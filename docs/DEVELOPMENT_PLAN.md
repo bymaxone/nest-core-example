@@ -5,8 +5,9 @@
 > **Source of truth:** [`TECHNICAL_SPECIFICATION.md`](TECHNICAL_SPECIFICATION.md). This file is
 > the execution roadmap that decomposes it; per-phase task files live under
 > [`docs/tasks/`](tasks/).
-> **Targeted library version:** `@bymax-one/nest-core@^0.1.0` (not yet published; see the
-> external gate below).
+> **Targeted library version:** `@bymax-one/nest-core@0.1.0`, consumed from the sibling local
+> checkout via `file:../../../nest-core` (not yet published to npm; see the external
+> precondition below).
 > **Document version:** 1.0, authored before implementation.
 > **Status legend (one legend everywhere):** 📋 ToDo · 🔄 In Progress · 👀 Review · ✅ Done · ⛔ Blocked · 🟡 Partial
 
@@ -30,12 +31,13 @@
 
 > **Progress:** 0 / 9 phases complete (0%) · 0 / 42 tasks
 > **Active phase:** none (plan awaiting kickoff)
-> **Blocked:** Phase 1 is ⛔ until the external precondition below is satisfied.
+> **Blocked:** none (the library is available locally; Phase 1 only requires its `dist/` to
+> be built — see the external precondition below).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
 | -- | ---------------------------------------- | ----------------------------------- | ---- | ------------ | ------ |
 | 0  | Repository Foundation & CI               | `phase-00-repo-foundation.md`       | M    | 0 / 5        | 📋     |
-| 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 0 / 3        | ⛔     |
+| 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 0 / 3        | 📋     |
 | 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 0 / 5        | 📋     |
 | 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 0 / 4        | 📋     |
 | 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 0 / 4        | 📋     |
@@ -46,17 +48,26 @@
 
 ## External Precondition
 
-`@bymax-one/nest-core` is **under development in its own repository and not yet published to
-npm**. Before starting Phase 1 (and any phase after it), verify:
+`@bymax-one/nest-core` is **ready in its sibling local checkout
+(`../nest-core`) and is not published to npm for now**. The example consumes it via
+`"@bymax-one/nest-core": "file:../../../nest-core"` in `apps/api` — the same pattern the
+sibling `*-example` repos use. The `file:` protocol packs the library respecting its
+`files` and `exports` fields, so the example still validates the packaged `exports` map
+like a real consumer. Before starting Phase 1 (and any phase after it), verify the library
+is built:
 
 ```bash
-npm view @bymax-one/nest-core version   # must succeed
+# from the repo root — all three subpath type entries must exist
+test -f ../nest-core/dist/index.d.ts \
+  && test -f ../nest-core/dist/pagination/index.d.ts \
+  && test -f ../nest-core/dist/health/index.d.ts
 ```
 
-While the command fails, Phase 1 stays ⛔ Blocked (name the missing package in the dashboard
-notes), Phase 0 proceeds normally, and the run stops cleanly after Phase 0 rather than polling.
-This plan never consumes the library from a workspace link or a `paths` alias: the example
-validates the published `exports` map, exactly like every real consumer.
+While the check fails, Phase 1 stays ⛔ Blocked (name the missing build in the dashboard
+notes) and the run stops cleanly; the operator builds the library with
+`pnpm -C ../nest-core build`. This plan never consumes the library as a `workspace:` member,
+a `link:` symlink, or a `paths` alias — and after any library rebuild, a fresh
+`pnpm install` is required for the repacked `file:` dependency to be picked up.
 
 ---
 
@@ -64,8 +75,8 @@ validates the published `exports` map, exactly like every real consumer.
 
 ```
 0 ──▶ 1 ──▶ 2 ──┬──▶ 3 ──┐
- (npm gate)     ├──▶ 4 ──┼──▶ 6 ──▶ 7 ──▶ 8
-                └──▶ 5 ──┘
+(local build    ├──▶ 4 ──┼──▶ 6 ──▶ 7 ──▶ 8
+ gate)          └──▶ 5 ──┘
 ```
 
 **Critical path:** `0 → 1 → 2 → 3 → 6 → 7 → 8`.
@@ -95,7 +106,7 @@ validates the published `exports` map, exactly like every real consumer.
 | Sizing          | functions ≤ 50 lines; files ≤ 800 (200-400 typical); `@fileoverview` + `@layer` header per file  |
 | Comments        | English only, timeless (no plan-phase references in committed code or config)                     |
 | API docs        | No Swagger; JSDoc on controllers; Zod DTOs                                                        |
-| Library dep     | `@bymax-one/nest-core@^0.1.0` from the public npm registry; peers (`@nestjs/*`, `reflect-metadata`, `rxjs`) plus the optional `prom-client` installed in `apps/api` |
+| Library dep     | `@bymax-one/nest-core` via `file:../../../nest-core` (sibling local checkout, packed `exports` map); peers (`@nestjs/*`, `reflect-metadata`, `rxjs`) plus the optional `prom-client` installed in `apps/api` |
 | Datastore       | none; the catalog is an in-memory seeded repository                                               |
 | Branching       | one branch per phase: `git switch -c feat/phase-NN-<slug>` (never `git checkout -b`)              |
 | PR flow         | one PR per phase; GitHub Copilot code review requested on every PR; all findings addressed; merge only with CI green; squash + delete branch |
@@ -127,11 +138,12 @@ without Conventional format.
 
 ### Phase 1: Library Consumption & Subpath Probes
 
-**Goal:** `apps/api` consumes `@bymax-one/nest-core` from npm and all three subpaths
-type-resolve.
-**Prerequisites:** Phase 0 + the **external gate** (`npm view @bymax-one/nest-core version`).
+**Goal:** `apps/api` consumes `@bymax-one/nest-core` from the sibling local checkout and all
+three subpaths type-resolve.
+**Prerequisites:** Phase 0 + the **external gate** (the library's `dist/` built at
+`../nest-core`; see the External Precondition).
 **Scope (in):** workspace packages `apps/api` (holder package.json), the library dependency
-`^0.1.0` with required peers (`@nestjs/common`, `@nestjs/core`, `reflect-metadata`, `rxjs`) and
+`file:../../../nest-core` with required peers (`@nestjs/common`, `@nestjs/core`, `reflect-metadata`, `rxjs`) and
 the optional peer `prom-client`; a typed three-subpath probe (`.`, `./pagination`, `./health`)
 proving resolution; removal of `--passWithNoTests` once the probe test lands.
 **Scope (out):** real wiring (Phase 2).
@@ -245,8 +257,9 @@ fully ✅.
    progress counter, completion log).
 2. Then update this dashboard: the phase row (Done / Total, Status) and the progress blockquote
    (phases %, tasks, active phase, blocked list).
-3. Phase 1's ⛔ is cleared only by a successful `npm view @bymax-one/nest-core version`,
-   recorded in the completion log with the resolved version.
+3. If the local-build check ever fails, Phase 1 goes ⛔ until the library's `dist/` is
+   rebuilt (`pnpm -C ../nest-core build`); the completion log records the packed library
+   version from `../nest-core/package.json`.
 4. A phase moves to ✅ only when every task is done, its Definition of Done holds, and its PR is
    merged with CI green and the Copilot review resolved.
 5. Commit dashboards with `docs(plan): update phase N status` (English, Conventional, no

@@ -442,7 +442,7 @@ Completion Protocol:
    docs/tasks/README.md.
 3. Commit the dashboard updates (Conventional Commits, no attribution trailers).
 4. Flip the Phase 0 row to ✅ in the plan dashboard and set Phase 1 as the active phase
-   (or ⛔ if the npm gate still fails).
+   (or ⛔ if the local-build gate still fails; see the plan's External Precondition).
 ````
 
 ## Completion log

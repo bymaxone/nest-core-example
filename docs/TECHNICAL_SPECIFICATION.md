@@ -17,15 +17,16 @@
 > [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md) and the per-phase `docs/tasks/phase-NN-*.md` files
 > derive from. It describes the intended end state so that planning, task scaffolding, and review
 > all share one contract. The API surface described here mirrors the library's technical
-> specification at version `0.1.0`; once the package publishes, every signature is re-verified
-> against the shipped type declarations (`dist/index.d.ts`, `dist/pagination/index.d.ts`,
-> `dist/health/index.d.ts`) and any drift is reconciled in this document, never papered over.
+> specification at version `0.1.0`; every signature is re-verified against the shipped type
+> declarations (`dist/index.d.ts`, `dist/pagination/index.d.ts`, `dist/health/index.d.ts`)
+> and any drift is reconciled in this document, never papered over.
 
-> ⚠️ **Library status.** `@bymax-one/nest-core` is **under active development in its own
-> repository and is not yet published to npm**. Phases of this example that consume the package
-> are externally blocked until `npm view @bymax-one/nest-core version` succeeds (see
-> [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md), Phase 1). Everything that does not need the
-> package (repository foundation, tooling, CI) proceeds immediately.
+> ⚠️ **Library status.** `@bymax-one/nest-core` is **ready in its sibling local checkout
+> (`../nest-core`) and is not published to npm for now**. The example consumes it via the
+> `file:../../../nest-core` protocol, which packs the library respecting its
+> `files`/`exports` fields. Phases that consume the package require its `dist/` to be built
+> (see [`DEVELOPMENT_PLAN.md`](DEVELOPMENT_PLAN.md), External Precondition). Everything that
+> does not need the package (repository foundation, tooling, CI) proceeds immediately.
 
 ---
 
@@ -171,7 +172,7 @@ plan.
 | Property         | Value                                                                     |
 | ---------------- | ------------------------------------------------------------------------- |
 | Package          | `@bymax-one/nest-core`                                                    |
-| Version targeted | `0.1.0` (pre-1.0, not yet published)                                      |
+| Version targeted | `0.1.0` (pre-1.0, consumed locally via `file:../../../nest-core`)         |
 | Build            | Dual ESM + CJS + `.d.ts` (tsup)                                           |
 | Subpaths         | `.` (module, filter, interceptor, tokens, interfaces, error codes) · `./pagination` · `./health` |
 | Runtime deps     | **none** (`dependencies: {}`)                                             |
@@ -494,24 +495,31 @@ exercised (with reason).
 
 ## 8 · Library Consumption
 
-The example consumes `@bymax-one/nest-core` as a versioned external package, **not** a workspace
-member. This mirrors a real install and ensures the example validates the published `exports`
-map (three subpaths, dual ESM + CJS), not a local `src/`.
+The example consumes `@bymax-one/nest-core` as a packed external package, **not** a workspace
+member. The library is not published to npm for now, so the dependency uses the `file:`
+protocol pointing at the sibling checkout: pnpm packs the directory respecting the library's
+`files` and `exports` fields, so the example still validates the packaged `exports` map
+(three subpaths, dual ESM + CJS), not a local `src/`.
 
 ### 8.1 The consumption gate
 
-The library is **not yet published**. The consuming phases of the plan are blocked until:
+The consuming phases of the plan require the local library to be **built**:
 
 ```bash
-npm view @bymax-one/nest-core version   # succeeds → consumption unblocked
+# from this repo's root — all three subpath type entries must exist
+test -f ../nest-core/dist/index.d.ts \
+  && test -f ../nest-core/dist/pagination/index.d.ts \
+  && test -f ../nest-core/dist/health/index.d.ts     # exit 0 → consumption unblocked
 ```
 
-Once published:
+If it fails, the operator rebuilds with `pnpm -C ../nest-core build`. After any library
+rebuild, a fresh `pnpm install` in this repo is required for the repacked `file:` dependency
+to be picked up. The dependency block:
 
 ```jsonc
 // apps/api/package.json
 "dependencies": {
-  "@bymax-one/nest-core": "^0.1.0",
+  "@bymax-one/nest-core": "file:../../../nest-core",
   // The library's REQUIRED peers live here so they resolve to a single copy:
   "@nestjs/common": "^11",
   "@nestjs/core": "^11",
@@ -522,10 +530,11 @@ Once published:
 }
 ```
 
-> 🎓 **Why not a workspace package or a `paths` alias.** Either would short-circuit the
-> published `exports` map and resolve library sources directly, hiding subpath, `.d.ts`, and
-> dual-build regressions. The external install resolves through `dist/` + `package.json#exports`
-> exactly as every real consumer does.
+> 🎓 **Why `file:` and not a workspace package, a `link:`, or a `paths` alias.** The latter
+> would short-circuit the packaged `exports` map and resolve library sources directly, hiding
+> subpath, `.d.ts`, and dual-build regressions. The `file:` install packs and resolves through
+> `dist/` + `package.json#exports` exactly as a real npm consumer does; when the library
+> publishes, the dependency flips to `^0.1.0` with no other change.
 
 ### 8.2 Subpath imports
 
