@@ -1,6 +1,6 @@
 # Phase 2: API Skeleton + Core Wiring
 
-> **Status**: 🔄 In Progress · **Progress**: 4 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: ✅ Done · **Progress**: 5 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-2-api-skeleton--core-wiring)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §9, §10
 
@@ -36,7 +36,7 @@ infrastructure.
 | 2.2 | Correlation: request context (ALS) + middleware + header echo  | ✅     | P0       | M    | 2.1        |
 | 2.3 | Timing sink (ring buffer, poisonable) + core.config factory    | ✅     | P0       | M    | 2.1        |
 | 2.4 | Module wiring (forRootAsync + token providers) + timing-feed   | ✅     | P0       | M    | 2.2, 2.3   |
-| 2.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 🔄     | P0       | S    | 2.1-2.4    |
+| 2.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | ✅     | P0       | S    | 2.1-2.4    |
 
 ## Tasks
 
@@ -373,13 +373,12 @@ Completion Protocol:
 
 ### Task 2.5: Phase close: audit, dashboards, PR + Copilot review + merge
 
-- **Status**: 🔄 In Progress
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 2.1, 2.2, 2.3, 2.4
 
-> **Note:** acceptance audit, dashboard sync, and PR creation (with the auto-requested Copilot
-> review) are complete. Review resolution and the squash-merge are owned by the orchestrator.
+> **Note:** PR #4 merged to `main` (squash, branch deleted) with CI green.
 
 #### Description
 
@@ -390,9 +389,8 @@ dashboards, open the PR, obtain and resolve the GitHub Copilot review, merge wit
 
 - [x] All verification commands of 2.1-2.4 re-run green; the envelope + correlation boot proof
       captured in the PR body.
-- [ ] Dashboards consistent; PR opened; Copilot review requested and fully addressed;
-      squash-merged with branch deletion; `main` CI green. _(PR opened and review auto-requested;
-      resolution + merge owned by the orchestrator.)_
+- [x] Dashboards consistent; PR opened; Copilot review requested and fully addressed;
+      squash-merged with branch deletion; `main` CI green.
 
 #### Files to create / modify
 
@@ -460,5 +458,5 @@ Completion Protocol:
 - 2.4 ✅ 2026-07-17 Global CoreWiringModule (token bindings + ring-buffer-fed TimingInterceptor),
   BymaxCoreModule.forRootAsync from buildCoreOptions, ZodValidationPipe, timing-feed endpoints;
   boot proof shows the 7-field envelope with correlationId and populated samples; 100% coverage.
-- 2.5 🔄 2026-07-17 Phase-close audit and dashboards done; all gates green; PR opened with the
-  Copilot review auto-requested. Review resolution and squash-merge are owned by the orchestrator.
+- 2.5 ✅ 2026-07-17 Phase-close audit and dashboards done; all gates green; PR #4 opened, Copilot
+  review addressed, squash-merged to `main` with branch deletion; CI green.
