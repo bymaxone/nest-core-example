@@ -91,30 +91,33 @@ posture) as if it were already public.
 
 ## Invariant greps
 
-Each line below is a gate scoped to `apps/` (planning docs stay exempt). Every command is
-written so that a clean tree exits 0 and a violation prints the offending lines and exits
-non-zero, making them safe to drop into a `set -e` CI step. Run from the repo root; they run
-in every implementer's phase-wide gate pass.
+Most gates below target `apps/` (planning docs stay exempt); two also check the root
+`package.json` and the branch's added history (`git log origin/main..HEAD`). Every command is
+written so that a clean tree exits 0 and a real violation prints the offending lines and exits
+non-zero, making them safe to drop into a `set -e` CI step. Recursive scans exclude
+`node_modules` (so installed dependencies never trip a gate) and suppress the missing-directory
+error that occurs before `apps/` exists, while still printing genuine violations. Run from the
+repo root; they run in every implementer's phase-wide gate pass.
 
 ```bash
 # no suppression comments anywhere in app code
-! grep -rnE "@ts-ignore|@ts-expect-error|@ts-nocheck|eslint-disable" apps/ --include='*.ts' --include='*.tsx' --include='*.mjs'
+! grep -rnE "@ts-ignore|@ts-expect-error|@ts-nocheck|eslint-disable" apps/ --include='*.ts' --include='*.tsx' --include='*.mjs' --exclude-dir=node_modules 2>/dev/null
 
 # env access only through the validated schema
-! { grep -rn "process\.env" apps/api/src/ --include='*.ts' | grep -v "config/env.schema.ts"; }
+! { grep -rn "process\.env" apps/api/src/ --include='*.ts' --exclude-dir=node_modules 2>/dev/null | grep -v "config/env.schema.ts"; }
 
 # the library is consumed via file: from the sibling checkout, never workspace-linked,
 # symlinked, or aliased (file: is the ONE allowed protocol)
-! grep -rnE "\"@bymax-one/nest-core\": *\"(workspace:|link:)" apps/ package.json
-! grep -rn "@bymax-one/nest-core" apps/ --include='tsconfig*.json'
+! grep -rnE "\"@bymax-one/nest-core\": *\"(workspace:|link:)" apps/ package.json --exclude-dir=node_modules 2>/dev/null
+! grep -rn "@bymax-one/nest-core" apps/ --include='tsconfig*.json' --exclude-dir=node_modules 2>/dev/null
 
 # no plan-stage references in committed code (timeless comments)
-! grep -rniE "phase [0-9]|fase [0-9]|P[0-9]-[0-9]" apps/ --include='*.ts' --include='*.tsx'
+! grep -rniE "phase [0-9]|fase [0-9]|P[0-9]-[0-9]" apps/ --include='*.ts' --include='*.tsx' --exclude-dir=node_modules 2>/dev/null
 
 # no .gitkeep placeholders, no Swagger, no em dashes in app code
-! find apps/ \( -name '.gitkeep' -o -name '.keep' \) -print | grep .
-! grep -rn "@nestjs/swagger" apps/
-! grep -rn "$(printf '\xe2\x80\x94')" apps/ --include='*.ts' --include='*.tsx'
+! find apps/ -path '*/node_modules' -prune -o \( -name '.gitkeep' -o -name '.keep' \) -print 2>/dev/null | grep .
+! grep -rn "@nestjs/swagger" apps/ --exclude-dir=node_modules 2>/dev/null
+! grep -rn "$(printf '\xe2\x80\x94')" apps/ --include='*.ts' --include='*.tsx' --exclude-dir=node_modules 2>/dev/null
 
 # no AI-attribution trailers in the history this chain adds
 ! git log --format='%B' origin/main..HEAD | grep -iE "co-authored-by|generated with"
