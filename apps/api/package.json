@@ -52,8 +52,11 @@
   "devDependencies": {
     "@jest/globals": "^30",
     "@nestjs/cli": "^11",
+    "@nestjs/testing": "^11",
     "@types/node": "^24",
+    "@types/supertest": "^7",
     "jest": "^30",
+    "supertest": "^7",
     "ts-jest": "^29"
   }
 }

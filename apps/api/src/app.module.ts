@@ -17,6 +17,7 @@ import { validateEnv } from './config/env.schema.js'
 import { buildCoreOptions } from './core/core.config.js'
 import { CoreWiringModule } from './core/core.module.js'
 import { RequestContextMiddleware } from './core/request-context.middleware.js'
+import { FailuresModule } from './failures/failures.module.js'
 import { TimingFeedModule } from './timing-feed/timing-feed.module.js'
 
 /**
@@ -38,6 +39,7 @@ import { TimingFeedModule } from './timing-feed/timing-feed.module.js'
     CoreWiringModule,
     TimingFeedModule,
     CatalogModule,
+    FailuresModule,
   ],
   controllers: [AppController],
 })
