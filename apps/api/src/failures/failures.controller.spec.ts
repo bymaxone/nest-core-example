@@ -5,7 +5,10 @@
  * production).
  * Goal: verify every registered failure kind produces the exact
  * `(code, statusCode)` pair documented in the library's BYMAX_* error-code
- * catalog, and that an unregistered kind 404s instead of executing anything.
+ * catalog, including the unmapped-4xx and unmapped-5xx fallbacks, and that an
+ * unregistered kind 404s instead of executing anything. The unknown-throw
+ * collapse gets its own dedicated prod/dev suites (prod-collapse.spec.ts,
+ * dev-internals.spec.ts) since it needs two contrasting module configurations.
  * Mocks: none; boots a real testing module with `BymaxCoreModule.forRoot()`.
  */
 
@@ -19,14 +22,14 @@ import request from 'supertest'
 
 import { FailuresModule } from './failures.module.js'
 
-/** One row per standard `HttpException` derivation covered by this suite. */
+/** One row per `HttpException`-derived catalog code covered by this suite. */
 interface CatalogRow {
   readonly kind: string
   readonly status: number
   readonly code: string
 }
 
-const STANDARD_CATALOG_ROWS: readonly CatalogRow[] = [
+const CATALOG_ROWS: readonly CatalogRow[] = [
   { kind: 'bad-request', status: 400, code: 'BYMAX_BAD_REQUEST' },
   { kind: 'unauthorized', status: 401, code: 'BYMAX_UNAUTHORIZED' },
   { kind: 'forbidden', status: 403, code: 'BYMAX_FORBIDDEN' },
@@ -40,6 +43,12 @@ const STANDARD_CATALOG_ROWS: readonly CatalogRow[] = [
   { kind: 'bad-gateway', status: 502, code: 'BYMAX_BAD_GATEWAY' },
   { kind: 'service-unavailable', status: 503, code: 'BYMAX_SERVICE_UNAVAILABLE' },
   { kind: 'gateway-timeout', status: 504, code: 'BYMAX_GATEWAY_TIMEOUT' },
+  // Unmapped 4xx: the filter derives the generic BYMAX_CLIENT_ERROR fallback
+  // from the raw 418 status rather than a dedicated catalog row.
+  { kind: 'teapot', status: 418, code: 'BYMAX_CLIENT_ERROR' },
+  // Unmapped 5xx: any status outside the catalogued rows collapses to
+  // BYMAX_INTERNAL_ERROR, the same code the unknown-throw collapse uses.
+  { kind: 'variant-5xx', status: 507, code: 'BYMAX_INTERNAL_ERROR' },
 ]
 
 describe('FailuresController', () => {
@@ -62,21 +71,19 @@ describe('FailuresController', () => {
   })
 
   /**
-   * Full standard-derivation catalog, one row per registered failure kind.
+   * Full catalog of `HttpException`-derived codes, one row per registered
+   * failure kind.
    *
    * Every `POST /failures/:kind` in this table must produce the exact
-   * `(code, statusCode)` pair the library's exception filter derives from the
-   * matching `HttpException` subclass.
+   * `(code, statusCode)` pair the library's exception filter derives: the
+   * standard per-status codes, and the unmapped-4xx / unmapped-5xx fallbacks.
    */
-  it.each(STANDARD_CATALOG_ROWS)(
-    'POST /failures/$kind -> $status $code',
-    async ({ kind, status, code }) => {
-      const response = await request(httpServer).post(`/failures/${kind}`)
+  it.each(CATALOG_ROWS)('POST /failures/$kind -> $status $code', async ({ kind, status, code }) => {
+    const response = await request(httpServer).post(`/failures/${kind}`)
 
-      expect(response.status).toBe(status)
-      expect((response.body as { code: string }).code).toBe(code)
-    },
-  )
+    expect(response.status).toBe(status)
+    expect((response.body as { code: string }).code).toBe(code)
+  })
 
   /**
    * Unknown kind rejection.

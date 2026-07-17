@@ -1,7 +1,8 @@
 /**
  * @fileoverview Frozen registry mapping each demo failure kind to a function
- * that throws the matching exception. One entry per row of the library's
- * BYMAX_* error-code catalog that a plain `HttpException` can trigger, so
+ * that throws the matching exception. Covers every row of the library's
+ * BYMAX_* error-code catalog: the standard `HttpException` derivations, the
+ * unmapped-4xx and unmapped-5xx fallbacks, and the unknown-throw collapse, so
  * every derivation is reproducible on demand through `POST /failures/:kind`.
  * @layer constants
  */
@@ -38,6 +39,16 @@ export type FailureKind =
   | 'bad-gateway'
   | 'service-unavailable'
   | 'gateway-timeout'
+  | 'teapot'
+  | 'variant-5xx'
+  | 'unknown'
+
+/**
+ * Deterministic marker embedded in the unknown-throw's message, so a test can
+ * assert it is absent from a production-mode response and present in a
+ * development-mode one.
+ */
+export const UNKNOWN_FAILURE_MARKER = 'demo unknown failure: catalog-collapse-marker'
 
 /**
  * Frozen map from failure kind to a trigger throwing the matching exception.
@@ -85,6 +96,21 @@ export const FAILURE_REGISTRY: Readonly<Record<FailureKind, () => never>> = Obje
   },
   'gateway-timeout': () => {
     throw new GatewayTimeoutException('Demo gateway timeout failure')
+  },
+  // 418 has no dedicated catalog row: the filter derives the unmapped-4xx
+  // fallback BYMAX_CLIENT_ERROR from the raw status.
+  teapot: () => {
+    throw new HttpException('I am a teapot', HttpStatus.I_AM_A_TEAPOT)
+  },
+  // 507 has no dedicated catalog row either: the filter derives the
+  // unmapped-5xx fallback BYMAX_INTERNAL_ERROR from the raw status.
+  'variant-5xx': () => {
+    throw new HttpException('Insufficient storage', HttpStatus.INSUFFICIENT_STORAGE)
+  },
+  // A plain Error, not an HttpException: the filter collapses this to the
+  // fixed, production-safe 500 envelope rather than deriving from a status.
+  unknown: () => {
+    throw new Error(UNKNOWN_FAILURE_MARKER)
   },
 })
 
