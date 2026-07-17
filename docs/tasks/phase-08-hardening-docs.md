@@ -1,6 +1,6 @@
 # Phase 8: Mutation, Docs, README & Export Audit
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-06
+> **Status**: 🔄 In Progress · **Progress**: 1 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-8-mutation-docs-readme--export-audit)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §7, §18, §21
 
@@ -35,7 +35,7 @@ the complete, verifiable usage reference for `@bymax-one/nest-core`.
 
 | ID  | Task                                                          | Status | Priority | Size | Depends on |
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 8.1 | Branch + Stryker toolchain (api + web) + baseline records      | 📋     | P0       | M    | Phase 7    |
+| 8.1 | Branch + Stryker toolchain (api + web) + baseline records      | ✅     | P0       | M    | Phase 7    |
 | 8.2 | Survivor hardening to thresholds (api 100, web 90)             | 📋     | P0       | L    | 8.1        |
 | 8.3 | Export audit script + CI job                                   | 📋     | P0       | M    | Phase 7    |
 | 8.4 | Final README, CHANGELOG and journeys                           | 📋     | P0       | M    | 8.3        |
@@ -45,7 +45,7 @@ the complete, verifiable usage reference for `@bymax-one/nest-core`.
 
 ### Task 8.1: Branch + Stryker toolchain (api + web) + baseline records
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 7
@@ -58,12 +58,12 @@ git/lint ignores for Stryker artifacts, and the baseline run recorded in `docs/s
 
 #### Acceptance criteria
 
-- [ ] `apps/api/stryker.config.json` (thresholds high 100 / low 100 / break 100) and
+- [x] `apps/api/stryker.config.json` (thresholds high 100 / low 100 / break 100) and
       `apps/web/stryker.config.json` (high 100 / low 95 / break 90; `lib/**` mutated fully,
       `components/ui/**` excluded).
-- [ ] Scripts `mutation` + `mutation:incremental` per app; `.stryker-tmp/` and `reports/`
+- [x] Scripts `mutation` + `mutation:incremental` per app; `.stryker-tmp/` and `reports/`
       ignored by git, lint, prettier.
-- [ ] Baseline executed one app at a time; scores + survivor inventory recorded in
+- [x] Baseline executed one app at a time; scores + survivor inventory recorded in
       `docs/stryker/BASELINE.md`; `docs/stryker/HISTORY.md` started (append-only).
 
 #### Files to create / modify
@@ -424,3 +424,6 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 8.1 ✅ 2026-07-17 Stryker wired for both apps (jest/vitest runners, perTest, ignoreStatic,
+  incremental); baselines recorded: api 77.81%, web 84.22%; artifacts git/lint/prettier ignored.
