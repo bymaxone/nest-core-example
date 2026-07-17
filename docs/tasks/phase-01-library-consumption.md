@@ -1,6 +1,6 @@
 # Phase 1: Library Consumption & Subpath Probes
 
-> **Status**: 🔄 In Progress · **Progress**: 2 / 3 tasks · **Last updated**: 2026-07-17
+> **Status**: 👀 Review · **Progress**: 3 / 3 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-1-library-consumption--subpath-probes)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §4, §8
 
@@ -50,7 +50,7 @@ run stops cleanly (the operator rebuilds with `pnpm -C ../nest-core build`).
 | --- | ------------------------------------------------------------ | ------ | -------- | ---- | ---------- |
 | 1.1 | Verify the local-build gate + create `apps/api` holder + dep | ✅     | P0       | S    | Phase 0    |
 | 1.2 | Three-subpath probe + first unit test (drop passWithNoTests) | ✅     | P0       | S    | 1.1        |
-| 1.3 | Phase close: audit, dashboards, PR + Copilot review + merge  | 📋     | P0       | S    | 1.1, 1.2   |
+| 1.3 | Phase close: audit, dashboards, PR + Copilot review + merge  | 👀     | P0       | S    | 1.1, 1.2   |
 
 ## Tasks
 
@@ -234,10 +234,14 @@ Completion Protocol:
 
 ### Task 1.3: Phase close: audit, dashboards, PR + Copilot review + merge
 
-- **Status**: 📋 ToDo
+- **Status**: 👀 Review
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 1.1, 1.2
+
+> **Note:** implementer scope ends at opening the PR and triggering the code review.
+> The review grace window, thread resolution, squash-merge with branch deletion, and
+> the post-merge `main` CI verification are completed after review.
 
 #### Description
 
@@ -246,10 +250,11 @@ resolve the GitHub Copilot review, merge with CI green.
 
 #### Acceptance criteria
 
-- [ ] All verification commands of 1.1-1.2 re-run green on the branch.
-- [ ] Dashboards consistent (this file 3/3, plan row, tasks README).
-- [ ] PR opened, Copilot review requested, all findings addressed, squash-merged with branch
-      deletion, `main` CI green.
+- [x] All verification commands of 1.1-1.2 re-run green on the branch.
+- [x] Dashboards consistent (this file 3/3, plan row, tasks README).
+- [x] PR opened and the GitHub Copilot code review auto-requested on open. (The review grace
+      window, addressing findings, squash-merge with branch deletion, and post-merge `main` CI
+      verification are completed after review.)
 
 #### Files to create / modify
 
@@ -319,3 +324,7 @@ Completion Protocol:
   (5 tests, cursor round-trip included); `jest.config.cjs` runs ts-jest ESM at `maxWorkers: '50%'`
   with a 100% coverage gate (met); dropped the `--if-present` test tolerance from the root script
   and CI so the suite genuinely runs.
+- 1.3 👀 2026-07-17 Audited every 1.1-1.2 acceptance criterion (install, lint, typecheck,
+  format, frozen-lockfile, and the probe suite all green; peers single-copy), synced the
+  dashboards, and opened the phase PR with the Copilot review auto-requested. Merge, thread
+  resolution, and branch deletion follow the review.

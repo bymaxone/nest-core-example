@@ -29,7 +29,7 @@
 
 ## Progress Dashboard
 
-> **Progress:** 1 / 9 phases complete (11%) · 7 / 42 tasks
+> **Progress:** 1 / 9 phases complete (11%) · 8 / 42 tasks
 > **Active phase:** Phase 1 (Library Consumption & Subpath Probes)
 > **Blocked:** none at kickoff - the sibling library is built and its `dist/` resolves, so
 > Phase 1's external gate is satisfied. Phase 1 returns to ⛔ only if that local-build check
@@ -38,7 +38,7 @@
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
 | -- | ---------------------------------------- | ----------------------------------- | ---- | ------------ | ------ |
 | 0  | Repository Foundation & CI               | `phase-00-repo-foundation.md`       | M    | 5 / 5        | ✅     |
-| 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 2 / 3        | 🔄     |
+| 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 3 / 3        | 👀     |
 | 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 0 / 5        | 📋     |
 | 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 0 / 4        | 📋     |
 | 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 0 / 4        | 📋     |
