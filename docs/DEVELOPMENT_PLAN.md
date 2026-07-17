@@ -29,7 +29,7 @@
 
 ## Progress Dashboard
 
-> **Progress:** 3 / 9 phases complete (33%) · 14 / 42 tasks
+> **Progress:** 3 / 9 phases complete (33%) · 15 / 42 tasks
 > **Active phase:** Phase 3 (Catalog Domain & Pagination)
 > **Blocked:** none - the sibling library is built and its `dist/` resolves. Phase 2 merged to
 > `main`; Phase 3 returns to ⛔ only if the local-build check regresses (see the
@@ -40,7 +40,7 @@
 | 0  | Repository Foundation & CI               | `phase-00-repo-foundation.md`       | M    | 5 / 5        | ✅     |
 | 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 3 / 3        | ✅     |
 | 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 5 / 5        | ✅     |
-| 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 1 / 4        | 🔄     |
+| 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 2 / 4        | 🔄     |
 | 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 0 / 4        | 📋     |
 | 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 0 / 5        | 📋     |
 | 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 0 / 6        | 📋     |

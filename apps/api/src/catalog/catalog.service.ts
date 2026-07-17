@@ -1,15 +1,23 @@
 /**
  * @fileoverview Business logic for the demo product catalog. Turns raw,
- * untrusted request input into calls against `ProductRepository`; controllers
- * stay thin, and every pagination decision (clamping, meta, cursor codec) is
- * delegated to the library, never hand-rolled.
+ * untrusted request input into calls against `ProductRepository` and the
+ * library's pagination helpers; controllers stay thin, and every pagination
+ * decision (clamping, meta, cursor codec) is made here or delegated to the
+ * library, never hand-rolled.
  * @layer service
  */
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { buildPageResult, normalizePageQuery } from '@bymax-one/nest-core/pagination'
+import type { PageResult } from '@bymax-one/nest-core/pagination'
 
+import { OutOfSeasonError } from '../common/domain-errors.js'
+import type { CreateProductInput } from './dto/create-product.dto.js'
 import { ProductRepository } from './product.repository.js'
 import type { Product } from './product.types.js'
+
+/** Page-size ceiling shared by both pagination models for this domain. */
+const MAX_PAGE_LIMIT = 50
 
 /**
  * Seeded product catalog demonstrating both pagination models over an
@@ -30,6 +38,44 @@ export class CatalogService {
     const product = await this.products.findById(id)
     if (product === undefined) {
       throw new NotFoundException(`Product ${id} was not found`)
+    }
+    return product
+  }
+
+  /**
+   * List products with offset pagination.
+   *
+   * @param raw - Unvalidated query input (page, limit).
+   * @returns A PageResult with clamped meta derived by the library helpers.
+   */
+  async listOffset(raw: Record<string, unknown>): Promise<PageResult<Product>> {
+    const query = normalizePageQuery(raw, { maxLimit: MAX_PAGE_LIMIT })
+    const { rows, total } = await this.products.findPage(query)
+    return buildPageResult(rows, total, query)
+  }
+
+  /**
+   * Create a new product from validated input.
+   *
+   * @param input - The Zod-validated fields for the new product.
+   * @returns The persisted product.
+   */
+  async createProduct(input: CreateProductInput): Promise<Product> {
+    return this.products.create(input)
+  }
+
+  /**
+   * Look up a product and enforce the seasonal availability rule.
+   *
+   * @param id - The product id to look up.
+   * @returns The product when it is currently in season.
+   * @throws NotFoundException when no product has the given id.
+   * @throws OutOfSeasonError when the product's category is `'seasonal'`.
+   */
+  async getSeasonalProduct(id: string): Promise<Product> {
+    const product = await this.getProduct(id)
+    if (product.category === 'seasonal') {
+      throw new OutOfSeasonError(product.id)
     }
     return product
   }

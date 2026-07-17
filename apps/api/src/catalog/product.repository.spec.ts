@@ -2,8 +2,8 @@
  * Unit tests for ProductRepository.
  *
  * Layer: unit.
- * Goal: verify deterministic seeding, latency simulation, offset slicing, and
- * cursor-relative fetching.
+ * Goal: verify deterministic seeding, latency simulation, offset slicing,
+ * cursor-relative fetching, and appended creation.
  * Mocks: a ConfigService stub supplying the seed count and origin latency.
  */
 
@@ -151,5 +151,30 @@ describe('ProductRepository', () => {
     const rows = await repository.findAfter({ id: 'does-not-exist' }, 2)
 
     expect(rows.map((product) => product.id)).toEqual(['p-000001', 'p-000002'])
+  })
+
+  /**
+   * Created products are appended and independently identified.
+   *
+   * `create` must persist a new product with a generated id and timestamp,
+   * distinct from the deterministic seed, and it must become visible to
+   * subsequent reads.
+   */
+  it('appends a created product with a generated id and timestamp', async () => {
+    const repository = buildRepository(2)
+
+    const created = await repository.create({
+      name: 'Test Item',
+      category: 'office',
+      priceCents: 1234,
+    })
+
+    expect(created.id).toEqual(expect.any(String))
+    expect(created.id).not.toBe('')
+    expect(created.createdAt).toEqual(expect.any(String))
+    expect(created.name).toBe('Test Item')
+
+    const found = await repository.findById(created.id)
+    expect(found).toEqual(created)
   })
 })

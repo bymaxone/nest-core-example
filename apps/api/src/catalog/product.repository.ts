@@ -9,6 +9,8 @@
  * @layer repository
  */
 
+import { randomUUID } from 'node:crypto'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { PageQuery } from '@bymax-one/nest-core/pagination'
@@ -28,6 +30,9 @@ export interface ProductPage {
   /** Total number of products in the catalog. */
   readonly total: number
 }
+
+/** Fields a caller supplies to create a product; the rest is repository-owned. */
+export type NewProductInput = Omit<Product, 'id' | 'createdAt'>
 
 /** Deterministic category rotation; every fifth product lands on `'seasonal'`. */
 const CATEGORIES = ['electronics', 'home', 'outdoors', 'office', 'seasonal'] as const
@@ -133,7 +138,9 @@ function buildSeedProduct(index: number): Product {
 /**
  * Deterministic, latency-simulated in-memory product repository.
  *
- * The seed is generated once per instance from `CATALOG_SEED_COUNT`.
+ * The seed is generated once per instance from `CATALOG_SEED_COUNT`. Products
+ * created via {@link ProductRepository.create} are appended afterward and are
+ * not part of the deterministic seed sequence.
  */
 @Injectable()
 export class ProductRepository {
@@ -191,6 +198,19 @@ export class ProductRepository {
     await this.simulateLatency()
     const afterIndex = after ? this.products.findIndex((product) => product.id === after.id) : -1
     return this.products.slice(afterIndex + 1, afterIndex + 1 + limit)
+  }
+
+  /**
+   * Append a new product to the catalog.
+   *
+   * @param input - Validated fields for the new product.
+   * @returns The persisted product, including its generated id and timestamp.
+   */
+  async create(input: NewProductInput): Promise<Product> {
+    await this.simulateLatency()
+    const product: Product = { ...input, id: randomUUID(), createdAt: new Date().toISOString() }
+    this.products.push(product)
+    return product
   }
 
   /** Await the configured artificial origin latency. */

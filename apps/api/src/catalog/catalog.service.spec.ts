@@ -2,13 +2,15 @@
  * Unit tests for CatalogService.
  *
  * Layer: unit.
- * Goal: verify the 404 lookup path.
- * Mocks: a ProductRepository stub returning fixed products.
+ * Goal: verify the 404 lookup path, offset clamping via the library helpers,
+ * create delegation, and the seasonal domain-error passthrough.
+ * Mocks: a ProductRepository stub returning fixed rows/products.
  */
 
 import { NotFoundException } from '@nestjs/common'
 import { describe, expect, it, jest } from '@jest/globals'
 
+import { OutOfSeasonError } from '../common/domain-errors.js'
 import { CatalogService } from './catalog.service.js'
 import type { ProductRepository } from './product.repository.js'
 import type { Product } from './product.types.js'
@@ -28,12 +30,16 @@ function buildProduct(overrides: Partial<Product> = {}): Product {
 /** Typed mock shape for each repository method exercised by these tests. */
 interface RepositoryStub {
   findById: jest.Mock<ProductRepository['findById']>
+  findPage: jest.Mock<ProductRepository['findPage']>
+  create: jest.Mock<ProductRepository['create']>
 }
 
 /** Build a fully-mocked repository stub; every method defaults to an unset jest.fn(). */
 function buildRepositoryStub(): RepositoryStub {
   return {
     findById: jest.fn<ProductRepository['findById']>(),
+    findPage: jest.fn<ProductRepository['findPage']>(),
+    create: jest.fn<ProductRepository['create']>(),
   }
 }
 
@@ -71,6 +77,155 @@ describe('CatalogService', () => {
 
       await expect(service.getProduct('missing-id')).rejects.toThrow(
         new NotFoundException('Product missing-id was not found'),
+      )
+    })
+  })
+
+  describe('listOffset', () => {
+    /**
+     * Clamp table: below-range page.
+     *
+     * `page=0` must clamp up to `1`, matching the library's documented floor.
+     */
+    it('clamps a below-range page to 1', async () => {
+      const stub = buildRepositoryStub()
+      stub.findPage.mockResolvedValue({ rows: [], total: 0 })
+      const service = buildService(stub)
+
+      const result = await service.listOffset({ page: 0, limit: 10 })
+
+      expect(result.meta.page).toBe(1)
+      expect(stub.findPage).toHaveBeenCalledWith({ page: 1, limit: 10 })
+    })
+
+    /**
+     * Clamp table: above-range limit.
+     *
+     * `limit=999` must clamp down to the service's configured ceiling of `50`.
+     */
+    it('clamps an above-range limit to the 50-item ceiling', async () => {
+      const stub = buildRepositoryStub()
+      stub.findPage.mockResolvedValue({ rows: [], total: 0 })
+      const service = buildService(stub)
+
+      const result = await service.listOffset({ page: 1, limit: 999 })
+
+      expect(result.meta.limit).toBe(50)
+      expect(stub.findPage).toHaveBeenCalledWith({ page: 1, limit: 50 })
+    })
+
+    /**
+     * Clamp table: defaults.
+     *
+     * Absent `page`/`limit` must fall back to the library's documented
+     * defaults (page 1, limit 20).
+     */
+    it('applies the documented defaults when page and limit are absent', async () => {
+      const stub = buildRepositoryStub()
+      stub.findPage.mockResolvedValue({ rows: [], total: 0 })
+      const service = buildService(stub)
+
+      const result = await service.listOffset({})
+
+      expect(result.meta.page).toBe(1)
+      expect(result.meta.limit).toBe(20)
+    })
+
+    /**
+     * Meta derivation.
+     *
+     * `totalPages` must be derived by the library from the repository's total
+     * count, never computed by hand in this service.
+     */
+    it('derives totalPages from the repository total via buildPageResult', async () => {
+      const rows = [buildProduct()]
+      const stub = buildRepositoryStub()
+      stub.findPage.mockResolvedValue({ rows, total: 21 })
+      const service = buildService(stub)
+
+      const result = await service.listOffset({ page: 1, limit: 10 })
+
+      expect(result.items).toEqual(rows)
+      expect(result.meta.totalItems).toBe(21)
+      expect(result.meta.totalPages).toBe(3)
+    })
+  })
+
+  describe('createProduct', () => {
+    /**
+     * Create delegation.
+     *
+     * The service must pass the validated input straight to the repository
+     * and return whatever it persists.
+     */
+    it('delegates creation to the repository and returns the persisted product', async () => {
+      const created = buildProduct({ id: 'generated-id' })
+      const stub = buildRepositoryStub()
+      stub.create.mockResolvedValue(created)
+      const service = buildService(stub)
+      const input = { name: 'Test Item', category: 'office', priceCents: 500 }
+
+      const result = await service.createProduct(input)
+
+      expect(stub.create).toHaveBeenCalledWith(input)
+      expect(result).toEqual(created)
+    })
+  })
+
+  describe('getSeasonalProduct', () => {
+    /**
+     * In-season product.
+     *
+     * A non-seasonal category must resolve normally.
+     */
+    it('returns the product when its category is not seasonal', async () => {
+      const product = buildProduct({ category: 'electronics' })
+      const stub = buildRepositoryStub()
+      stub.findById.mockResolvedValue(product)
+      const service = buildService(stub)
+
+      await expect(service.getSeasonalProduct('p-000001')).resolves.toEqual(product)
+    })
+
+    /**
+     * Out-of-season product, custom-code passthrough.
+     *
+     * A `'seasonal'` category must throw `OutOfSeasonError` carrying the
+     * explicit `CATALOG_OUT_OF_SEASON` code, which the library passes through
+     * verbatim instead of deriving one from the HTTP status.
+     */
+    it('throws OutOfSeasonError with the custom code for a seasonal product', async () => {
+      const product = buildProduct({ category: 'seasonal' })
+      const stub = buildRepositoryStub()
+      stub.findById.mockResolvedValue(product)
+      const service = buildService(stub)
+
+      await expect(service.getSeasonalProduct('p-000001')).rejects.toBeInstanceOf(OutOfSeasonError)
+      try {
+        await service.getSeasonalProduct('p-000001')
+        throw new Error('expected getSeasonalProduct to throw')
+      } catch (error) {
+        expect(error).toBeInstanceOf(OutOfSeasonError)
+        expect((error as OutOfSeasonError).getResponse()).toEqual({
+          code: 'CATALOG_OUT_OF_SEASON',
+          message: 'Product p-000001 is currently out of season',
+        })
+      }
+    })
+
+    /**
+     * Missing product, 404 precedence.
+     *
+     * An unknown id must still surface `NotFoundException`, proving the
+     * lookup failure is checked before the seasonal rule.
+     */
+    it('throws NotFoundException when the product does not exist', async () => {
+      const stub = buildRepositoryStub()
+      stub.findById.mockResolvedValue(undefined)
+      const service = buildService(stub)
+
+      await expect(service.getSeasonalProduct('missing-id')).rejects.toBeInstanceOf(
+        NotFoundException,
       )
     })
   })
