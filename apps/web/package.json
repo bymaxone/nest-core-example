@@ -1,0 +1,74 @@
+{
+  "name": "@nest-core-example/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Next.js 16 dashboard for nest-core-example: renders the demo domain of @bymax-one/nest-core (error envelope, timing, pagination, health, metrics) against apps/api.",
+  "keywords": [
+    "bymax",
+    "bymax-one",
+    "nest-core",
+    "nextjs",
+    "reference-app",
+    "example",
+    "dashboard"
+  ],
+  "homepage": "https://github.com/bymaxone/nest-core-example/tree/main/apps/web#readme",
+  "bugs": {
+    "url": "https://github.com/bymaxone/nest-core-example/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bymaxone/nest-core-example.git",
+    "directory": "apps/web"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Bymax One",
+    "url": "https://github.com/bymaxone"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "next typegen && tsc --noEmit",
+    "lint": "eslint app lib components hooks",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "@tanstack/react-query": "^5.90.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "geist": "^1.7.0",
+    "lucide-react": "^1.8.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.4",
+    "autoprefixer": "^10.5.0",
+    "jsdom": "^29.0.2",
+    "tailwindcss": "^4.2.2",
+    "vitest": "^4.1.4"
+  }
+}
