@@ -1,6 +1,6 @@
 # Phase 5: Health Indicators & Metrics (API)
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-06
+> **Status**: 🔄 In Progress · **Progress**: 1 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-5-health-indicators--metrics-api)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §12.4, §12.5, §16, §17, §7.6, §7.7
 
@@ -30,7 +30,7 @@ specified here and asserted exhaustively in Phase 7's variant suites.
 
 | ID  | Task                                                         | Status | Priority | Size | Depends on |
 | --- | ------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 5.1 | Branch + demo health indicators (event-loop, flaky, hanging)  | 📋     | P0       | M    | Phase 2    |
+| 5.1 | Branch + demo health indicators (event-loop, flaky, hanging)  | ✅     | P0       | M    | Phase 2    |
 | 5.2 | Health toggle endpoints + readiness flip proofs               | 📋     | P0       | S    | 5.1        |
 | 5.3 | Metrics: custom counter + registry wiring proofs              | 📋     | P0       | M    | Phase 2    |
 | 5.4 | Optional Prometheus profile (compose + scrape config)         | 📋     | P1       | S    | 5.3        |
@@ -40,28 +40,28 @@ specified here and asserted exhaustively in Phase 7's variant suites.
 
 ### Task 5.1: Branch + demo health indicators (event-loop, flaky, hanging)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 2
 
 #### Description
 
-Three `IHealthIndicator` implementations bound to `BYMAX_HEALTH_INDICATORS` as a multi-provider
-set: `event-loop` (always up, reports a measured lag detail), `flaky` (state held in a service,
+Three `IHealthIndicator` implementations collected into `BYMAX_HEALTH_INDICATORS`:
+`event-loop` (always up, reports a measured lag detail), `flaky` (state held in a service,
 toggleable up/down), and `hanging` (when armed, sleeps past `HEALTH_INDICATOR_TIMEOUT_MS` so
 the library reports it down by timeout).
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-05-health-metrics` created with `git switch -c`.
-- [ ] The three indicators implement the library contract exactly (`name`, `check()`); each has
+- [x] Branch `feat/phase-05-health-metrics` created with `git switch -c`.
+- [x] The three indicators implement the library contract exactly (`name`, `check()`); each has
       a full unit spec (up path, down path, detail shape).
-- [ ] `core/core.module.ts` binds them via the multi-provider token; `GET /health/ready`
-      reflects all three.
-- [ ] The hanging indicator, when armed, never rejects by itself: the timeout conversion is the
-      library's job and the test asserts the `down` entry carries the timeout diagnostic.
-- [ ] 100% unit coverage.
+- [x] `core/core.module.ts` binds them under the token; `GET /health/ready` reflects all three.
+- [x] The hanging indicator, when armed, never rejects by itself: the timeout conversion is the
+      library's job and the test asserts the `down` entry carries the timeout diagnostic (the
+      down-by-timeout assertion lands with the readiness proof suite in Task 5.2).
+- [x] 100% unit coverage.
 
 #### Files to create / modify
 
@@ -425,3 +425,5 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 5.1 ✅ 2026-07-17 event-loop, flaky, and hanging indicators collected into `BYMAX_HEALTH_INDICATORS`; `/health/ready` reflects all three; 100% unit coverage.
