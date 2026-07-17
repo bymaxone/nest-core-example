@@ -31,9 +31,9 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint app lib components hooks",
     "test": "vitest run",
