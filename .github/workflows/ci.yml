@@ -39,13 +39,21 @@ jobs:
           cache: pnpm
 
       # @bymax-one/nest-core is not published to npm; it is consumed from its
-      # sibling checkout through a file: dependency. Clone and build it next to
-      # this repo so file:../../../nest-core resolves exactly as it does locally.
+      # sibling checkout through a file: dependency. Fetch the pinned commit and
+      # build it next to this repo so file:../../../nest-core resolves exactly as
+      # it does locally, deterministically. Bump NEST_CORE_REF to adopt a newer
+      # library build.
       - name: Check out and build @bymax-one/nest-core
+        env:
+          NEST_CORE_REF: f028ce7742a0aec46bef356963d9c3f552655469
         run: |
-          git clone --depth 1 https://github.com/bymaxone/nest-core.git "${GITHUB_WORKSPACE}/../nest-core"
-          pnpm --dir "${GITHUB_WORKSPACE}/../nest-core" install --frozen-lockfile
-          pnpm --dir "${GITHUB_WORKSPACE}/../nest-core" run build
+          dir="${GITHUB_WORKSPACE}/../nest-core"
+          git init -q "$dir"
+          git -C "$dir" remote add origin https://github.com/bymaxone/nest-core.git
+          git -C "$dir" fetch -q --depth 1 origin "$NEST_CORE_REF"
+          git -C "$dir" checkout -q --detach FETCH_HEAD
+          pnpm --dir "$dir" install --frozen-lockfile
+          pnpm --dir "$dir" run build
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
