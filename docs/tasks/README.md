@@ -89,5 +89,6 @@ Sizes: **XS/S** (< ~100 LoC), **M** (~100-250), **L** (~250+). Priorities: **P0*
   `@fileoverview` + `@layer` header; JSDoc on every export; English-only timeless comments.
 - 100% coverage on both apps by Phase 7; every `it()` carries a scenario comment.
 - Test suites run sequentially with `maxWorkers: '50%'`; never fan out parallel test agents.
-- No `.gitkeep`, no em dashes in code or docs, no Swagger.
+- No `.gitkeep`, no em dashes in application code (enforced on `apps/`; the design-system HTML
+  and Markdown docs are exempt), no Swagger.
 - CI gates every PR from Phase 0; CodeQL/Scorecard are conditional until the repo is public.
