@@ -15,8 +15,7 @@ Read `docs/` first:
 ## Non-negotiables
 
 - **English only**, all identifiers, comments, JSDoc, and commit messages must be in English.
-- **Conventional Commits**, format enforced by commitlint; scopes: `repo | api | web | ci | docs
-| deps`.
+- **Conventional Commits**, format enforced by commitlint; scopes: `repo | api | web | ci | docs | deps`.
 - **No Swagger**, REST contracts are JSDoc on controllers; request and response shapes are Zod
   schemas.
 - **No `@ts-ignore` / `eslint-disable` / suppression comments**, fix the root cause.
