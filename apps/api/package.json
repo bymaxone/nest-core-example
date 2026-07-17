@@ -32,7 +32,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.cjs --coverage",
+    "test": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest.config.cjs --coverage",
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {

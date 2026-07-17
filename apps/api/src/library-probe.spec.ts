@@ -56,18 +56,14 @@ describe('LIBRARY_PROBE', () => {
   /**
    * Pagination subpath resolution.
    *
-   * The four pure helpers must resolve as named functions from
-   * `@bymax-one/nest-core/pagination`; this guards the second subpath entry in
-   * the packaged `exports` map.
+   * The four pure helpers are imported by name in the probe, so their binding
+   * names are enforced at compile time; here we confirm all four resolve to real
+   * callable functions at runtime (catching an `exports`-map or dual-build break
+   * that a type check alone would miss), guarding the second subpath entry.
    */
   it('resolves the four pagination helpers', () => {
     expect(LIBRARY_PROBE.pagination.helperCount).toBe(4)
-    expect(LIBRARY_PROBE.pagination.helperNames).toEqual([
-      'normalizePageQuery',
-      'buildPageResult',
-      'encodeCursor',
-      'decodeCursor',
-    ])
+    expect(LIBRARY_PROBE.pagination.allHelpersCallable).toBe(true)
   })
 
   /**

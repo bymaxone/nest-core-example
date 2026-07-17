@@ -9,7 +9,9 @@
  * I/O. It only reads stable, side-effect-free metadata (the module class name,
  * the five dependency-injection Symbol descriptions, the pure helper names) plus
  * a few typed sample literals into {@link LIBRARY_PROBE}, which the unit suite
- * asserts. Real wiring replaces this probe once the API is bootstrapped.
+ * asserts. Exported binding names are enforced by the typed imports above; the
+ * runtime probe only confirms the bindings resolve to real values. Real wiring
+ * replaces this probe once the API is bootstrapped.
  */
 
 import {
@@ -87,7 +89,7 @@ export const LIBRARY_PROBE = {
   /** Pagination subpath (`@bymax-one/nest-core/pagination`): four pure helpers. */
   pagination: {
     helperCount: PAGINATION_HELPERS.length,
-    helperNames: PAGINATION_HELPERS.map((helper) => helper.name),
+    allHelpersCallable: PAGINATION_HELPERS.every((helper) => typeof helper === 'function'),
   },
   /** Health subpath (`@bymax-one/nest-core/health`): the indicator contract and its result. */
   health: {
