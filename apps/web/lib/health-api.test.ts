@@ -144,6 +144,38 @@ describe('getReadiness', () => {
   })
 
   /**
+   * Malformed checks entries.
+   *
+   * Each check entry is validated, not just the array: a null entry, a
+   * non-object entry, a missing name, and an out-of-range status must all
+   * surface as `transport` so downstream rendering never reads `check.name`
+   * off a malformed value.
+   */
+  it('returns kind:transport when a checks entry is malformed', async () => {
+    // Arrange: one array per malformed entry kind, each failing the guard.
+    const malformedBodies = [
+      { status: 'ok', checks: [null] },
+      { status: 'ok', checks: [42] },
+      { status: 'ok', checks: [{ status: 'up' }] },
+      { status: 'ok', checks: [{ name: 'x', status: 'sideways' }] },
+    ]
+
+    for (const body of malformedBodies) {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse(200, body)))
+
+      // Act
+      const result = await getReadiness()
+
+      // Assert
+      expect(result).toEqual({
+        ok: false,
+        kind: 'transport',
+        message: 'Unexpected health response shape (status 200)',
+      })
+    }
+  })
+
+  /**
    * Non-object body.
    *
    * A JSON body that parses to a primitive (not an object) must be rejected

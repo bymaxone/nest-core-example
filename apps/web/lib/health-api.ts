@@ -45,9 +45,28 @@ function isHealthResponse(value: unknown): value is HealthResponse {
     return false
   }
   const candidate = value as Record<string, unknown>
+  const checks = candidate['checks']
   return (
     (candidate['status'] === 'ok' || candidate['status'] === 'error') &&
-    Array.isArray(candidate['checks'])
+    Array.isArray(checks) &&
+    checks.every(isHealthCheckEntry)
+  )
+}
+
+/**
+ * Narrow an unknown value to a {@link HealthCheckEntry}, so a malformed entry
+ * (e.g. `null` or a missing name) is rejected before it reaches rendering.
+ *
+ * @param value - The candidate check entry.
+ * @returns Whether `value` has a string `name` and an `'up' | 'down'` status.
+ */
+function isHealthCheckEntry(value: unknown): value is HealthCheckEntry {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  const entry = value as Record<string, unknown>
+  return (
+    typeof entry['name'] === 'string' && (entry['status'] === 'up' || entry['status'] === 'down')
   )
 }
 
