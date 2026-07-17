@@ -115,14 +115,16 @@ function mulberry32(seed: number): () => number {
 /**
  * Pick one deterministic element from a fixed, non-empty pool.
  *
- * @param items - The non-empty pool to pick from (one of the module constants).
+ * @param items - The pool to pick from (one of the module constants), typed as a
+ *   non-empty tuple so an empty pool is a compile-time error.
  * @param random - The seeded PRNG stream to draw the index from.
  * @returns One element of `items`.
  */
-function pickFrom<T>(items: readonly T[], random: () => number): T {
-  const index = Math.floor(random() * items.length) % items.length
-  // `items` is always a fixed, non-empty module constant and `index` is always
-  // within its bounds, so this lookup can never be undefined.
+function pickFrom<T>(items: readonly [T, ...T[]], random: () => number): T {
+  // random() is in [0, 1), so the index is always in [0, items.length - 1].
+  const index = Math.floor(random() * items.length)
+  // Dynamic index access is `T | undefined` under noUncheckedIndexedAccess; the
+  // non-empty tuple and the bounded index above guarantee a defined element.
   return items[index]!
 }
 
