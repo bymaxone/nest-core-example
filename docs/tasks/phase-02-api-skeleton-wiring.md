@@ -1,6 +1,6 @@
 # Phase 2: API Skeleton + Core Wiring
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-06
+> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-2-api-skeleton--core-wiring)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §9, §10
 
@@ -80,7 +80,7 @@ dependency and a probe (Phase 1). pnpm monorepo, Node 24, TS strict, Jest maxWor
 CURRENT PHASE: 2 (API Skeleton + Core Wiring), Task 2.1 of 5 (FIRST).
 
 PRECONDITIONS
-- Phase 1 merged; `pnpm install` green; the library resolves from npm.
+- Phase 1 merged; `pnpm install` green; the library resolves from its packed `file:` dependency.
 
 REQUIRED READING (only these)
 - docs/TECHNICAL_SPECIFICATION.md §9.1 (env table) and §10 (backend design)

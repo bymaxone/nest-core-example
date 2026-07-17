@@ -1,24 +1,36 @@
 # Phase 1: Library Consumption & Subpath Probes
 
-> **Status**: ⛔ Blocked (external: `@bymax-one/nest-core` not on npm) · **Progress**: 0 / 3 tasks · **Last updated**: 2026-07-06
+> **Status**: 📋 ToDo · **Progress**: 0 / 3 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-1-library-consumption--subpath-probes)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §4, §8
 
 ## Context
 
 Phase 0 delivered the tooling and CI. This phase makes the repository consume
-`@bymax-one/nest-core` **from the public npm registry** and proves that all three published
-subpaths (`.`, `./pagination`, `./health`) type-resolve, before any real wiring exists. The
-`apps/api` workspace package is created here as a minimal holder so the dependency has a home.
+`@bymax-one/nest-core` **from the sibling local checkout** via
+`"@bymax-one/nest-core": "file:../../../nest-core"` (the library is not published to npm for
+now; `file:` packs it respecting its `files`/`exports` fields, so the packaged `exports` map
+is still what resolves) and proves that all three subpaths (`.`, `./pagination`, `./health`)
+type-resolve, before any real wiring exists. The `apps/api` workspace package is created here
+as a minimal holder so the dependency has a home.
 
-**External gate:** this phase must not start until `npm view @bymax-one/nest-core version`
-succeeds. While it fails, the phase stays ⛔ with the missing package named in the plan
-dashboard, and the run stops cleanly (no polling loops).
+**External gate:** this phase must not start until the library's `dist/` is built. From the
+repo root, this must exit 0:
+
+```bash
+test -f ../nest-core/dist/index.d.ts \
+  && test -f ../nest-core/dist/pagination/index.d.ts \
+  && test -f ../nest-core/dist/health/index.d.ts
+```
+
+While it fails, the phase stays ⛔ with the missing build named in the plan dashboard, and the
+run stops cleanly (the operator rebuilds with `pnpm -C ../nest-core build`).
 
 ## Rules-of-phase
 
-1. The library is an external dependency: never a workspace member, never a `paths` alias,
-   never a `file:` link in this repository.
+1. The library is an external dependency consumed only via `file:../../../nest-core`:
+   never a `workspace:` member, never a `link:` symlink, never a `paths` alias, never
+   copied code.
 2. The library's required peers (`@nestjs/common`, `@nestjs/core`, `reflect-metadata`, `rxjs`)
    and the optional peer `prom-client` are declared in `apps/api` so they resolve to a single
    copy.
@@ -36,33 +48,36 @@ dashboard, and the run stops cleanly (no polling loops).
 
 | ID  | Task                                                        | Status | Priority | Size | Depends on |
 | --- | ------------------------------------------------------------ | ------ | -------- | ---- | ---------- |
-| 1.1 | Verify the npm gate + create `apps/api` holder + dependency  | ⛔     | P0       | S    | Phase 0    |
+| 1.1 | Verify the local-build gate + create `apps/api` holder + dep | 📋     | P0       | S    | Phase 0    |
 | 1.2 | Three-subpath probe + first unit test (drop passWithNoTests) | 📋     | P0       | S    | 1.1        |
 | 1.3 | Phase close: audit, dashboards, PR + Copilot review + merge  | 📋     | P0       | S    | 1.1, 1.2   |
 
 ## Tasks
 
-### Task 1.1: Verify the npm gate + create `apps/api` holder + dependency
+### Task 1.1: Verify the local-build gate + create `apps/api` holder + dependency
 
-- **Status**: ⛔ Blocked (external)
+- **Status**: 📋 ToDo
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: Phase 0
 
 #### Description
 
-Objectively verify the library is published, then create the minimal `apps/api` workspace
+Objectively verify the local library is built, then create the minimal `apps/api` workspace
 package (package.json, tsconfig extending the base, an empty `src/` created by its first real
-file in 1.2) declaring the library `^0.1.0`, its four required peers, and the optional
-`prom-client`.
+file in 1.2) declaring the library via `file:../../../nest-core`, its four required peers, and
+the optional `prom-client`.
 
 #### Acceptance criteria
 
-- [ ] `npm view @bymax-one/nest-core version` succeeds; the resolved version is recorded in the
+- [ ] The local-build gate passes (`../nest-core/dist/index.d.ts`,
+      `../nest-core/dist/pagination/index.d.ts`, `../nest-core/dist/health/index.d.ts` all
+      exist); the packed library version (from `../nest-core/package.json`) is recorded in the
       completion log.
 - [ ] Branch `feat/phase-01-library-consumption` created with `git switch -c`.
-- [ ] `apps/api/package.json`: name `@nest-core-example/api`, deps `@bymax-one/nest-core@^0.1.0`,
-      `@nestjs/common@^11`, `@nestjs/core@^11`, `reflect-metadata@^0.2`, `rxjs@^7`,
+- [ ] `apps/api/package.json`: name `@nest-core-example/api`, with the library declared as the
+      exact `package.json` key/value pair `"@bymax-one/nest-core": "file:../../../nest-core"`,
+      plus peers `@nestjs/common@^11`, `@nestjs/core@^11`, `reflect-metadata@^0.2`, `rxjs@^7`,
       `prom-client@^15`; scripts `typecheck`, `test`, `build` (placeholder tsc build).
 - [ ] `apps/api/tsconfig.json` extends `../../tsconfig.base.json`.
 - [ ] `pnpm install` links everything; peers resolve to a single copy (`pnpm why @nestjs/core`).
@@ -74,26 +89,32 @@ file in 1.2) declaring the library `^0.1.0`, its four required peers, and the op
 #### Agent prompt
 
 ````
-You are a senior NestJS engineer wiring a reference app to consume a freshly published library.
+You are a senior NestJS engineer wiring a reference app to consume a locally packed library.
 
 PROJECT: nest-core-example, reference app for @bymax-one/nest-core (pnpm monorepo, Node 24, TS
-strict). Phase 0 delivered tooling + CI; apps/ is empty.
+strict). Phase 0 delivered tooling + CI; apps/ is empty. The library is NOT on npm: it lives
+in the sibling checkout ../nest-core and is consumed via the file: protocol, which packs it
+respecting its files/exports fields (same pattern as nest-cache-example).
 
 CURRENT PHASE: 1 (Library Consumption), Task 1.1 of 3 (FIRST).
 
 PRECONDITIONS
 - Phase 0 merged; CI green on main.
-- EXTERNAL GATE: run `npm view @bymax-one/nest-core version`. If it FAILS, STOP: set this task
-  and the phase to ⛔ in this file and in docs/DEVELOPMENT_PLAN.md (naming the missing package),
-  commit that dashboard update on main, and report. Do NOT poll, do NOT use file:/link:.
+- EXTERNAL GATE: from the repo root, verify the packed library is built by running this single
+  command: `test -f ../nest-core/dist/index.d.ts && test -f ../nest-core/dist/pagination/index.d.ts && test -f ../nest-core/dist/health/index.d.ts`. Under autopilot the orchestrator builds the
+  library as a precondition before spawning you, so this normally already passes. If you still
+  find it failing, build it once with `pnpm -C ../nest-core build` and re-check; if it STILL
+  fails, STOP and report the missing build (the orchestrator/operator marks Phase 1 ⛔ in the
+  dashboards via a PR and rebuilds). Never consume the library with workspace:/link:; do NOT
+  poll.
 
 REQUIRED READING (only these)
 - docs/TECHNICAL_SPECIFICATION.md §8 (Library Consumption)
-- docs/DEVELOPMENT_PLAN.md §3 (Global Conventions)
+- docs/DEVELOPMENT_PLAN.md §3 (Global Conventions) + External Precondition
 
 TASK
-Create the apps/api holder package declaring the library and its peers, from the public npm
-registry only.
+Create the apps/api holder package declaring the library (file:../../../nest-core) and its
+peers.
 
 DELIVERABLES
 1. `git switch -c feat/phase-01-library-consumption` (NEVER `git checkout -b`).
@@ -101,24 +122,26 @@ DELIVERABLES
    the sibling examples' api apps, engines node >=24).
 3. apps/api/tsconfig.json extending ../../tsconfig.base.json.
 4. `pnpm install`; verify single-copy peer resolution with `pnpm why @nestjs/core`.
-5. Commit: `feat(api): consume @bymax-one/nest-core from npm with required peers (1.1)`.
+5. Commit: `feat(api): consume @bymax-one/nest-core via local file dependency (1.1)`.
 
 Constraints:
 - Never add Co-Authored-By, 'Generated with', or any AI-attribution line to commits, PR titles,
   PR bodies, or comments.
-- The library resolves through its published dist + exports map only; no workspace member, no
-  paths alias, no file: link. TS strict; no suppression comments; English-only timeless
-  comments; no .gitkeep; no em dashes.
+- The library resolves through its packed dist + exports map only (the file: protocol
+  guarantees this); no workspace: member, no link: symlink, no paths alias, no copied code.
+  Never read ../nest-core sources - only the installed node_modules artifacts. TS strict; no
+  suppression comments; English-only timeless comments; no .gitkeep; no em dashes.
 
 Verification:
-- `npm view @bymax-one/nest-core version` exits 0.
-- `pnpm install` exits 0; `node -p "require('./apps/api/package.json').dependencies['@bymax-one/nest-core']"` prints `^0.1.0`.
+- The external-gate `test` command exits 0.
+- `pnpm install` exits 0; `node -p "require('./apps/api/package.json').dependencies['@bymax-one/nest-core']"` prints `file:../../../nest-core`.
+- `node -p "require('./apps/api/node_modules/@bymax-one/nest-core/package.json').version"` prints the packed version.
 
 Completion Protocol:
 1. In docs/tasks/phase-01-library-consumption.md set this task's Status to ✅ (block + task
    index), tick its checkboxes, bump the header Progress, append `- 1.1 ✅ <date> <summary
-   including the resolved library version>` to the Completion log.
-2. Mirror progress in docs/DEVELOPMENT_PLAN.md (clear the ⛔, record the version) and
+   including the packed library version>` to the Completion log.
+2. Mirror progress in docs/DEVELOPMENT_PLAN.md (record the version) and
    docs/tasks/README.md.
 3. Commit the dashboard updates (Conventional Commits, no attribution trailers).
 ````
@@ -157,10 +180,10 @@ repository's first real Jest suite asserting the probe's shape, which also remov
 #### Agent prompt
 
 ````
-You are a senior TypeScript engineer proving a published exports map end to end.
+You are a senior TypeScript engineer proving a packaged exports map end to end.
 
-PROJECT: nest-core-example. Task 1.1 declared @bymax-one/nest-core@^0.1.0 in apps/api on branch
-feat/phase-01-library-consumption.
+PROJECT: nest-core-example. Task 1.1 declared @bymax-one/nest-core (file:../../../nest-core,
+the packed sibling checkout) in apps/api on branch feat/phase-01-library-consumption.
 
 CURRENT PHASE: 1, Task 1.2 of 3 (MIDDLE).
 
@@ -169,7 +192,8 @@ PRECONDITIONS
 
 REQUIRED READING (only these)
 - docs/TECHNICAL_SPECIFICATION.md §4.1-§4.3 (the three subpath inventories) and §8.2
-- The library's published README (node_modules/@bymax-one/nest-core/README.md) for exact names
+- The library's installed README (node_modules/@bymax-one/nest-core/README.md) for exact names
+  (never the ../nest-core source checkout)
 
 TASK
 Create the three-subpath resolution probe and the first Jest suite; remove the no-tests

@@ -1,6 +1,6 @@
 # Development Tasks: nest-core-example
 
-> **Last updated:** 2026-07-06
+> **Last updated:** 2026-07-17
 > **Source roadmap:** [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md) · **Spec:** [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md)
 
 Tasks live **one file per phase** in this folder (`phase-NN-<slug>.md`). Each file is
@@ -12,17 +12,20 @@ four-backtick **Agent prompt** executable by a fresh agent) and a completion log
 
 ## External precondition (not a phase)
 
-`@bymax-one/nest-core` is developed in its own repository and is **not yet published**. Phase 1
-and everything after it require `npm view @bymax-one/nest-core version` to succeed. While it
-fails, only Phase 0 is runnable; mark Phase 1 ⛔ with the missing package named and stop
-cleanly instead of polling.
+`@bymax-one/nest-core` lives in the sibling local checkout (`../nest-core`) and is **not
+published to npm for now** - the example consumes it via
+`"@bymax-one/nest-core": "file:../../../nest-core"` in `apps/api`. Phase 1 and everything
+after it require the library's `dist/` to be built, i.e. all three subpath `.d.ts` entries
+present; see the [plan's External Precondition](../DEVELOPMENT_PLAN.md#external-precondition).
+If the check fails, mark Phase 1 ⛔ with the missing build named and stop cleanly; the
+operator rebuilds with `pnpm -C ../nest-core build`.
 
 ## Phases (files in this folder)
 
 | Phase | File                                                                     | Tasks | Status |
 | ----- | ------------------------------------------------------------------------ | ----- | ------ |
 | 0     | [`phase-00-repo-foundation.md`](./phase-00-repo-foundation.md)           | 0 / 5 | 📋     |
-| 1     | [`phase-01-library-consumption.md`](./phase-01-library-consumption.md)   | 0 / 3 | ⛔     |
+| 1     | [`phase-01-library-consumption.md`](./phase-01-library-consumption.md)   | 0 / 3 | 📋     |
 | 2     | [`phase-02-api-skeleton-wiring.md`](./phase-02-api-skeleton-wiring.md)   | 0 / 5 | 📋     |
 | 3     | [`phase-03-catalog-pagination.md`](./phase-03-catalog-pagination.md)     | 0 / 4 | 📋     |
 | 4     | [`phase-04-failures-latency.md`](./phase-04-failures-latency.md)         | 0 / 4 | 📋     |
@@ -46,7 +49,8 @@ Sizes: **XS/S** (< ~100 LoC), **M** (~100-250), **L** (~250+). Priorities: **P0*
 
 1. Do not load a whole phase file: jump to your task block (`Read` with `offset`/`limit`).
 2. Do not load the whole plan or spec: each task lists REQUIRED READING with exact sections.
-3. Do not read the library's repository: consume its published README and `.d.ts` only.
+3. Do not read the library's source checkout (`../nest-core`): consume its installed README
+   and `.d.ts` (`node_modules/@bymax-one/nest-core/`) only.
 
 ### Branch & PR flow (mandatory, one PR per phase)
 
@@ -78,11 +82,13 @@ Sizes: **XS/S** (< ~100 LoC), **M** (~100-250), **L** (~250+). Priorities: **P0*
 
 ## Project-wide constraints (every task)
 
-- The example only consumes `@bymax-one/nest-core` from npm; never a workspace member, never a
-  `paths` alias, never copied code.
+- The example consumes `@bymax-one/nest-core` only via `file:../../../nest-core` (the packed
+  sibling checkout); never a `workspace:` member, never a `link:` symlink, never a `paths`
+  alias, never copied code.
 - TS strict, zero `any`, zero suppression comments; functions ≤ 50 lines; files ≤ 800;
   `@fileoverview` + `@layer` header; JSDoc on every export; English-only timeless comments.
 - 100% coverage on both apps by Phase 7; every `it()` carries a scenario comment.
 - Test suites run sequentially with `maxWorkers: '50%'`; never fan out parallel test agents.
-- No `.gitkeep`, no em dashes in code or docs, no Swagger.
+- No `.gitkeep`, no em dashes in application code (enforced on `apps/`; the design-system HTML
+  and Markdown docs are exempt), no Swagger.
 - CI gates every PR from Phase 0; CodeQL/Scorecard are conditional until the repo is public.

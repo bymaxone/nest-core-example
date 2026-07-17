@@ -1,6 +1,6 @@
 # Phase 0: Repository Foundation & CI
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-06
+> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-0-repository-foundation--ci)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §6, §19
 
@@ -442,7 +442,7 @@ Completion Protocol:
    docs/tasks/README.md.
 3. Commit the dashboard updates (Conventional Commits, no attribution trailers).
 4. Flip the Phase 0 row to ✅ in the plan dashboard and set Phase 1 as the active phase
-   (or ⛔ if the npm gate still fails).
+   (or ⛔ if the local-build gate still fails; see the plan's External Precondition).
 ````
 
 ## Completion log
