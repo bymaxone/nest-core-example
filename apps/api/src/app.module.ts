@@ -18,6 +18,7 @@ import { buildCoreOptions } from './core/core.config.js'
 import { CoreWiringModule } from './core/core.module.js'
 import { RequestContextMiddleware } from './core/request-context.middleware.js'
 import { FailuresModule } from './failures/failures.module.js'
+import { HealthDemoModule } from './health-demo/health-demo.module.js'
 import { LatencyModule } from './latency/latency.module.js'
 import { TimingFeedModule } from './timing-feed/timing-feed.module.js'
 
@@ -42,6 +43,7 @@ import { TimingFeedModule } from './timing-feed/timing-feed.module.js'
     CatalogModule,
     FailuresModule,
     LatencyModule,
+    HealthDemoModule,
   ],
   controllers: [AppController],
 })

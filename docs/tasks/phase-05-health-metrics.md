@@ -1,6 +1,6 @@
 # Phase 5: Health Indicators & Metrics (API)
 
-> **Status**: 🔄 In Progress · **Progress**: 1 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 2 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-5-health-indicators--metrics-api)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §12.4, §12.5, §16, §17, §7.6, §7.7
 
@@ -31,7 +31,7 @@ specified here and asserted exhaustively in Phase 7's variant suites.
 | ID  | Task                                                         | Status | Priority | Size | Depends on |
 | --- | ------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 5.1 | Branch + demo health indicators (event-loop, flaky, hanging)  | ✅     | P0       | M    | Phase 2    |
-| 5.2 | Health toggle endpoints + readiness flip proofs               | 📋     | P0       | S    | 5.1        |
+| 5.2 | Health toggle endpoints + readiness flip proofs               | ✅     | P0       | S    | 5.1        |
 | 5.3 | Metrics: custom counter + registry wiring proofs              | 📋     | P0       | M    | Phase 2    |
 | 5.4 | Optional Prometheus profile (compose + scrape config)         | 📋     | P1       | S    | 5.3        |
 | 5.5 | Phase close: audit, dashboards, PR + Copilot review + merge   | 📋     | P0       | S    | 5.1-5.4    |
@@ -125,7 +125,7 @@ Completion Protocol:
 
 ### Task 5.2: Health toggle endpoints + readiness flip proofs
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 5.1
@@ -139,12 +139,12 @@ with its diagnostic.
 
 #### Acceptance criteria
 
-- [ ] Both toggle endpoints Zod-validated, returning the new state.
-- [ ] Proof specs: flaky down → `/health/ready` 503 with `status: 'error'`, flaky check down,
+- [x] Both toggle endpoints Zod-validated, returning the new state.
+- [x] Proof specs: flaky down → `/health/ready` 503 with `status: 'error'`, flaky check down,
       event-loop still up in the same response; hang armed → its check down with the timeout
       diagnostic while others stay up; everything back up → 200.
-- [ ] Liveness (`/health/live`) stays 200 through all of it.
-- [ ] 100% unit coverage.
+- [x] Liveness (`/health/live`) stays 200 through all of it.
+- [x] 100% unit coverage.
 
 #### Files to create / modify
 
@@ -427,3 +427,4 @@ Completion Protocol:
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
 
 - 5.1 ✅ 2026-07-17 event-loop, flaky, and hanging indicators collected into `BYMAX_HEALTH_INDICATORS`; `/health/ready` reflects all three; 100% unit coverage.
+- 5.2 ✅ 2026-07-17 flaky/hang toggle endpoints (Zod-validated) with readiness-flip proofs: 200↔503, one failure hides nothing, hang down-by-timeout carries `timedOutAfterMs`; 100% coverage.
