@@ -106,13 +106,13 @@ in every implementer's phase-wide gate pass.
 # the library is consumed via file: from the sibling checkout, never workspace-linked,
 # symlinked, or aliased (file: is the ONE allowed protocol)
 ! grep -rnE "\"@bymax-one/nest-core\": *\"(workspace:|link:)" apps/ package.json
-! grep -rn "@bymax-one/nest-core" apps/*/tsconfig*.json
+! grep -rn "@bymax-one/nest-core" apps/ --include='tsconfig*.json'
 
 # no plan-stage references in committed code (timeless comments)
 ! grep -rniE "phase [0-9]|fase [0-9]|P[0-9]-[0-9]" apps/ --include='*.ts' --include='*.tsx'
 
 # no .gitkeep placeholders, no Swagger, no em dashes in app code
-[ -z "$(find apps/ \( -name '.gitkeep' -o -name '.keep' \) -print)" ]
+! find apps/ \( -name '.gitkeep' -o -name '.keep' \) -print | grep .
 ! grep -rn "@nestjs/swagger" apps/
 ! grep -rn "$(printf '\xe2\x80\x94')" apps/ --include='*.ts' --include='*.tsx'
 

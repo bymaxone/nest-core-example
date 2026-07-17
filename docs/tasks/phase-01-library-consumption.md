@@ -99,12 +99,14 @@ CURRENT PHASE: 1 (Library Consumption), Task 1.1 of 3 (FIRST).
 
 PRECONDITIONS
 - Phase 0 merged; CI green on main.
-- EXTERNAL GATE: from the repo root run `test -f ../nest-core/dist/index.d.ts && test -f
-  ../nest-core/dist/pagination/index.d.ts && test -f ../nest-core/dist/health/index.d.ts`.
-  If it FAILS, STOP: set this task and the phase to ⛔ in this file and in
-  docs/DEVELOPMENT_PLAN.md (naming the missing local build), commit that dashboard update on
-  main, and report. Do NOT build ../nest-core yourself, do NOT poll, do NOT use
-  workspace:/link:.
+- EXTERNAL GATE: from the repo root, verify the packed library is built:
+  `test -f ../nest-core/dist/index.d.ts && test -f ../nest-core/dist/pagination/index.d.ts
+  && test -f ../nest-core/dist/health/index.d.ts`. Under autopilot the orchestrator builds the
+  library as a precondition before spawning you, so this normally already passes. If you still
+  find it failing, build it once with `pnpm -C ../nest-core build` and re-check; if it STILL
+  fails, STOP and report the missing build (the orchestrator/operator marks Phase 1 ⛔ in the
+  dashboards via a PR and rebuilds). Never consume the library with workspace:/link:; do NOT
+  poll.
 
 REQUIRED READING (only these)
 - docs/TECHNICAL_SPECIFICATION.md §8 (Library Consumption)

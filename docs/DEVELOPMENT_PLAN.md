@@ -31,8 +31,9 @@
 
 > **Progress:** 0 / 9 phases complete (0%) · 0 / 42 tasks
 > **Active phase:** none (plan awaiting kickoff)
-> **Blocked:** none (the library is available locally; Phase 1 only requires its `dist/` to
-> be built - see the external precondition below).
+> **Blocked:** none at kickoff - the sibling library is built and its `dist/` resolves, so
+> Phase 1's external gate is satisfied. Phase 1 returns to ⛔ only if that local-build check
+> regresses (see the [External Precondition](#external-precondition)).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
 | -- | ---------------------------------------- | ----------------------------------- | ---- | ------------ | ------ |
