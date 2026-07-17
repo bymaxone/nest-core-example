@@ -64,11 +64,11 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      # No package declares a build script yet; --if-present keeps this step
-      # green today and starts building automatically once apps/api and
-      # apps/web land.
+      # Build every workspace package that declares a build script. --if-present
+      # sits before `run` so pnpm consumes it as its own flag (skipping packages
+      # without a build script) instead of forwarding it to the package script.
       - name: Build
-        run: pnpm -r --workspace-concurrency=1 run build --if-present
+        run: pnpm -r --workspace-concurrency=1 --if-present run build
 
       # apps/api runs the real Jest suite with coverage enforcement. Every
       # package's `test` script runs (no --if-present), so a package that ever
