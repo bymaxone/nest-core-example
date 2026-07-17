@@ -27,7 +27,7 @@ export class RingBufferTimingSink implements ITimingSink {
   /** Retained samples, oldest first. */
   private readonly samples: RequestTimingSample[] = []
   /** When set, the next `record` throws once and clears this flag. */
-  private poisoned = false
+  private isPoisoned = false
 
   constructor(@Inject(ConfigService) config: ConfigService<Env, true>) {
     this.capacity = config.get('TIMING_BUFFER_SIZE', { infer: true })
@@ -43,8 +43,8 @@ export class RingBufferTimingSink implements ITimingSink {
    * @throws Error once after {@link armPoison}, to simulate a failing sink.
    */
   record(sample: RequestTimingSample): void {
-    if (this.poisoned) {
-      this.poisoned = false
+    if (this.isPoisoned) {
+      this.isPoisoned = false
       throw new Error('RingBufferTimingSink poison: simulated sink failure')
     }
     this.samples.push(sample)
@@ -66,6 +66,6 @@ export class RingBufferTimingSink implements ITimingSink {
    * Arm the one-shot poison so the next {@link record} throws exactly once.
    */
   armPoison(): void {
-    this.poisoned = true
+    this.isPoisoned = true
   }
 }
