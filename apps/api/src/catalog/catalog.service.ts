@@ -19,7 +19,7 @@ import type { CursorResult, PageResult } from '@bymax-one/nest-core/pagination'
 
 import { OutOfSeasonError } from '../common/domain-errors.js'
 import type { CreateProductInput } from './dto/create-product.dto.js'
-import { ProductRepository } from './product.repository.js'
+import { ProductRepository, type ProductCursorKeys } from './product.repository.js'
 import type { Product } from './product.types.js'
 
 /** Page-size ceiling shared by both pagination models for this domain. */
@@ -71,7 +71,7 @@ export class CatalogService {
   async listCursor(raw: Record<string, unknown>): Promise<CursorResult<Product>> {
     const query = normalizeCursorQuery(raw, { maxLimit: MAX_PAGE_LIMIT })
     const after =
-      query.cursor !== undefined ? decodeCursor<{ id: string }>(query.cursor) : undefined
+      query.cursor !== undefined ? decodeCursor<ProductCursorKeys>(query.cursor) : undefined
     const rows = await this.products.findAfter(after, query.limit + 1)
     return buildCursorResult(rows, query.limit, (last) => ({ id: last.id }))
   }

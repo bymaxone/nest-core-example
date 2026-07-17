@@ -289,7 +289,6 @@ describe('CatalogService', () => {
       stub.findById.mockResolvedValue(product)
       const service = buildService(stub)
 
-      await expect(service.getSeasonalProduct('p-000001')).rejects.toBeInstanceOf(OutOfSeasonError)
       try {
         await service.getSeasonalProduct('p-000001')
         throw new Error('expected getSeasonalProduct to throw')
