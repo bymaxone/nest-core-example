@@ -36,10 +36,9 @@ reading it from a README alone.
 
 ## Status
 
-This repository is under construction. Phase 0 (repository foundation and CI) is the first
-phase to land; the API, the dashboard, and their demonstration domains follow in subsequent
-phases. See the [Progress Dashboard](docs/DEVELOPMENT_PLAN.md#progress-dashboard) for the
-current state.
+This repository is under construction: the monorepo toolchain and CI are in place, and the API,
+the dashboard, and their demonstration domains are being built out incrementally. See the
+[Progress Dashboard](docs/DEVELOPMENT_PLAN.md#progress-dashboard) for the current state.
 
 ## License
 
