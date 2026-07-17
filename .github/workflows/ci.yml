@@ -31,7 +31,8 @@ jobs:
     uses: bymaxone/.github/.github/workflows/node-ci.yml@v1
     with:
       library-repo: bymaxone/nest-core
-      has-web: false
+      has-web: true
+      run-e2e-web: false
       run-e2e-api: false
       run-export-audit: false
       run-mutation: false

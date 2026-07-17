@@ -10,8 +10,8 @@
  * `@bymax-one/nest-core` from a sibling `file:` checkout, and unbounded
  * parallel workers each reload the consumed module graph.
  *
- * Coverage is scoped to `lib/**` and the bespoke `components/**` modules
- * that carry real logic. Presentational shadcn primitives
+ * Coverage is scoped to `lib/**`, `hooks/**`, and the bespoke `components/**`
+ * modules that carry real logic. Presentational shadcn primitives
  * (`components/ui/**`), the shell chrome (`components/layout/**`), and App
  * Router pages (`app/**`) are exercised by manual verification and the
  * Playwright web smoke landing in a later phase, not by this unit gate.
@@ -41,7 +41,7 @@ export default defineConfig({
     },
     coverage: {
       provider: 'v8',
-      include: ['lib/**/*.ts', 'components/**/*.tsx'],
+      include: ['lib/**/*.ts', 'hooks/**/*.ts', 'components/**/*.tsx'],
       exclude: [
         'node_modules',
         '.next',

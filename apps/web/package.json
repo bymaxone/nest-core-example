@@ -35,7 +35,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
-    "lint": "eslint app lib components",
+    "lint": "eslint app lib components hooks",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest"

@@ -19,6 +19,30 @@ import {
 import { severityForHttpStatus } from '@/lib/severity'
 import type { RequestTimingSample } from '@/lib/timing-api'
 
+interface SampleRowProps {
+  /** The sample this row renders. */
+  sample: RequestTimingSample
+}
+
+/** One timing-sample row: method, route, status badge, duration, slow badge. */
+function SampleRow({ sample }: SampleRowProps) {
+  return (
+    <TableRow>
+      <TableCell className="font-mono">{sample.method}</TableCell>
+      <TableCell className="font-mono">{sample.route}</TableCell>
+      <TableCell>
+        <Badge
+          variant={severityForHttpStatus(sample.statusCode) === 'ok' ? 'outline' : 'destructive'}
+        >
+          {sample.statusCode}
+        </Badge>
+      </TableCell>
+      <TableCell className="font-mono">{sample.durationMs}ms</TableCell>
+      <TableCell>{sample.slow && <Badge variant="secondary">slow</Badge>}</TableCell>
+    </TableRow>
+  )
+}
+
 interface SampleFeedProps {
   /** The recent timing samples, oldest first (as returned by the API). */
   samples: readonly RequestTimingSample[]
@@ -66,21 +90,10 @@ export function SampleFeed({ samples, thresholdMs }: SampleFeedProps) {
             </TableRow>
           ) : (
             mostRecentFirst.map((sample, index) => (
-              <TableRow key={`${sample.method}-${sample.route}-${sample.durationMs}-${index}`}>
-                <TableCell className="font-mono">{sample.method}</TableCell>
-                <TableCell className="font-mono">{sample.route}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      severityForHttpStatus(sample.statusCode) === 'ok' ? 'outline' : 'destructive'
-                    }
-                  >
-                    {sample.statusCode}
-                  </Badge>
-                </TableCell>
-                <TableCell className="font-mono">{sample.durationMs}ms</TableCell>
-                <TableCell>{sample.slow && <Badge variant="secondary">slow</Badge>}</TableCell>
-              </TableRow>
+              <SampleRow
+                key={`${sample.method}-${sample.route}-${sample.durationMs}-${index}`}
+                sample={sample}
+              />
             ))
           )}
         </TableBody>

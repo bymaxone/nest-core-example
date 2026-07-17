@@ -14,9 +14,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Activity, AlertTriangle, BarChart3, HeartPulse, Layers } from 'lucide-react'
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { QuickLinkCard } from '@/components/overview/quick-link-card'
-import { StatTile } from '@/components/shared/stat-tile'
-import { StatusChip } from '@/components/shared/status-chip'
+import { QuickLinksGrid, type QuickLink } from '@/components/overview/quick-links-grid'
+import { StatusStrip } from '@/components/overview/status-strip'
 import { getReadiness } from '@/lib/health-api'
 import { getTimingSamples, summarizeSamples } from '@/lib/timing-api'
 
@@ -24,7 +23,7 @@ import { getTimingSamples, summarizeSamples } from '@/lib/timing-api'
 const POLL_INTERVAL_MS = 3000
 
 /** The five feature pages linked from the Overview's quick-link grid. */
-const QUICK_LINKS = [
+const QUICK_LINKS: readonly QuickLink[] = [
   {
     href: '/errors',
     title: 'Errors',
@@ -55,7 +54,7 @@ const QUICK_LINKS = [
     description: 'Read the raw Prometheus scrape and the parsed highlights.',
     icon: BarChart3,
   },
-] as const
+]
 
 export default function OverviewPage() {
   const readiness = useQuery({
@@ -84,43 +83,14 @@ export default function OverviewPage() {
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatTile
-          label="Readiness"
-          value={
-            healthStatus ? (
-              <StatusChip severity={healthStatus} label={healthStatus.toUpperCase()} />
-            ) : (
-              '...'
-            )
-          }
-          loading={readiness.isPending}
-        />
-        <StatTile label="Requests" value={summary.total} loading={timing.isPending} />
-        <StatTile
-          label="Slow requests"
-          value={summary.slow}
-          severity={summary.slow > 0 ? 'warn' : 'ok'}
-          loading={timing.isPending}
-        />
-        <StatTile
-          label="Error responses"
-          value={summary.errors}
-          severity={summary.errors > 0 ? 'error' : 'ok'}
-          loading={timing.isPending}
-        />
-      </div>
+      <StatusStrip
+        healthStatus={healthStatus}
+        summary={summary}
+        readinessLoading={readiness.isPending}
+        timingLoading={timing.isPending}
+      />
 
-      <div>
-        <h2 className="mb-3 font-mono text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Explore
-        </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {QUICK_LINKS.map((link) => (
-            <QuickLinkCard key={link.href} {...link} />
-          ))}
-        </div>
-      </div>
+      <QuickLinksGrid links={QUICK_LINKS} />
     </div>
   )
 }

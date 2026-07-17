@@ -42,7 +42,7 @@ Health Console, and Metrics View.
 | 6.3 | Errors Playground + Latency Lab pages                        | ✅     | P0       | L    | 6.2           |
 | 6.4 | Pagination page (offset + cursor + corrupt-cursor)           | ✅     | P0       | M    | 6.2           |
 | 6.5 | Health Console + Metrics View pages                          | ✅     | P0       | M    | 6.2           |
-| 6.6 | Phase close: audit, dashboards, PR + Copilot review + merge  | 📋     | P0       | S    | 6.1-6.5       |
+| 6.6 | Phase close: audit, dashboards, PR + Copilot review + merge  | 👀     | P0       | S    | 6.1-6.5       |
 
 ## Tasks
 
@@ -472,10 +472,14 @@ Completion Protocol:
 
 ### Task 6.6: Phase close: audit, dashboards, PR + Copilot review + merge
 
-- **Status**: 📋 ToDo
+- **Status**: 👀 Review
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 6.1-6.5
+
+> **Note:** acceptance audited, dashboards synced, and the PR opened with the Copilot review
+> auto-requested. The review-to-merge loop is owned by the orchestrator; this task closes to ✅
+> once the PR merges to `main` with CI green.
 
 #### Description
 
@@ -484,8 +488,18 @@ example must be indistinguishable in chrome (topbar, sidebar, cards, brand treat
 
 #### Acceptance criteria
 
-- [ ] All verification commands of 6.1-6.5 re-run green.
-- [ ] Design parity confirmed and stated in the PR body (screenshot attached).
+- [x] All verification commands of 6.1-6.5 re-run green (lint, typecheck, format:check,
+      `pnpm --filter web build`, `pnpm --filter web test:cov` at 100%, `pnpm --filter api test`
+      unaffected).
+- [x] Design parity confirmed and stated in the PR body: `app/globals.css`, `tailwind.config.ts`,
+      and every `components/ui/*` primitive are byte-identical in every token/class/structural
+      line to `nest-auth-example/apps/web` (diffed; only comment prose and this repo's
+      no-semicolon/no-em-dash formatting differ). A live-browser screenshot could not be
+      captured in this sandbox (the headless browser tool cannot reach `localhost`/`127.0.0.1`
+      here even though `curl` and the dev/prod servers work correctly; `agent-browser doctor`
+      passes and external navigation works, so this is an environment network-namespace
+      limitation, not an application defect). SSR HTML was verified instead (curl) for all six
+      routes across three separate live sessions.
 - [ ] Dashboards consistent (6/6); PR opened; Copilot review requested and fully addressed;
       squash-merged with branch deletion; `main` CI green.
 
@@ -552,3 +566,4 @@ Completion Protocol:
 - 6.3 ✅ 2026-07-17 Errors Playground: 19-card `TriggerGrid` (16 `/failures/:kind` derivations + catalog not-found/validation/seasonal), the shared `EnvelopeViewer` (annotated JSON, correlationId row highlighted, copy-to-clipboard) shows the exact envelope; Latency Lab: `DelayControl` (0-2000ms slider), `SampleFeed` (most-recent-first table with slow/status badges), `DurationSparkline` (inline SVG, last 50), `PoisonToggle` (arms the sink then verifies the follow-up request still succeeds); `lib/failures-api.ts`, `lib/catalog-api.ts`, and `lib/latency-api.ts` added; 117 tests green, 100% coverage maintained; live-verified against the running API (curl contract check + SSR HTML check for both pages).
 - 6.4 ✅ 2026-07-17 Pagination page: Offset tab (`OffsetTable` with limit `Select` + page prev/next clamped from `meta`, raw meta panel) and Cursor tab (`CursorTable` load-more accumulation, `CursorTrail` chips with copy-to-clipboard, `nextCursor: null` end-of-catalog state, "Corrupt the cursor" button rendering the `BYMAX_VALIDATION_FAILED` envelope inline via the shared `EnvelopeViewer`); `lib/catalog-api.ts` extended with `listOffsetProducts`/`listCursorProducts`; jsdom polyfills for `scrollIntoView`/pointer-capture added so Radix `Select` interactions run under Vitest; 138 tests green, 100% coverage maintained; live-verified against the running API (SSR HTML check).
 - 6.5 ✅ 2026-07-17 Health Console: `StatusTiles` (liveness + readiness, 2s poll), `CheckList` (per-indicator status chip + details), `ToggleCard` (generic two-option toggle reused for the flaky up/down switch and the hanging arm/disarm switch, owns its own mutation + sonner toast); `lib/health-api.ts` extended with `toggleFlaky`/`toggleHang`. Metrics View: `RawScrape` (mono panel, manual refresh + 5s auto), `Highlights` (parsed `http_requests_total`, duration bucket count, `catalog_lookups_total`), `FireTraffic` (10 concurrent catalog requests then refetch), a disabled-by-default callout explaining a 404; `lib/metrics-api.ts` added (`getRawMetrics` text fetch, `findMetricSamples`/`sumMetricValue` Prometheus-text parser, `+Inf` bucket labels handled). 172 tests green, 100% coverage maintained; live-verified against the running API (SSR HTML check + curl-verified readiness flip: flaky down -> 503, up -> 200).
+- 6.6 👀 2026-07-17 Phase close: code review pass extracted six functions over the 50-line guideline into 12 new focused files/hooks (`OffsetControls`, `ProductTable`, `RawMetaPanel`, `CursorControls`, `useCursorWalk`, `useHealthConsole`, `HealthToggles`, `useErrorTrigger`, `DevProdCallout`, `TriggerResponsePanel`, `SampleRow`, `StatusStrip`/`QuickLinksGrid`) and fixed one boolean-naming finding (`showPrice` -> `hasPriceColumn`); security review found no findings; `has-web: true` + `run-e2e-web: false` flipped in `.github/workflows/ci.yml` (the one allowed CI edit); 192 tests green, 100% coverage on `lib/**`, `hooks/**`, and the bespoke `components/**`; design parity confirmed by diffing `globals.css`/`tailwind.config.ts`/every `components/ui/*` against `nest-auth-example/apps/web` (byte-identical tokens/classes, only comment prose and this repo's no-semicolon/no-em-dash formatting differ); PR opened with the Copilot review auto-requested; merge owned by the orchestrator.

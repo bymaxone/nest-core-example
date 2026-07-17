@@ -10,47 +10,15 @@
 
 'use client'
 
-import { useState } from 'react'
-
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { EnvelopeViewer } from '@/components/shared/envelope-viewer'
+import { DevProdCallout } from '@/components/errors/dev-prod-callout'
 import { TriggerGrid } from '@/components/errors/trigger-grid'
-import { TRIGGERS, type Trigger } from '@/components/errors/triggers'
-import type { ErrorEnvelope } from '@/lib/envelope'
-
-/** What the response panel currently shows: nothing yet, an envelope, or a transport failure. */
-type ResponseState =
-  | { kind: 'idle' }
-  | { kind: 'envelope'; trigger: Trigger; envelope: ErrorEnvelope }
-  | { kind: 'transport'; trigger: Trigger; message: string }
+import { TriggerResponsePanel } from '@/components/errors/trigger-response-panel'
+import { TRIGGERS } from '@/components/errors/triggers'
+import { useErrorTrigger } from '@/hooks/use-error-trigger'
 
 export default function ErrorsPage() {
-  const [response, setResponse] = useState<ResponseState>({ kind: 'idle' })
-  const [activeId, setActiveId] = useState<string | null>(null)
-
-  const handleTrigger = async (id: string) => {
-    const trigger = TRIGGERS.find((candidate) => candidate.id === id)
-    if (!trigger) {
-      return
-    }
-    setActiveId(id)
-    try {
-      const result = await trigger.run()
-      if (result.ok) {
-        setResponse({
-          kind: 'transport',
-          trigger,
-          message: 'Unexpected success (this endpoint always fails).',
-        })
-      } else if (result.kind === 'envelope') {
-        setResponse({ kind: 'envelope', trigger, envelope: result.error })
-      } else {
-        setResponse({ kind: 'transport', trigger, message: result.message })
-      }
-    } finally {
-      setActiveId(null)
-    }
-  }
+  const { response, activeId, handleTrigger } = useErrorTrigger()
 
   return (
     <div className="flex flex-col gap-6">
@@ -64,35 +32,11 @@ export default function ErrorsPage() {
         </CardHeader>
       </Card>
 
-      <div className="border-(--glass-border) bg-(--glass-bg) rounded-xl border p-4 text-sm text-(--text-70)">
-        <strong className="text-foreground">Dev vs. prod:</strong> this example's development
-        default is <code className="font-mono text-xs">ENVELOPE_EXPOSE_INTERNALS=true</code>, so the{' '}
-        <em>Unknown Throw</em> card's envelope carries a <code>details</code> block with the
-        original message and stack. Setting <code>NODE_ENV=production</code> collapses that same
-        trigger to the fixed, safe message with no <code>details</code> at all: internals never leak
-        to a production client regardless of the flag.
-      </div>
+      <DevProdCallout />
 
-      <TriggerGrid
-        triggers={TRIGGERS}
-        activeId={activeId}
-        onTrigger={(id) => void handleTrigger(id)}
-      />
+      <TriggerGrid triggers={TRIGGERS} activeId={activeId} onTrigger={handleTrigger} />
 
-      {response.kind !== 'idle' && (
-        <div>
-          <h2 className="mb-3 font-mono text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Response: {response.trigger.label}
-          </h2>
-          {response.kind === 'envelope' ? (
-            <EnvelopeViewer envelope={response.envelope} />
-          ) : (
-            <div className="border-(--glass-border) bg-(--glass-bg) rounded-xl border p-4 font-mono text-sm text-(--color-danger)">
-              {response.message}
-            </div>
-          )}
-        </div>
-      )}
+      <TriggerResponsePanel response={response} />
     </div>
   )
 }

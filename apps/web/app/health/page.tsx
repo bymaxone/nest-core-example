@@ -11,52 +11,14 @@
 
 'use client'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckList } from '@/components/health/check-list'
+import { HealthToggles } from '@/components/health/health-toggles'
 import { StatusTiles } from '@/components/health/status-tiles'
-import { ToggleCard } from '@/components/health/toggle-card'
-import { getLiveness, getReadiness, toggleFlaky, toggleHang } from '@/lib/health-api'
-
-/** Polling interval for both health endpoints, in milliseconds. */
-const POLL_INTERVAL_MS = 2000
-
-const FLAKY_OPTIONS = [
-  { value: 'up', label: 'Up' },
-  { value: 'down', label: 'Down' },
-] as const
-
-const HANG_OPTIONS = [
-  { value: 'false', label: 'Disarm' },
-  { value: 'true', label: 'Arm' },
-] as const
+import { useHealthConsole } from '@/hooks/use-health-console'
 
 export default function HealthPage() {
-  const queryClient = useQueryClient()
-
-  const live = useQuery({
-    queryKey: ['health', 'live'],
-    queryFn: getLiveness,
-    refetchInterval: POLL_INTERVAL_MS,
-  })
-  const ready = useQuery({
-    queryKey: ['health', 'ready'],
-    queryFn: getReadiness,
-    refetchInterval: POLL_INTERVAL_MS,
-  })
-
-  const readyData = ready.data?.ok ? ready.data.data : undefined
-  const liveStatus = live.data?.ok ? live.data.data.status : undefined
-  const flakyCheck = readyData?.checks.find((check) => check.name === 'flaky')
-  // The hanging indicator has no separate "armed" field: once armed, every
-  // readiness check sleeps past the timeout and is reported down until
-  // disarmed, so its down/up status doubles as the armed/disarmed toggle state.
-  const hangCheck = readyData?.checks.find((check) => check.name === 'hanging')
-
-  const handleToggled = () => {
-    void queryClient.invalidateQueries({ queryKey: ['health', 'ready'] })
-  }
+  const health = useHealthConsole()
 
   return (
     <div className="flex flex-col gap-6">
@@ -71,34 +33,23 @@ export default function HealthPage() {
       </Card>
 
       <StatusTiles
-        liveStatus={liveStatus}
-        readyStatus={readyData?.status}
-        loading={live.isPending || ready.isPending}
+        liveStatus={health.liveStatus}
+        readyStatus={health.readyStatus}
+        loading={health.loading}
       />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ToggleCard
-          title="Flaky indicator"
-          options={FLAKY_OPTIONS}
-          activeValue={flakyCheck?.status}
-          onToggle={(value) => toggleFlaky(value)}
-          onToggled={handleToggled}
-        />
-        <ToggleCard
-          title="Hanging indicator"
-          options={HANG_OPTIONS}
-          activeValue={hangCheck ? (hangCheck.status === 'down' ? 'true' : 'false') : undefined}
-          onToggle={(value) => toggleHang(value === 'true')}
-          onToggled={handleToggled}
-        />
-      </div>
+      <HealthToggles
+        flakyStatus={health.flakyStatus}
+        hangStatus={health.hangStatus}
+        onToggled={health.refreshReadiness}
+      />
 
       <Card>
         <CardHeader accent>
           <CardTitle className="text-base">Checks</CardTitle>
         </CardHeader>
         <div className="px-6 pb-6">
-          <CheckList checks={readyData?.checks ?? []} />
+          <CheckList checks={health.checks} />
         </div>
       </Card>
     </div>
