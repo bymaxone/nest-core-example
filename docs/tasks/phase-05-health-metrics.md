@@ -1,6 +1,6 @@
 # Phase 5: Health Indicators & Metrics (API)
 
-> **Status**: 🔄 In Progress · **Progress**: 2 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 3 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-5-health-indicators--metrics-api)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §12.4, §12.5, §16, §17, §7.6, §7.7
 
@@ -32,7 +32,7 @@ specified here and asserted exhaustively in Phase 7's variant suites.
 | --- | ------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 5.1 | Branch + demo health indicators (event-loop, flaky, hanging)  | ✅     | P0       | M    | Phase 2    |
 | 5.2 | Health toggle endpoints + readiness flip proofs               | ✅     | P0       | S    | 5.1        |
-| 5.3 | Metrics: custom counter + registry wiring proofs              | 📋     | P0       | M    | Phase 2    |
+| 5.3 | Metrics: custom counter + registry wiring proofs              | ✅     | P0       | M    | Phase 2    |
 | 5.4 | Optional Prometheus profile (compose + scrape config)         | 📋     | P1       | S    | 5.3        |
 | 5.5 | Phase close: audit, dashboards, PR + Copilot review + merge   | 📋     | P0       | S    | 5.1-5.4    |
 
@@ -199,7 +199,7 @@ Completion Protocol:
 
 ### Task 5.3: Metrics: custom counter + registry wiring proofs
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 2
@@ -213,16 +213,15 @@ metrics, and the custom counter. Application code never imports `prom-client` di
 
 #### Acceptance criteria
 
-- [ ] `metrics-demo` module: `POST /metrics-demo/lookup` increments `catalog_lookups_total`
+- [x] `metrics-demo` module: `POST /metrics-demo/lookup` increments `catalog_lookups_total`
       (counter created lazily through the injected registry, typed via the registry's own
       types, no top-level `prom-client` import in `src/`).
-- [ ] Scrape assertions (supertest on `GET /metrics`): `http_requests_total` and
+- [x] Scrape assertions (supertest on `GET /metrics`): `http_requests_total` and
       `http_request_duration_seconds` present with `method`/`route`/`status_code` labels only;
       `app="nest-core-example"` default label present; a `process_` metric present;
       `catalog_lookups_total` grows after the demo endpoint fires.
-- [ ] Grep gate documented and enforced in the suite: no `from 'prom-client'` import under
-      `apps/api/src/`.
-- [ ] 100% unit coverage.
+- [x] Grep gate enforced in a dedicated suite: no static peer import under `apps/api/src/`.
+- [x] 100% unit coverage.
 
 #### Files to create / modify
 
@@ -428,3 +427,4 @@ Completion Protocol:
 
 - 5.1 ✅ 2026-07-17 event-loop, flaky, and hanging indicators collected into `BYMAX_HEALTH_INDICATORS`; `/health/ready` reflects all three; 100% unit coverage.
 - 5.2 ✅ 2026-07-17 flaky/hang toggle endpoints (Zod-validated) with readiness-flip proofs: 200↔503, one failure hides nothing, hang down-by-timeout carries `timedOutAfterMs`; 100% coverage.
+- 5.3 ✅ 2026-07-17 `metrics-demo` custom `catalog_lookups_total` counter via injected `BYMAX_METRICS_REGISTRY` (lazy `prom-client`, no static import); scrape proofs for default HTTP metrics, bounded/default labels, process metrics, counter growth; import-hygiene gate; 100% coverage.

@@ -20,6 +20,7 @@ import { RequestContextMiddleware } from './core/request-context.middleware.js'
 import { FailuresModule } from './failures/failures.module.js'
 import { HealthDemoModule } from './health-demo/health-demo.module.js'
 import { LatencyModule } from './latency/latency.module.js'
+import { MetricsDemoModule } from './metrics-demo/metrics-demo.module.js'
 import { TimingFeedModule } from './timing-feed/timing-feed.module.js'
 
 /**
@@ -44,6 +45,7 @@ import { TimingFeedModule } from './timing-feed/timing-feed.module.js'
     FailuresModule,
     LatencyModule,
     HealthDemoModule,
+    MetricsDemoModule,
   ],
   controllers: [AppController],
 })
