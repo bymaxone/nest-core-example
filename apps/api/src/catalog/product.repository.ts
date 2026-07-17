@@ -83,6 +83,15 @@ const CATALOG_EPOCH_MS = Date.UTC(2024, 0, 1)
 /** Milliseconds in one day, used to spread seeded `createdAt` values. */
 const ONE_DAY_MS = 86_400_000
 
+/** Width of the zero-padded numeric suffix in a seeded product id (`p-000001`). */
+const PRODUCT_ID_WIDTH = 6
+
+/** Lowest seeded price, in cents. */
+const MIN_PRICE_CENTS = 500
+
+/** Span added on top of {@link MIN_PRICE_CENTS}, in cents. */
+const PRICE_RANGE_CENTS = 49_500
+
 /**
  * Deterministic PRNG seeded per index (mulberry32 algorithm). Never
  * `Math.random`: the same seed always yields the same stream, independent of
@@ -125,9 +134,9 @@ function buildSeedProduct(index: number): Product {
   const random = mulberry32(index + 1)
   const adjective = pickFrom(ADJECTIVES, random)
   const noun = pickFrom(NOUNS, random)
-  const priceCents = 500 + Math.floor(random() * 49_500)
+  const priceCents = MIN_PRICE_CENTS + Math.floor(random() * PRICE_RANGE_CENTS)
   return {
-    id: `p-${String(index + 1).padStart(6, '0')}`,
+    id: `p-${String(index + 1).padStart(PRODUCT_ID_WIDTH, '0')}`,
     name: `${adjective} ${noun}`,
     category: CATEGORIES[index % CATEGORIES.length]!,
     priceCents,
