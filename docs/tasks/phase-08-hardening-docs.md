@@ -139,8 +139,10 @@ observable behavior until the api holds `break: 100` and the web holds `break: 9
       non-equivalent mutants).
 - [x] `pnpm --filter @nest-core-example/web mutation` passes at `break: 90` with `lib/**`
       mutants fully killed.
-- [x] Every equivalent mutant carries a `// Stryker disable <Mutator>: <reason>`
-      in source AND a row in `docs/stryker/BASELINE.md`'s equivalents table.
+- [x] Every equivalent mutant carries a Stryker disable annotation in source, either the
+      single-line `// Stryker disable next-line <Mutator>: <reason>` or a paired
+      `// Stryker disable <Mutator>: <reason>` / `// Stryker restore <Mutator>` block, AND a
+      row in `docs/stryker/BASELINE.md`'s equivalents table.
 - [x] `docs/stryker/HISTORY.md` updated with the final run rows.
 
 #### Files to create / modify
