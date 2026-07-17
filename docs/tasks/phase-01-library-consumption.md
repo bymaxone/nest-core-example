@@ -1,6 +1,6 @@
 # Phase 1: Library Consumption & Subpath Probes
 
-> **Status**: 🔄 In Progress · **Progress**: 1 / 3 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 2 / 3 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-1-library-consumption--subpath-probes)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §4, §8
 
@@ -49,7 +49,7 @@ run stops cleanly (the operator rebuilds with `pnpm -C ../nest-core build`).
 | ID  | Task                                                        | Status | Priority | Size | Depends on |
 | --- | ------------------------------------------------------------ | ------ | -------- | ---- | ---------- |
 | 1.1 | Verify the local-build gate + create `apps/api` holder + dep | ✅     | P0       | S    | Phase 0    |
-| 1.2 | Three-subpath probe + first unit test (drop passWithNoTests) | 📋     | P0       | S    | 1.1        |
+| 1.2 | Three-subpath probe + first unit test (drop passWithNoTests) | ✅     | P0       | S    | 1.1        |
 | 1.3 | Phase close: audit, dashboards, PR + Copilot review + merge  | 📋     | P0       | S    | 1.1, 1.2   |
 
 ## Tasks
@@ -148,7 +148,7 @@ Completion Protocol:
 
 ### Task 1.2: Three-subpath probe + first unit test (drop passWithNoTests)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 1.1
@@ -161,16 +161,16 @@ repository's first real Jest suite asserting the probe's shape, which also remov
 
 #### Acceptance criteria
 
-- [ ] `apps/api/src/library-probe.ts` imports and references: root (`BymaxCoreModule`, the five
+- [x] `apps/api/src/library-probe.ts` imports and references: root (`BymaxCoreModule`, the five
       Symbol tokens, `type BymaxCoreModuleOptions`, `type RequestTimingSample`), pagination
       (`normalizePageQuery`, `buildPageResult`, `encodeCursor`, `decodeCursor`), health
       (`type IHealthIndicator`, `type HealthIndicatorResult`).
-- [ ] `apps/api/jest.config.cjs` with `maxWorkers: '50%'` and coverage config scaffolded;
+- [x] `apps/api/jest.config.cjs` with `maxWorkers: '50%'` and coverage config scaffolded;
       `library-probe.spec.ts` asserts the probe object (every `it()` carries a scenario
       comment).
-- [ ] `--passWithNoTests` (or `--if-present` tolerance for tests) removed from `apps/api`
+- [x] `--passWithNoTests` (or `--if-present` tolerance for tests) removed from `apps/api`
       scripts; CI test step now genuinely runs the suite.
-- [ ] `pnpm typecheck` and `pnpm test` exit 0 across the workspace.
+- [x] `pnpm typecheck` and `pnpm test` exit 0 across the workspace.
 
 #### Files to create / modify
 
@@ -314,3 +314,8 @@ Completion Protocol:
   (packed version `0.1.0`) via `file:../../../nest-core` with peers `@nestjs/common`/`@nestjs/core`
   `11.1.28`, `reflect-metadata` `0.2.2`, `rxjs` `7.8.2`, `prom-client` `15.1.3`; `pnpm install`
   links everything and `pnpm why @nestjs/core` reports a single copy (`11.1.28`).
+- 1.2 ✅ 2026-07-17 Added the runtime-inert `library-probe.ts` importing all three subpaths
+  (root, `./pagination`, `./health`) under NodeNext resolution plus `library-probe.spec.ts`
+  (5 tests, cursor round-trip included); `jest.config.cjs` runs ts-jest ESM at `maxWorkers: '50%'`
+  with a 100% coverage gate (met); dropped the `--if-present` test tolerance from the root script
+  and CI so the suite genuinely runs.
