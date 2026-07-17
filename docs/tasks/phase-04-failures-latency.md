@@ -1,6 +1,6 @@
 # Phase 4: Failure Injection & Latency Lab (API)
 
-> **Status**: 🔄 In Progress · **Progress**: 1 / 4 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 2 / 4 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-4-failure-injection--latency-lab-api)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §12.1, §12.2, §7.3, §7.4
 
@@ -31,7 +31,7 @@ artificial-delay endpoint that drives the `slow` flag and the sink-poison proof.
 | ID  | Task                                                          | Status | Priority | Size | Depends on |
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 4.1 | Branch + failures module: standard HttpException triggers      | ✅     | P0       | M    | Phase 2    |
-| 4.2 | Fallback + collapse triggers (418, 507, unknown) + prod proof  | 📋     | P0       | M    | 4.1        |
+| 4.2 | Fallback + collapse triggers (418, 507, unknown) + prod proof  | ✅     | P0       | M    | 4.1        |
 | 4.3 | Latency endpoint (slow flag + sink poison round trip)          | 📋     | P0       | S    | Phase 2    |
 | 4.4 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 4.1-4.3    |
 
@@ -124,7 +124,7 @@ Completion Protocol:
 
 ### Task 4.2: Fallback + collapse triggers (418, 507, unknown) + prod proof
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 4.1
@@ -138,14 +138,14 @@ original message; the dev contrast asserts `exposeInternals` includes them.
 
 #### Acceptance criteria
 
-- [ ] Triggers `teapot` (418), `variant-5xx` (507), `unknown` (plain `Error` throw) added to
+- [x] Triggers `teapot` (418), `variant-5xx` (507), `unknown` (plain `Error` throw) added to
       the registry.
-- [ ] Prod-mode test module (`exposeInternals: false`): unknown throw yields exactly
+- [x] Prod-mode test module (`exposeInternals: false`): unknown throw yields exactly
       `{ statusCode: 500, code: 'BYMAX_INTERNAL_ERROR', message: 'Internal server error' }`
       fields plus timestamp/path/correlationId; no stack anywhere in the body.
-- [ ] Dev-mode contrast: same throw with `exposeInternals: true` carries the original message
+- [x] Dev-mode contrast: same throw with `exposeInternals: true` carries the original message
       in `details`.
-- [ ] 100% unit coverage.
+- [x] 100% unit coverage.
 
 #### Files to create / modify
 
@@ -355,3 +355,9 @@ Completion Protocol:
   collapsing an unregistered kind to `NotFoundException`, `POST /failures/:kind` wired into
   AppModule; integration suite boots a real testing module with `BymaxCoreModule.forRoot()` and
   asserts every row's exact `(code, statusCode)` via supertest; 100% unit coverage.
+- 4.2 ✅ 2026-07-17 Registry extended with `teapot` (418 -> `BYMAX_CLIENT_ERROR`), `variant-5xx`
+  (507 -> `BYMAX_INTERNAL_ERROR`), and `unknown` (plain `Error` throw, deterministic marker); two
+  dedicated suites prove the collapse: prod-collapse.spec.ts (`exposeInternals: false`) asserts
+  the fixed 500 envelope with no `details` key and no marker or stack anywhere in the body;
+  dev-internals.spec.ts (`exposeInternals: true`) asserts the same fixed top-level `message`
+  with the original marker and a stack surfaced under `details`; 100% unit coverage.
