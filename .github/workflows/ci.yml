@@ -1,77 +1,45 @@
+# CI — thin caller of the org-wide reusable pipeline (bymaxone/.github).
+#
+# The whole pipeline (install, lint, typecheck, format, coverage, e2e, export
+# audit, mutation) lives in bymaxone/.github so every repo shares one
+# definition. The reusable's `library-repo` input clones and builds the
+# sibling @bymax-one/nest-core checkout so apps/api's `file:` dependency
+# resolves in CI exactly as it does locally — no manual clone+build step here.
+# Web, API e2e, export-audit and mutation stay off until their app/scripts
+# exist; flip the matching input once they land. The reusables are versioned
+# via the @v1 tag on bymaxone/.github.
 name: CI
 
-# Runs on every pull request targeting main and on every push to main, so the
-# gate that guards every future phase is exercised by this very phase's PR.
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
-# Cancel a stale run for the same ref when a new commit supersedes it.
+# Cancel superseded runs for the same ref so only the latest commit is verified.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# Default to read-only. No job in this workflow needs to write to the repo.
+# Least-privilege at the caller; the reusables request no more than this.
 permissions:
   contents: read
 
 jobs:
-  verify:
-    name: Verify (lint, typecheck, build, test)
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+  ci:
+    uses: bymaxone/.github/.github/workflows/node-ci.yml@v1
+    with:
+      library-repo: bymaxone/nest-core
+      has-web: false
+      run-e2e-api: false
+      run-export-audit: false
+      run-mutation: false
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      # pnpm must be on PATH before actions/setup-node's cache: pnpm resolves the
-      # store path, so the pnpm setup step runs first.
-      - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: 24
-          cache: pnpm
-
-      # @bymax-one/nest-core is not published to npm; it is consumed from its
-      # sibling checkout through a file: dependency. Fetch the pinned commit and
-      # build it next to this repo so file:../../../nest-core resolves exactly as
-      # it does locally, deterministically. Bump NEST_CORE_REF to adopt a newer
-      # library build.
-      - name: Check out and build @bymax-one/nest-core
-        env:
-          NEST_CORE_REF: f028ce7742a0aec46bef356963d9c3f552655469
-        run: |
-          dir="${GITHUB_WORKSPACE}/../nest-core"
-          git init -q "$dir"
-          git -C "$dir" remote add origin https://github.com/bymaxone/nest-core.git
-          git -C "$dir" fetch -q --depth 1 origin "$NEST_CORE_REF"
-          git -C "$dir" checkout -q --detach FETCH_HEAD
-          pnpm --dir "$dir" install --frozen-lockfile
-          pnpm --dir "$dir" run build
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      # Build every workspace package that declares a build script. --if-present
-      # sits before `run` so pnpm consumes it as its own flag (skipping packages
-      # without a build script) instead of forwarding it to the package script.
-      - name: Build
-        run: pnpm -r --workspace-concurrency=1 --if-present run build
-
-      # apps/api runs the real Jest suite with coverage enforcement. Every
-      # package's `test` script runs (no --if-present), so a package that ever
-      # ships without tests fails this gate instead of passing silently.
-      - name: Test
-        run: pnpm -r --workspace-concurrency=1 run test
+  security:
+    # Dependency review only applies to a pull request — don't spawn a no-op
+    # job on push / workflow_dispatch.
+    if: github.event_name == 'pull_request'
+    uses: bymaxone/.github/.github/workflows/security.yml@v1
+    with:
+      fail-on-severity: high

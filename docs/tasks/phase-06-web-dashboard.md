@@ -24,6 +24,9 @@ Health Console, and Metrics View.
    a unit test against the documented contract.
 4. `pnpm --filter web build` must pass before the phase closes; component unit tests land here,
    full coverage completion happens in Phase 7.
+5. CI (`.github/workflows/ci.yml`) is a thin caller of the org reusable pipeline. Closing this
+   phase must flip its `has-web: true` input now that `apps/web` exists, so the reusable's web
+   build (and later e2e-web) job stops being skipped.
 
 ## Reference docs
 

@@ -21,6 +21,10 @@ the complete, verifiable usage reference for `@bymax-one/nest-core`.
 3. The export audit reads the library's shipped `.d.ts` files from `node_modules`, never a
    hardcoded export list.
 4. Mutation runs are long: execute them one app at a time, never concurrently.
+5. `.github/workflows/ci.yml` is a thin caller of the org reusable pipeline. Closing this phase
+   must flip its `run-export-audit: true` and `run-mutation: true` inputs and add the
+   `audit:exports` script plus each app's `mutation` script(s) the reusable expects, rather than
+   hand-writing new CI steps.
 
 ## Reference docs
 
@@ -202,6 +206,10 @@ The CI-enforceable proof of goal G1: `scripts/audit-library-exports.mjs` parses 
 `.d.ts` of all three subpaths from `node_modules`, word-boundary-searches the `apps/` corpus,
 and fails on any undocumented export unless listed in `.audit-ignore.json` with a written
 reason; wired as an `audit:exports` script and a CI step.
+
+> **Update**: the "CI step" is now the `run-export-audit: true` input on `ci.yml`'s thin call
+> into the org reusable pipeline (`node-ci.yml@v1`), not a hand-written step — see
+> `docs/AUTOPILOT.md`.
 
 #### Acceptance criteria
 

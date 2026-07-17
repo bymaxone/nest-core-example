@@ -296,6 +296,12 @@ build and test sequentially (test with `--passWithNoTests` until the first real 
 Phase 1), plus CodeQL and OpenSSF Scorecard workflows written to be inert while the repository
 is private and active once it is public.
 
+> **Update**: `ci.yml` was later replaced with a thin caller of the org-wide reusable pipeline
+> (`bymaxone/.github/.github/workflows/node-ci.yml@v1` and `security.yml@v1`) — see
+> `docs/AUTOPILOT.md`. The hand-rolled steps described below (and the sibling library's manual
+> clone+build) reflect the original scaffold; lint, typecheck, build, test and the sibling
+> library build now come from the shared reusable, not from steps in this repo's `ci.yml`.
+
 #### Acceptance criteria
 
 - [x] `.github/workflows/ci.yml`: triggers on `pull_request` + `push` to `main`; pnpm setup
