@@ -1,6 +1,6 @@
 # Phase 2: API Skeleton + Core Wiring
 
-> **Status**: 🔄 In Progress · **Progress**: 1 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 2 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-2-api-skeleton--core-wiring)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §9, §10
 
@@ -33,7 +33,7 @@ infrastructure.
 | ID  | Task                                                          | Status | Priority | Size | Depends on |
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 2.1 | Branch + Nest app skeleton + Zod env schema                    | ✅     | P0       | M    | Phase 1    |
-| 2.2 | Correlation: request context (ALS) + middleware + header echo  | 📋     | P0       | M    | 2.1        |
+| 2.2 | Correlation: request context (ALS) + middleware + header echo  | ✅     | P0       | M    | 2.1        |
 | 2.3 | Timing sink (ring buffer, poisonable) + core.config factory    | 📋     | P0       | M    | 2.1        |
 | 2.4 | Module wiring (forRootAsync + token providers) + timing-feed   | 📋     | P0       | M    | 2.2, 2.3   |
 | 2.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 2.1-2.4    |
@@ -126,7 +126,7 @@ Completion Protocol:
 
 ### Task 2.2: Correlation: request context (ALS) + middleware + header echo
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 2.1
@@ -139,13 +139,13 @@ with `crypto.randomUUID()` per request, a service exposing `getCorrelationId()`,
 
 #### Acceptance criteria
 
-- [ ] `core/request-context.service.ts` implements the library's `ICorrelationIdProvider`
+- [x] `core/request-context.service.ts` implements the library's `ICorrelationIdProvider`
       contract over `AsyncLocalStorage` (returns `undefined` outside a request).
-- [ ] `core/request-context.middleware.ts` seeds the store and sets `x-request-id`; applied to
+- [x] `core/request-context.middleware.ts` seeds the store and sets `x-request-id`; applied to
       all routes in `AppModule`.
-- [ ] JSDoc on the service documents the production pairing (a structured-logging context
+- [x] JSDoc on the service documents the production pairing (a structured-logging context
       service can satisfy the same token with one `useExisting`).
-- [ ] 100% unit coverage (inside/outside context, header echo, uuid format).
+- [x] 100% unit coverage (inside/outside context, header echo, uuid format).
 
 #### Files to create / modify
 
@@ -446,3 +446,5 @@ Completion Protocol:
 
 - 2.1 ✅ 2026-07-17 Nest 11 skeleton (createApp/bootstrap, restricted CORS, shutdown hooks),
   Zod-validated env schema with fail-fast validateEnv, root info controller; 100% unit coverage.
+- 2.2 ✅ 2026-07-17 AsyncLocalStorage RequestContextService (ICorrelationIdProvider) + seeding
+  middleware echoing a generated x-request-id, applied to all routes; 100% unit coverage.
