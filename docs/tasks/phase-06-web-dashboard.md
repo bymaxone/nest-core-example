@@ -1,6 +1,6 @@
 # Phase 6: Dashboard: Shell + All Pages
 
-> **Status**: 🔄 In Progress · **Progress**: 0 / 6 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 1 / 6 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-6-dashboard-shell--all-pages)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §13, §14, §12
 
@@ -37,7 +37,7 @@ Health Console, and Metrics View.
 
 | ID  | Task                                                        | Status | Priority | Size | Depends on    |
 | --- | ------------------------------------------------------------ | ------ | -------- | ---- | ------------- |
-| 6.1 | Branch + Next.js skeleton + design-system shell              | 📋     | P0       | L    | Phases 3, 4, 5 |
+| 6.1 | Branch + Next.js skeleton + design-system shell              | ✅     | P0       | L    | Phases 3, 4, 5 |
 | 6.2 | Typed API client + mirrored envelope + Overview page         | 📋     | P0       | M    | 6.1           |
 | 6.3 | Errors Playground + Latency Lab pages                        | 📋     | P0       | L    | 6.2           |
 | 6.4 | Pagination page (offset + cursor + corrupt-cursor)           | 📋     | P0       | M    | 6.2           |
@@ -48,7 +48,7 @@ Health Console, and Metrics View.
 
 ### Task 6.1: Branch + Next.js skeleton + design-system shell
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: L
 - **Depends on**: Phases 3, 4, 5
@@ -61,13 +61,13 @@ cards) built to `docs/design_system.html`.
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-06-web-dashboard` created with `git switch -c`.
-- [ ] `apps/web` scaffolded (App Router, TS strict, Tailwind v4 tokens per the design system,
+- [x] Branch `feat/phase-06-web-dashboard` created with `git switch -c`.
+- [x] `apps/web` scaffolded (App Router, TS strict, Tailwind v4 tokens per the design system,
       `components.json` shadcn new-york, Geist Sans/Mono, forced `dark` on `<html>`).
-- [ ] Shell components: `Topbar` (64px), `Sidebar` (250px, groups Observe / Labs / System,
+- [x] Shell components: `Topbar` (64px), `Sidebar` (250px, groups Observe / Labs / System,
       orange active state), `AppShell`; brand wordmark `nest-core-example` in mono.
-- [ ] Providers: TanStack Query + sonner `Toaster`.
-- [ ] `pnpm --filter @nest-core-example/web build` succeeds; placeholder pages render inside
+- [x] Providers: TanStack Query + sonner `Toaster`.
+- [x] `pnpm --filter web build` succeeds; placeholder pages render inside
       the shell for all six routes.
 
 #### Files to create / modify
@@ -528,3 +528,5 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 6.1 ✅ 2026-07-17 `apps/web` scaffolded (Next.js 16 App Router, Tailwind v4, shadcn new-york primitives, Geist, forced dark); `AppShell`/`Topbar`/`Sidebar` (Observe/Labs/System groups) built verbatim to the shared design system; six placeholder routes render inside the shell; `next typegen` wired into `typecheck` so CI's standalone type-check job works without a prior build.
