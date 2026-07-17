@@ -33,6 +33,20 @@ const SOURCE_FILE = /\.(ts|tsx)$/
 const SELF_TEST_MISS = '__nest_core_audit_self_test_missing_export__'
 
 /**
+ * Escape RegExp metacharacters so an identifier is matched literally.
+ *
+ * Identifiers may legally contain `$`, which is a RegExp anchor; interpolating a
+ * raw name would mis-match (a false pass or false miss). Escaping keeps the
+ * word-boundary demonstration check exact for any valid identifier.
+ *
+ * @param literal - The identifier to embed in a RegExp.
+ * @returns The identifier with every metacharacter backslash-escaped.
+ */
+function escapeRegExp(literal) {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/**
  * Resolve the absolute path to the installed library's package root.
  *
  * The library is a `file:` dependency of `apps/api` only, so resolution is anchored
@@ -81,7 +95,7 @@ function extractExports(source) {
     for (const raw of block[1].split(',')) {
       const item = raw.trim().replace(/^type\s+/, '')
       if (!item) continue
-      const asMatch = item.match(/\s+as\s+(\w+)$/)
+      const asMatch = item.match(/\s+as\s+([\w$]+)$/)
       const name = asMatch ? asMatch[1] : item
       if (/^[A-Za-z_$][\w$]*$/.test(name) && name !== 'default') names.add(name)
     }
@@ -158,7 +172,7 @@ function main() {
   const missing = []
   for (const name of [...exports].sort()) {
     if (ignores.has(name)) continue
-    if (!new RegExp(`\\b${name}\\b`).test(corpus)) missing.push(name)
+    if (!new RegExp(`\\b${escapeRegExp(name)}\\b`).test(corpus)) missing.push(name)
   }
 
   reportStaleIgnores(ignores, exports, corpus)
@@ -174,7 +188,7 @@ function main() {
  */
 function reportStaleIgnores(ignores, exports, corpus) {
   for (const name of ignores.keys()) {
-    if (exports.has(name) && new RegExp(`\\b${name}\\b`).test(corpus)) {
+    if (exports.has(name) && new RegExp(`\\b${escapeRegExp(name)}\\b`).test(corpus)) {
       console.warn(
         `WARN  stale waiver: "${name}" is demonstrated; remove it from .audit-ignore.json`,
       )
