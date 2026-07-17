@@ -28,5 +28,5 @@ export const hangToggleSchema = z.object({
   enabled: z.enum(['true', 'false']).transform((value) => value === 'true'),
 })
 
-/** Inferred output type for {@link hangToggleSchema}. */
+/** Inferred parsed (post-transform) type for {@link hangToggleSchema}. */
 export type HangToggleQuery = z.infer<typeof hangToggleSchema>

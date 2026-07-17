@@ -1,8 +1,8 @@
 /**
  * @fileoverview Feature module for the health demonstration. It owns the shared
  * toggle state services and the flaky and hanging indicators, exporting them so
- * the core wiring module can alias them onto the library's
- * `BYMAX_HEALTH_INDICATORS` multi-token.
+ * the core wiring module can collect them into the ordered `IHealthIndicator[]`
+ * value bound to the library's `BYMAX_HEALTH_INDICATORS` token.
  * @layer module
  */
 
