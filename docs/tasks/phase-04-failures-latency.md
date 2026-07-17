@@ -1,6 +1,6 @@
 # Phase 4: Failure Injection & Latency Lab (API)
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 4 tasks · **Last updated**: 2026-07-06
+> **Status**: 🔄 In Progress · **Progress**: 1 / 4 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-4-failure-injection--latency-lab-api)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §12.1, §12.2, §7.3, §7.4
 
@@ -30,7 +30,7 @@ artificial-delay endpoint that drives the `slow` flag and the sink-poison proof.
 
 | ID  | Task                                                          | Status | Priority | Size | Depends on |
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 4.1 | Branch + failures module: standard HttpException triggers      | 📋     | P0       | M    | Phase 2    |
+| 4.1 | Branch + failures module: standard HttpException triggers      | ✅     | P0       | M    | Phase 2    |
 | 4.2 | Fallback + collapse triggers (418, 507, unknown) + prod proof  | 📋     | P0       | M    | 4.1        |
 | 4.3 | Latency endpoint (slow flag + sink poison round trip)          | 📋     | P0       | S    | Phase 2    |
 | 4.4 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 4.1-4.3    |
@@ -39,7 +39,7 @@ artificial-delay endpoint that drives the `slow` flag and the sink-poison proof.
 
 ### Task 4.1: Branch + failures module: standard HttpException triggers
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 2
@@ -54,12 +54,12 @@ exception; each asserted test pins the resulting envelope code and status.
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-04-failures-latency` created with `git switch -c`.
-- [ ] `POST /failures/:kind` with a typed kind registry (a `Record<kind, () => never>` map, no
+- [x] Branch `feat/phase-04-failures-latency` created with `git switch -c`.
+- [x] `POST /failures/:kind` with a typed kind registry (a `Record<kind, () => never>` map, no
       switch sprawl); unknown kind returns `BYMAX_NOT_FOUND` for the trigger itself.
-- [ ] One unit test per §7.3 row covered here, asserting `code` + `statusCode` through a real
+- [x] One unit test per §7.3 row covered here, asserting `code` + `statusCode` through a real
       filter-wired test module.
-- [ ] 100% unit coverage.
+- [x] 100% unit coverage.
 
 #### Files to create / modify
 
@@ -349,3 +349,9 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 4.1 ✅ 2026-07-17 failures module added: frozen `FAILURE_REGISTRY` (13 standard
+  `HttpException` derivations, bad-request through gateway-timeout), `FailuresService.trigger`
+  collapsing an unregistered kind to `NotFoundException`, `POST /failures/:kind` wired into
+  AppModule; integration suite boots a real testing module with `BymaxCoreModule.forRoot()` and
+  asserts every row's exact `(code, statusCode)` via supertest; 100% unit coverage.

@@ -29,10 +29,10 @@
 
 ## Progress Dashboard
 
-> **Progress:** 3 / 9 phases complete (33%) · 16 / 42 tasks
-> **Active phase:** Phase 3 (Catalog Domain & Pagination)
-> **Blocked:** none - the sibling library is built and its `dist/` resolves. Phase 2 merged to
-> `main`; Phase 3 returns to ⛔ only if the local-build check regresses (see the
+> **Progress:** 4 / 9 phases complete (44%) · 18 / 42 tasks
+> **Active phase:** Phase 4 (Failure Injection & Latency Lab (API))
+> **Blocked:** none - the sibling library is built and its `dist/` resolves. Phase 3 merged to
+> `main`; Phase 4 returns to ⛔ only if the local-build check regresses (see the
 > [External Precondition](#external-precondition)).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
@@ -40,8 +40,8 @@
 | 0  | Repository Foundation & CI               | `phase-00-repo-foundation.md`       | M    | 5 / 5        | ✅     |
 | 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 3 / 3        | ✅     |
 | 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 5 / 5        | ✅     |
-| 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 3 / 4        | 🔄     |
-| 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 0 / 4        | 📋     |
+| 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 4 / 4        | ✅     |
+| 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 1 / 4        | 🔄     |
 | 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 0 / 5        | 📋     |
 | 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 0 / 6        | 📋     |
 | 7  | Testing to the Reference Bar             | `phase-07-testing.md`               | L    | 0 / 5        | 📋     |
