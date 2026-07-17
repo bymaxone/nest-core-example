@@ -24,7 +24,7 @@ operator rebuilds with `pnpm -C ../nest-core build`.
 
 | Phase | File                                                                     | Tasks | Status |
 | ----- | ------------------------------------------------------------------------ | ----- | ------ |
-| 0     | [`phase-00-repo-foundation.md`](./phase-00-repo-foundation.md)           | 4 / 5 | 🔄     |
+| 0     | [`phase-00-repo-foundation.md`](./phase-00-repo-foundation.md)           | 5 / 5 | 👀     |
 | 1     | [`phase-01-library-consumption.md`](./phase-01-library-consumption.md)   | 0 / 3 | 📋     |
 | 2     | [`phase-02-api-skeleton-wiring.md`](./phase-02-api-skeleton-wiring.md)   | 0 / 5 | 📋     |
 | 3     | [`phase-03-catalog-pagination.md`](./phase-03-catalog-pagination.md)     | 0 / 4 | 📋     |
@@ -33,7 +33,7 @@ operator rebuilds with `pnpm -C ../nest-core build`.
 | 6     | [`phase-06-web-dashboard.md`](./phase-06-web-dashboard.md)               | 0 / 6 | 📋     |
 | 7     | [`phase-07-testing.md`](./phase-07-testing.md)                           | 0 / 5 | 📋     |
 | 8     | [`phase-08-hardening-docs.md`](./phase-08-hardening-docs.md)             | 0 / 5 | 📋     |
-|       | **Total**                                                                | **4 / 42** | 🔄 |
+|       | **Total**                                                                | **5 / 42** | 🔄 |
 
 **Status legend:** 📋 ToDo · 🔄 In Progress · 👀 Review · ✅ Done · ⛔ Blocked · 🟡 Partial
 Sizes: **XS/S** (< ~100 LoC), **M** (~100-250), **L** (~250+). Priorities: **P0** (blocking),

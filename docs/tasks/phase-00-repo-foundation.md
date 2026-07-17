@@ -1,6 +1,6 @@
 # Phase 0: Repository Foundation & CI
 
-> **Status**: 🔄 In Progress · **Progress**: 4 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 👀 Review · **Progress**: 5 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-0-repository-foundation--ci)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §6, §19
 
@@ -33,7 +33,7 @@ the plan's external precondition).
 | 0.2 | Lint, format, git hooks, commit governance                  | ✅     | P0       | S    | 0.1        |
 | 0.3 | Community files + Renovate                                  | ✅     | P1       | S    | 0.1        |
 | 0.4 | CI workflows (ci + conditional codeql/scorecard)            | ✅     | P0       | M    | 0.2        |
-| 0.5 | Phase close: audit, dashboards, PR + Copilot review + merge | 📋     | P0       | S    | 0.1-0.4    |
+| 0.5 | Phase close: audit, dashboards, PR + Copilot review + merge | 👀     | P0       | S    | 0.1-0.4    |
 
 ## Tasks
 
@@ -367,7 +367,12 @@ Completion Protocol:
 
 ### Task 0.5: Phase close: audit, dashboards, PR + Copilot review + merge
 
-- **Status**: 📋 ToDo
+- **Status**: 👀 Review
+
+> **Note:** the implementer completes the audit, dashboards, and PR open with the review
+> requested. Waiting for the review and CI, addressing findings, the merge, and branch deletion
+> are carried out by the orchestrator in a follow-up step.
+
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 0.1, 0.2, 0.3, 0.4
@@ -379,11 +384,11 @@ PR, request the GitHub Copilot code review, address every finding, and merge wit
 
 #### Acceptance criteria
 
-- [ ] Every acceptance criterion of tasks 0.1-0.4 re-verified on the branch (spot-run the
+- [x] Every acceptance criterion of tasks 0.1-0.4 re-verified on the branch (spot-run the
       verification commands).
-- [ ] Phase file header, task index, completion log, plan dashboard and tasks README all
+- [x] Phase file header, task index, completion log, plan dashboard and tasks README all
       consistent (5/5 done).
-- [ ] PR opened with a professional English title/body summarizing the foundation; Copilot
+- [x] PR opened with a professional English title/body summarizing the foundation; Copilot
       review requested; every finding addressed or answered.
 - [ ] Merged via squash with branch deletion; `main` CI green after merge.
 
@@ -452,3 +457,4 @@ Completion Protocol:
 - 0.2 ✅ 2026-07-17 ESLint 9 flat config, Prettier, husky and commitlint wired and verified
 - 0.3 ✅ 2026-07-17 Community files (license, contributing, conduct, changelog, README stub) and Renovate config added
 - 0.4 ✅ 2026-07-17 CI pipeline plus visibility-gated CodeQL and Scorecard workflows added, all actions SHA-pinned
+- 0.5 👀 2026-07-17 Acceptance criteria audited, dashboards synced, PR opened with Copilot review requested; merge owned by the orchestrator
