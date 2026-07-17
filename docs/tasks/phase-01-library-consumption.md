@@ -1,6 +1,6 @@
 # Phase 1: Library Consumption & Subpath Probes
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 3 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 1 / 3 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-1-library-consumption--subpath-probes)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §4, §8
 
@@ -48,7 +48,7 @@ run stops cleanly (the operator rebuilds with `pnpm -C ../nest-core build`).
 
 | ID  | Task                                                        | Status | Priority | Size | Depends on |
 | --- | ------------------------------------------------------------ | ------ | -------- | ---- | ---------- |
-| 1.1 | Verify the local-build gate + create `apps/api` holder + dep | 📋     | P0       | S    | Phase 0    |
+| 1.1 | Verify the local-build gate + create `apps/api` holder + dep | ✅     | P0       | S    | Phase 0    |
 | 1.2 | Three-subpath probe + first unit test (drop passWithNoTests) | 📋     | P0       | S    | 1.1        |
 | 1.3 | Phase close: audit, dashboards, PR + Copilot review + merge  | 📋     | P0       | S    | 1.1, 1.2   |
 
@@ -56,7 +56,7 @@ run stops cleanly (the operator rebuilds with `pnpm -C ../nest-core build`).
 
 ### Task 1.1: Verify the local-build gate + create `apps/api` holder + dependency
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: Phase 0
@@ -70,17 +70,17 @@ the optional `prom-client`.
 
 #### Acceptance criteria
 
-- [ ] The local-build gate passes (`../nest-core/dist/index.d.ts`,
+- [x] The local-build gate passes (`../nest-core/dist/index.d.ts`,
       `../nest-core/dist/pagination/index.d.ts`, `../nest-core/dist/health/index.d.ts` all
       exist); the packed library version (from `../nest-core/package.json`) is recorded in the
       completion log.
-- [ ] Branch `feat/phase-01-library-consumption` created with `git switch -c`.
-- [ ] `apps/api/package.json`: name `@nest-core-example/api`, with the library declared as the
+- [x] Branch `feat/phase-01-library-consumption` created with `git switch -c`.
+- [x] `apps/api/package.json`: name `@nest-core-example/api`, with the library declared as the
       exact `package.json` key/value pair `"@bymax-one/nest-core": "file:../../../nest-core"`,
       plus peers `@nestjs/common@^11`, `@nestjs/core@^11`, `reflect-metadata@^0.2`, `rxjs@^7`,
       `prom-client@^15`; scripts `typecheck`, `test`, `build` (placeholder tsc build).
-- [ ] `apps/api/tsconfig.json` extends `../../tsconfig.base.json`.
-- [ ] `pnpm install` links everything; peers resolve to a single copy (`pnpm why @nestjs/core`).
+- [x] `apps/api/tsconfig.json` extends `../../tsconfig.base.json`.
+- [x] `pnpm install` links everything; peers resolve to a single copy (`pnpm why @nestjs/core`).
 
 #### Files to create / modify
 
@@ -309,3 +309,8 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 1.1 ✅ 2026-07-17 Created the `@nest-core-example/api` holder consuming `@bymax-one/nest-core`
+  (packed version `0.1.0`) via `file:../../../nest-core` with peers `@nestjs/common`/`@nestjs/core`
+  `11.1.28`, `reflect-metadata` `0.2.2`, `rxjs` `7.8.2`, `prom-client` `15.1.3`; `pnpm install`
+  links everything and `pnpm why @nestjs/core` reports a single copy (`11.1.28`).
