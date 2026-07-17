@@ -5,9 +5,10 @@
 # definition. The reusable's `library-repo` input clones and builds the
 # sibling @bymax-one/nest-core checkout so apps/api's `file:` dependency
 # resolves in CI exactly as it does locally — no manual clone+build step here.
-# Web, API e2e, export-audit and mutation stay off until their app/scripts
-# exist; flip the matching input once they land. The reusables are versioned
-# via the @v1 tag on bymaxone/.github.
+# API e2e (pure supertest, no external infra) and the Playwright web smoke
+# (against production-built api+web) are both on now that their scripts
+# exist. Export-audit and mutation stay off until their scripts land in a
+# later phase. The reusables are versioned via the @v1 tag on bymaxone/.github.
 name: CI
 
 on:
@@ -32,8 +33,8 @@ jobs:
     with:
       library-repo: bymaxone/nest-core
       has-web: true
-      run-e2e-web: false
-      run-e2e-api: false
+      run-e2e-web: true
+      run-e2e-api: true
       run-export-audit: false
       run-mutation: false
 
