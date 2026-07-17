@@ -147,8 +147,10 @@ Per-phase focus for the security-sensitive rows of the model policy:
 
 ## Review bot
 
-- **Reviewer**: `copilot-pull-request-reviewer[bot]` (request with
-  `gh pr edit <PR#> --add-reviewer copilot-pull-request-reviewer[bot]`)
+- **Reviewer**: `copilot-pull-request-reviewer[bot]`, **auto-requested by the org ruleset**
+  `copilot-code-review` on every PR and re-run on every push (`review_on_push: true`,
+  `review_draft_pull_requests: true`). No manual `--add-reviewer` is required; issuing it is a
+  harmless redundant safety net (may report "already requested").
 - **Review-bot timeout**: 15 minutes — a request pending this long with no review submitted
   is treated as bot-unresponsive: the request is removed, a factual PR comment records it,
   and the gate proceeds CI-only (the implementer's zero-findings review floor already ran
@@ -156,10 +158,26 @@ Per-phase focus for the security-sensitive rows of the model policy:
 
 ## Merge policy
 
-- **Method**: squash (delete branch on merge — always, local + remote, with printed proof)
+- **Method**: squash (`required_linear_history` forbids merge commits; delete branch on merge —
+  always, local + remote, with printed proof)
 - **Grace window**: 5 minutes since last push
 - **Review-bot timeout**: 15 minutes (see Review bot above)
 - **Stall limit**: 3 full fix cycles on the same phase → 🟡/⛔ + notify + STOP
+
+### Branch protection (rulesets, not classic protection)
+
+- **`main` is PR-only** (`protect-default-branch`: no direct push, no force-push, no
+  deletion). The ruleset requires **only** a PR + linear history + auto Copilot review;
+  `required_approving_review_count: 0` and there are **no required status checks**, so the
+  merge-blocking conjunction (CI green + all bot threads resolved + grace elapsed) is the
+  **orchestrator's own gate**, enforced in software here, not by GitHub.
+- Because `main` rejects direct pushes, **phase dashboard updates ride inside the phase's own
+  PR** (the implementer's phase-close already edits `DEVELOPMENT_PLAN.md`, `tasks/README.md`,
+  and the phase file — they land on `main` when the PR merges). The orchestrator does **not**
+  push a separate post-merge `docs(plan): mark P<N> complete` commit to `main`.
+- Any orchestrator-only doc change (this config, marking a phase ⛔ Blocked, a dashboard
+  correction after a post-merge audit) goes through its **own short PR**, squash-merged the
+  same way — never a direct push.
 
 ## Custom conventions
 
