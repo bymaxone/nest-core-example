@@ -71,8 +71,9 @@ the optional `prom-client`.
 #### Acceptance criteria
 
 - [ ] The local-build gate passes (`../nest-core/dist/index.d.ts`,
-      `dist/pagination/index.d.ts`, `dist/health/index.d.ts` all exist); the packed library
-      version (from `../nest-core/package.json`) is recorded in the completion log.
+      `../nest-core/dist/pagination/index.d.ts`, `../nest-core/dist/health/index.d.ts` all
+      exist); the packed library version (from `../nest-core/package.json`) is recorded in the
+      completion log.
 - [ ] Branch `feat/phase-01-library-consumption` created with `git switch -c`.
 - [ ] `apps/api/package.json`: name `@nest-core-example/api`, with the library declared as the
       exact `package.json` key/value pair `"@bymax-one/nest-core": "file:../../../nest-core"`,
