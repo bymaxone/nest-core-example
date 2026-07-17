@@ -1,28 +1,43 @@
 /**
- * @fileoverview Application root module. Loads the Zod-validated configuration
- * globally, mounts the root information controller, and seeds the per-request
- * correlation context for every route through the request-context middleware.
+ * @fileoverview Application root module. Loads the Zod-validated configuration,
+ * registers `BymaxCoreModule` from that configuration, binds the example's
+ * implementations onto the library tokens, seeds per-request correlation, and
+ * mounts the feature controllers.
  * @layer module
  */
 
 import { Module } from '@nestjs/common'
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { BymaxCoreModule } from '@bymax-one/nest-core'
 
 import { AppController } from './app.controller.js'
 import { validateEnv } from './config/env.schema.js'
+import { buildCoreOptions } from './core/core.config.js'
+import { CoreWiringModule } from './core/core.module.js'
 import { RequestContextMiddleware } from './core/request-context.middleware.js'
-import { RequestContextService } from './core/request-context.service.js'
+import { TimingFeedModule } from './timing-feed/timing-feed.module.js'
 
 /**
- * Root module. `ConfigModule` is global so any provider can inject the typed
- * `ConfigService<Env, true>`; `validateEnv` runs during initialization, so a
- * malformed environment aborts the bootstrap before the first request.
+ * Root module. `ConfigModule` validates the environment (aborting a bad boot),
+ * `BymaxCoreModule.forRootAsync` resolves the library options from it, and
+ * `CoreWiringModule` binds the correlation provider and timing sink.
  */
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, validate: validateEnv })],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
+    BymaxCoreModule.forRootAsync({
+      // `isGlobal` is a synchronous module extra decided by the builder at the
+      // call site; a value returned from `useFactory` would have no effect.
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: buildCoreOptions,
+    }),
+    CoreWiringModule,
+    TimingFeedModule,
+  ],
   controllers: [AppController],
-  providers: [RequestContextService],
 })
 export class AppModule implements NestModule {
   /**

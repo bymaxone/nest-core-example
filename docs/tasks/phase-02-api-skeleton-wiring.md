@@ -1,6 +1,6 @@
 # Phase 2: API Skeleton + Core Wiring
 
-> **Status**: 🔄 In Progress · **Progress**: 3 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 4 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-2-api-skeleton--core-wiring)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §9, §10
 
@@ -35,7 +35,7 @@ infrastructure.
 | 2.1 | Branch + Nest app skeleton + Zod env schema                    | ✅     | P0       | M    | Phase 1    |
 | 2.2 | Correlation: request context (ALS) + middleware + header echo  | ✅     | P0       | M    | 2.1        |
 | 2.3 | Timing sink (ring buffer, poisonable) + core.config factory    | ✅     | P0       | M    | 2.1        |
-| 2.4 | Module wiring (forRootAsync + token providers) + timing-feed   | 📋     | P0       | M    | 2.2, 2.3   |
+| 2.4 | Module wiring (forRootAsync + token providers) + timing-feed   | ✅     | P0       | M    | 2.2, 2.3   |
 | 2.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 2.1-2.4    |
 
 ## Tasks
@@ -283,7 +283,7 @@ Completion Protocol:
 
 ### Task 2.4: Module wiring (forRootAsync + token providers) + timing-feed
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 2.2, 2.3
@@ -296,17 +296,19 @@ exposing recent samples with the resolved threshold read from `BYMAX_CORE_OPTION
 
 #### Acceptance criteria
 
-- [ ] `core/core.module.ts` provides `BYMAX_CORRELATION_PROVIDER` (useExisting
+- [x] `core/core.module.ts` provides `BYMAX_CORRELATION_PROVIDER` (useExisting
       RequestContextService) and `BYMAX_TIMING_SINK` (useExisting RingBufferTimingSink);
-      exports both services.
-- [ ] `app.module.ts`: `BymaxCoreModule.forRootAsync({ isGlobal: true, imports, inject,
+      exports both services. Global so the bindings reach the library's global filter; the
+      demo sink is fed by the library's own `TimingInterceptor` because `forRootAsync` owns
+      `BYMAX_TIMING_SINK`.
+- [x] `app.module.ts`: `BymaxCoreModule.forRootAsync({ isGlobal: true, imports, inject,
       useFactory: buildCoreOptions })` with the inline note that `isGlobal` is synchronous.
-- [ ] `common/zod-validation.pipe.ts` parses Zod DTOs (rejections carry structured issues).
-- [ ] `timing-feed` module: `GET /timing/samples` returns `{ thresholdMs, samples }` (threshold
+- [x] `common/zod-validation.pipe.ts` parses Zod DTOs (rejections carry structured issues).
+- [x] `timing-feed` module: `GET /timing/samples` returns `{ thresholdMs, samples }` (threshold
       via `@Inject(BYMAX_CORE_OPTIONS)`); `POST /timing/poison` arms the sink poison.
-- [ ] Boot proof: an unknown route returns the 7-field envelope with `correlationId`; samples
+- [x] Boot proof: an unknown route returns the 7-field envelope with `correlationId`; samples
       accumulate with route templates.
-- [ ] 100% unit coverage on new files.
+- [x] 100% unit coverage on new files.
 
 #### Files to create / modify
 
@@ -451,3 +453,6 @@ Completion Protocol:
   middleware echoing a generated x-request-id, applied to all routes; 100% unit coverage.
 - 2.3 ✅ 2026-07-17 Bounded poisonable RingBufferTimingSink (ITimingSink) and buildCoreOptions
   factory with production-hardened exposeInternals; 100% unit coverage.
+- 2.4 ✅ 2026-07-17 Global CoreWiringModule (token bindings + ring-buffer-fed TimingInterceptor),
+  BymaxCoreModule.forRootAsync from buildCoreOptions, ZodValidationPipe, timing-feed endpoints;
+  boot proof shows the 7-field envelope with correlationId and populated samples; 100% coverage.
