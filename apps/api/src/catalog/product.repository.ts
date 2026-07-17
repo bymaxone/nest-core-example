@@ -9,8 +9,6 @@
  * @layer repository
  */
 
-import { randomUUID } from 'node:crypto'
-
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import type { PageQuery } from '@bymax-one/nest-core/pagination'
@@ -148,8 +146,8 @@ function buildSeedProduct(index: number): Product {
  * Deterministic, latency-simulated in-memory product repository.
  *
  * The seed is generated once per instance from `CATALOG_SEED_COUNT`. Products
- * created via {@link ProductRepository.create} are appended afterward and are
- * not part of the deterministic seed sequence.
+ * created via {@link ProductRepository.create} are appended afterward, continuing
+ * the seeded id sequence so catalog order stays consistent with id order.
  */
 @Injectable()
 export class ProductRepository {
@@ -217,7 +215,11 @@ export class ProductRepository {
    */
   async create(input: NewProductInput): Promise<Product> {
     await this.simulateLatency()
-    const product: Product = { ...input, id: randomUUID(), createdAt: new Date().toISOString() }
+    // Continue the seeded id sequence so insertion order stays consistent with
+    // id order (the property the offset and cursor walks rely on). Append-only
+    // storage makes the length-derived sequence number monotonic and unique.
+    const id = `p-${String(this.products.length + 1).padStart(PRODUCT_ID_WIDTH, '0')}`
+    const product: Product = { ...input, id, createdAt: new Date().toISOString() }
     this.products.push(product)
     return product
   }

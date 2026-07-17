@@ -169,8 +169,9 @@ describe('ProductRepository', () => {
       priceCents: 1234,
     })
 
-    expect(created.id).toEqual(expect.any(String))
-    expect(created.id).not.toBe('')
+    // The created product continues the seeded id sequence (2 seeded -> p-000003),
+    // keeping insertion order consistent with id order.
+    expect(created.id).toBe('p-000003')
     expect(created.createdAt).toEqual(expect.any(String))
     expect(created.name).toBe('Test Item')
 
