@@ -1,6 +1,6 @@
 # Phase 2: API Skeleton + Core Wiring
 
-> **Status**: 🔄 In Progress · **Progress**: 2 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 3 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-2-api-skeleton--core-wiring)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §9, §10
 
@@ -34,7 +34,7 @@ infrastructure.
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 2.1 | Branch + Nest app skeleton + Zod env schema                    | ✅     | P0       | M    | Phase 1    |
 | 2.2 | Correlation: request context (ALS) + middleware + header echo  | ✅     | P0       | M    | 2.1        |
-| 2.3 | Timing sink (ring buffer, poisonable) + core.config factory    | 📋     | P0       | M    | 2.1        |
+| 2.3 | Timing sink (ring buffer, poisonable) + core.config factory    | ✅     | P0       | M    | 2.1        |
 | 2.4 | Module wiring (forRootAsync + token providers) + timing-feed   | 📋     | P0       | M    | 2.2, 2.3   |
 | 2.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 2.1-2.4    |
 
@@ -206,7 +206,7 @@ Completion Protocol:
 
 ### Task 2.3: Timing sink (ring buffer, poisonable) + core.config factory
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 2.1
@@ -219,12 +219,13 @@ one-shot poison mode (throws once, proving the interceptor's never-throw guarant
 
 #### Acceptance criteria
 
-- [ ] `core/ring-buffer-timing.sink.ts`: `record()` appends; capacity from
+- [x] `core/ring-buffer-timing.sink.ts`: `record()` appends; capacity from
       `TIMING_BUFFER_SIZE` (oldest evicted); `snapshot()` returns a copy; `armPoison()` makes
       the next `record()` throw exactly once (documented as the never-throw proof).
-- [ ] `core/core.config.ts`: `buildCoreOptions(config)` returning envelope/timing/health/metrics
-      blocks exactly per spec §9.2.
-- [ ] 100% unit coverage (eviction, snapshot immutability, poison single-shot, option mapping
+- [x] `core/core.config.ts`: `buildCoreOptions(config)` returning envelope/timing/health/metrics
+      blocks per spec §9.2, with `exposeInternals` additionally hard-guarded to `false` in
+      production (spec §20 / the security requirement).
+- [x] 100% unit coverage (eviction, snapshot immutability, poison single-shot, option mapping
       for every env combination).
 
 #### Files to create / modify
@@ -448,3 +449,5 @@ Completion Protocol:
   Zod-validated env schema with fail-fast validateEnv, root info controller; 100% unit coverage.
 - 2.2 ✅ 2026-07-17 AsyncLocalStorage RequestContextService (ICorrelationIdProvider) + seeding
   middleware echoing a generated x-request-id, applied to all routes; 100% unit coverage.
+- 2.3 ✅ 2026-07-17 Bounded poisonable RingBufferTimingSink (ITimingSink) and buildCoreOptions
+  factory with production-hardened exposeInternals; 100% unit coverage.
