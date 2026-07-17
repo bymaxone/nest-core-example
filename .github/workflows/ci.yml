@@ -37,9 +37,12 @@ jobs:
       run-mutation: false
 
   security:
-    # Dependency review only applies to a pull request — don't spawn a no-op
-    # job on push / workflow_dispatch.
-    if: github.event_name == 'pull_request'
+    # Dependency review needs the repository dependency graph, which is only
+    # available on public repositories (or private ones with GitHub Advanced
+    # Security). Gate on public visibility so this stays inert while the repo is
+    # private and self-activates on the public flip, and only on a pull request
+    # (it diffs the PR's dependency changes).
+    if: ${{ github.event_name == 'pull_request' && !github.event.repository.private }}
     uses: bymaxone/.github/.github/workflows/security.yml@v1
     with:
       fail-on-severity: high
