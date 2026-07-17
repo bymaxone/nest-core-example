@@ -1,6 +1,6 @@
 # Phase 2: API Skeleton + Core Wiring
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 4 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-2-api-skeleton--core-wiring)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §9, §10
 
@@ -32,17 +32,17 @@ infrastructure.
 
 | ID  | Task                                                          | Status | Priority | Size | Depends on |
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 2.1 | Branch + Nest app skeleton + Zod env schema                    | 📋     | P0       | M    | Phase 1    |
-| 2.2 | Correlation: request context (ALS) + middleware + header echo  | 📋     | P0       | M    | 2.1        |
-| 2.3 | Timing sink (ring buffer, poisonable) + core.config factory    | 📋     | P0       | M    | 2.1        |
-| 2.4 | Module wiring (forRootAsync + token providers) + timing-feed   | 📋     | P0       | M    | 2.2, 2.3   |
-| 2.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 2.1-2.4    |
+| 2.1 | Branch + Nest app skeleton + Zod env schema                    | ✅     | P0       | M    | Phase 1    |
+| 2.2 | Correlation: request context (ALS) + middleware + header echo  | ✅     | P0       | M    | 2.1        |
+| 2.3 | Timing sink (ring buffer, poisonable) + core.config factory    | ✅     | P0       | M    | 2.1        |
+| 2.4 | Module wiring (forRootAsync + token providers) + timing-feed   | ✅     | P0       | M    | 2.2, 2.3   |
+| 2.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 🔄     | P0       | S    | 2.1-2.4    |
 
 ## Tasks
 
 ### Task 2.1: Branch + Nest app skeleton + Zod env schema
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 1
@@ -55,13 +55,13 @@ wired through `@nestjs/config` so a bad environment fails at startup with a read
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-02-api-skeleton-wiring` created with `git switch -c`.
-- [ ] `src/config/env.schema.ts`: Zod schema for every Appendix A variable with defaults;
+- [x] Branch `feat/phase-02-api-skeleton-wiring` created with `git switch -c`.
+- [x] `src/config/env.schema.ts`: Zod schema for every Appendix A variable with defaults;
       `validateEnv()`; exported `Env` type; unit-tested (valid, invalid, defaults).
-- [ ] `main.ts`: `createApp()` seam (testable) + `bootstrap()`; CORS restricted to
+- [x] `main.ts`: `createApp()` seam (testable) + `bootstrap()`; CORS restricted to
       `WEB_ORIGIN`; `enableShutdownHooks`.
-- [ ] `pnpm --filter @nest-core-example/api dev` boots and serves a minimal `GET /` info route.
-- [ ] 100% unit coverage on the new files; `it()` scenario comments.
+- [x] `pnpm --filter @nest-core-example/api dev` boots and serves a minimal `GET /` info route.
+- [x] 100% unit coverage on the new files; `it()` scenario comments.
 
 #### Files to create / modify
 
@@ -126,7 +126,7 @@ Completion Protocol:
 
 ### Task 2.2: Correlation: request context (ALS) + middleware + header echo
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 2.1
@@ -139,13 +139,13 @@ with `crypto.randomUUID()` per request, a service exposing `getCorrelationId()`,
 
 #### Acceptance criteria
 
-- [ ] `core/request-context.service.ts` implements the library's `ICorrelationIdProvider`
+- [x] `core/request-context.service.ts` implements the library's `ICorrelationIdProvider`
       contract over `AsyncLocalStorage` (returns `undefined` outside a request).
-- [ ] `core/request-context.middleware.ts` seeds the store and sets `x-request-id`; applied to
+- [x] `core/request-context.middleware.ts` seeds the store and sets `x-request-id`; applied to
       all routes in `AppModule`.
-- [ ] JSDoc on the service documents the production pairing (a structured-logging context
+- [x] JSDoc on the service documents the production pairing (a structured-logging context
       service can satisfy the same token with one `useExisting`).
-- [ ] 100% unit coverage (inside/outside context, header echo, uuid format).
+- [x] 100% unit coverage (inside/outside context, header echo, uuid format).
 
 #### Files to create / modify
 
@@ -206,7 +206,7 @@ Completion Protocol:
 
 ### Task 2.3: Timing sink (ring buffer, poisonable) + core.config factory
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 2.1
@@ -219,12 +219,13 @@ one-shot poison mode (throws once, proving the interceptor's never-throw guarant
 
 #### Acceptance criteria
 
-- [ ] `core/ring-buffer-timing.sink.ts`: `record()` appends; capacity from
+- [x] `core/ring-buffer-timing.sink.ts`: `record()` appends; capacity from
       `TIMING_BUFFER_SIZE` (oldest evicted); `snapshot()` returns a copy; `armPoison()` makes
       the next `record()` throw exactly once (documented as the never-throw proof).
-- [ ] `core/core.config.ts`: `buildCoreOptions(config)` returning envelope/timing/health/metrics
-      blocks exactly per spec §9.2.
-- [ ] 100% unit coverage (eviction, snapshot immutability, poison single-shot, option mapping
+- [x] `core/core.config.ts`: `buildCoreOptions(config)` returning envelope/timing/health/metrics
+      blocks per spec §9.2, with `exposeInternals` additionally hard-guarded to `false` in
+      production (spec §20 / the security requirement).
+- [x] 100% unit coverage (eviction, snapshot immutability, poison single-shot, option mapping
       for every env combination).
 
 #### Files to create / modify
@@ -282,7 +283,7 @@ Completion Protocol:
 
 ### Task 2.4: Module wiring (forRootAsync + token providers) + timing-feed
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 2.2, 2.3
@@ -295,17 +296,19 @@ exposing recent samples with the resolved threshold read from `BYMAX_CORE_OPTION
 
 #### Acceptance criteria
 
-- [ ] `core/core.module.ts` provides `BYMAX_CORRELATION_PROVIDER` (useExisting
+- [x] `core/core.module.ts` provides `BYMAX_CORRELATION_PROVIDER` (useExisting
       RequestContextService) and `BYMAX_TIMING_SINK` (useExisting RingBufferTimingSink);
-      exports both services.
-- [ ] `app.module.ts`: `BymaxCoreModule.forRootAsync({ isGlobal: true, imports, inject,
+      exports both services. Global so the bindings reach the library's global filter; the
+      demo sink is fed by the library's own `TimingInterceptor` because `forRootAsync` owns
+      `BYMAX_TIMING_SINK`.
+- [x] `app.module.ts`: `BymaxCoreModule.forRootAsync({ isGlobal: true, imports, inject,
       useFactory: buildCoreOptions })` with the inline note that `isGlobal` is synchronous.
-- [ ] `common/zod-validation.pipe.ts` parses Zod DTOs (rejections carry structured issues).
-- [ ] `timing-feed` module: `GET /timing/samples` returns `{ thresholdMs, samples }` (threshold
+- [x] `common/zod-validation.pipe.ts` parses Zod DTOs (rejections carry structured issues).
+- [x] `timing-feed` module: `GET /timing/samples` returns `{ thresholdMs, samples }` (threshold
       via `@Inject(BYMAX_CORE_OPTIONS)`); `POST /timing/poison` arms the sink poison.
-- [ ] Boot proof: an unknown route returns the 7-field envelope with `correlationId`; samples
+- [x] Boot proof: an unknown route returns the 7-field envelope with `correlationId`; samples
       accumulate with route templates.
-- [ ] 100% unit coverage on new files.
+- [x] 100% unit coverage on new files.
 
 #### Files to create / modify
 
@@ -370,10 +373,13 @@ Completion Protocol:
 
 ### Task 2.5: Phase close: audit, dashboards, PR + Copilot review + merge
 
-- **Status**: 📋 ToDo
+- **Status**: 🔄 In Progress
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 2.1, 2.2, 2.3, 2.4
+
+> **Note:** acceptance audit, dashboard sync, and PR creation (with the auto-requested Copilot
+> review) are complete. Review resolution and the squash-merge are owned by the orchestrator.
 
 #### Description
 
@@ -382,10 +388,11 @@ dashboards, open the PR, obtain and resolve the GitHub Copilot review, merge wit
 
 #### Acceptance criteria
 
-- [ ] All verification commands of 2.1-2.4 re-run green; the envelope + correlation boot proof
+- [x] All verification commands of 2.1-2.4 re-run green; the envelope + correlation boot proof
       captured in the PR body.
-- [ ] Dashboards consistent (5/5); PR opened; Copilot review requested and fully addressed;
-      squash-merged with branch deletion; `main` CI green.
+- [ ] Dashboards consistent; PR opened; Copilot review requested and fully addressed;
+      squash-merged with branch deletion; `main` CI green. _(PR opened and review auto-requested;
+      resolution + merge owned by the orchestrator.)_
 
 #### Files to create / modify
 
@@ -443,3 +450,15 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 2.1 ✅ 2026-07-17 Nest 11 skeleton (createApp/bootstrap, restricted CORS, shutdown hooks),
+  Zod-validated env schema with fail-fast validateEnv, root info controller; 100% unit coverage.
+- 2.2 ✅ 2026-07-17 AsyncLocalStorage RequestContextService (ICorrelationIdProvider) + seeding
+  middleware echoing a generated x-request-id, applied to all routes; 100% unit coverage.
+- 2.3 ✅ 2026-07-17 Bounded poisonable RingBufferTimingSink (ITimingSink) and buildCoreOptions
+  factory with production-hardened exposeInternals; 100% unit coverage.
+- 2.4 ✅ 2026-07-17 Global CoreWiringModule (token bindings + ring-buffer-fed TimingInterceptor),
+  BymaxCoreModule.forRootAsync from buildCoreOptions, ZodValidationPipe, timing-feed endpoints;
+  boot proof shows the 7-field envelope with correlationId and populated samples; 100% coverage.
+- 2.5 🔄 2026-07-17 Phase-close audit and dashboards done; all gates green; PR opened with the
+  Copilot review auto-requested. Review resolution and squash-merge are owned by the orchestrator.

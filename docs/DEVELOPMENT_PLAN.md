@@ -29,17 +29,17 @@
 
 ## Progress Dashboard
 
-> **Progress:** 1 / 9 phases complete (11%) · 8 / 42 tasks
-> **Active phase:** Phase 1 (Library Consumption & Subpath Probes)
-> **Blocked:** none at kickoff - the sibling library is built and its `dist/` resolves, so
-> Phase 1's external gate is satisfied. Phase 1 returns to ⛔ only if that local-build check
-> regresses (see the [External Precondition](#external-precondition)).
+> **Progress:** 2 / 9 phases complete (22%) · 12 / 42 tasks
+> **Active phase:** Phase 2 (API Skeleton + Core Wiring)
+> **Blocked:** none - the sibling library is built and its `dist/` resolves. Phase 1 merged to
+> `main`; Phase 2 returns to ⛔ only if the local-build check regresses (see the
+> [External Precondition](#external-precondition)).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
 | -- | ---------------------------------------- | ----------------------------------- | ---- | ------------ | ------ |
 | 0  | Repository Foundation & CI               | `phase-00-repo-foundation.md`       | M    | 5 / 5        | ✅     |
-| 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 3 / 3        | 👀     |
-| 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 0 / 5        | 📋     |
+| 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 3 / 3        | ✅     |
+| 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 4 / 5        | 🔄     |
 | 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 0 / 4        | 📋     |
 | 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 0 / 4        | 📋     |
 | 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 0 / 5        | 📋     |
