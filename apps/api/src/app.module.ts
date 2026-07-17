@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { BymaxCoreModule } from '@bymax-one/nest-core'
 
 import { AppController } from './app.controller.js'
+import { CatalogModule } from './catalog/catalog.module.js'
 import { validateEnv } from './config/env.schema.js'
 import { buildCoreOptions } from './core/core.config.js'
 import { CoreWiringModule } from './core/core.module.js'
@@ -36,6 +37,7 @@ import { TimingFeedModule } from './timing-feed/timing-feed.module.js'
     }),
     CoreWiringModule,
     TimingFeedModule,
+    CatalogModule,
   ],
   controllers: [AppController],
 })

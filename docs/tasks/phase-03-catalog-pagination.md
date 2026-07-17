@@ -1,6 +1,6 @@
 # Phase 3: Catalog Domain & Pagination
 
-> **Status**: 🔄 In Progress · **Progress**: 0 / 4 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 1 / 4 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-3-catalog-domain--pagination)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §11, §12.3, §7.5
 
@@ -29,7 +29,7 @@ envelope paths. No database: the repository pattern proves the library's ORM neu
 
 | ID  | Task                                                         | Status | Priority | Size | Depends on |
 | --- | ------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 3.1 | Branch + seeded repository + single lookup (404 path)         | 📋     | P0       | M    | Phase 2    |
+| 3.1 | Branch + seeded repository + single lookup (404 path)         | ✅     | P0       | M    | Phase 2    |
 | 3.2 | Offset endpoint + Zod-validated create + seasonal domain code | 📋     | P0       | M    | 3.1        |
 | 3.3 | Cursor endpoint (codec walk + strict rejection)               | 📋     | P0       | M    | 3.1        |
 | 3.4 | Phase close: audit, dashboards, PR + Copilot review + merge   | 📋     | P0       | S    | 3.1-3.3    |
@@ -38,7 +38,7 @@ envelope paths. No database: the repository pattern proves the library's ORM neu
 
 ### Task 3.1: Branch + seeded repository + single lookup (404 path)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 2
@@ -52,13 +52,13 @@ The `catalog` module skeleton: a deterministic in-memory `ProductRepository` (se
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-03-catalog-pagination` created with `git switch -c`.
-- [ ] `ProductRepository`: `findById`, `findPage(query)`, `findAfter(cursorKeys, limit)`
+- [x] Branch `feat/phase-03-catalog-pagination` created with `git switch -c`.
+- [x] `ProductRepository`: `findById`, `findPage(query)`, `findAfter(cursorKeys, limit)`
       (returns `limit` rows after the cursor position, ordered by id), all latency-simulated.
-- [ ] `GET /catalog/products/:id` returns the product or throws `NotFoundException` with a
+- [x] `GET /catalog/products/:id` returns the product or throws `NotFoundException` with a
       message naming the id (the library derives `BYMAX_NOT_FOUND`).
-- [ ] Seed is deterministic: same count env yields the same products across boots.
-- [ ] 100% unit coverage; scenario comments on every `it()`.
+- [x] Seed is deterministic: same count env yields the same products across boots.
+- [x] 100% unit coverage; scenario comments on every `it()`.
 
 #### Files to create / modify
 
@@ -353,3 +353,7 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 3.1 ✅ 2026-07-17 Deterministic seeded ProductRepository (mulberry32 PRNG keyed by index,
+  latency-simulated findById/findPage/findAfter), CatalogService.getProduct throwing
+  NotFoundException, GET /catalog/products/:id wired into AppModule; 100% unit coverage.
