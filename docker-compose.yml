@@ -1,0 +1,28 @@
+# Optional local observability stack for nest-core-example.
+#
+# Nothing in this file is required to run the project: `pnpm dev` starts the API
+# and the dashboard with zero containers. It adds a single Prometheus instance,
+# gated behind the `tools` profile, so it starts only when explicitly requested
+# with `pnpm tools:up` (or `docker compose --profile tools up -d`). Prometheus
+# scrapes the host-run API's `/metrics` endpoint to demonstrate a real scrape
+# path against the library's metrics surface. Stop it with `pnpm tools:down`.
+#
+# Prometheus UI: http://127.0.0.1:9090
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.4.0
+    # The `tools` profile keeps this service out of the default `up`, so a plain
+    # `docker compose up` starts nothing and the repo stays infrastructure-free.
+    profiles: ['tools']
+    # Bound to loopback only: the demo scraper is never exposed off the machine.
+    ports:
+      - '127.0.0.1:9090:9090'
+    # Read-only scrape config; the container never writes back to the repo.
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    # On Linux, `host.docker.internal` must be mapped explicitly so the scrape
+    # can reach the host-run API. Docker Desktop (macOS/Windows) resolves it
+    # already, where this mapping is a harmless no-op.
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

@@ -1,6 +1,6 @@
 # Phase 5: Health Indicators & Metrics (API)
 
-> **Status**: 🔄 In Progress · **Progress**: 3 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 4 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-5-health-indicators--metrics-api)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §12.4, §12.5, §16, §17, §7.6, §7.7
 
@@ -33,7 +33,7 @@ specified here and asserted exhaustively in Phase 7's variant suites.
 | 5.1 | Branch + demo health indicators (event-loop, flaky, hanging)  | ✅     | P0       | M    | Phase 2    |
 | 5.2 | Health toggle endpoints + readiness flip proofs               | ✅     | P0       | S    | 5.1        |
 | 5.3 | Metrics: custom counter + registry wiring proofs              | ✅     | P0       | M    | Phase 2    |
-| 5.4 | Optional Prometheus profile (compose + scrape config)         | 📋     | P1       | S    | 5.3        |
+| 5.4 | Optional Prometheus profile (compose + scrape config)         | ✅     | P1       | S    | 5.3        |
 | 5.5 | Phase close: audit, dashboards, PR + Copilot review + merge   | 📋     | P0       | S    | 5.1-5.4    |
 
 ## Tasks
@@ -282,7 +282,7 @@ Completion Protocol:
 
 ### Task 5.4: Optional Prometheus profile (compose + scrape config)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P1
 - **Size**: S
 - **Depends on**: 5.3
@@ -295,13 +295,14 @@ config for learners. Nothing in the app depends on it.
 
 #### Acceptance criteria
 
-- [ ] `docker-compose.yml` with the single `prometheus` service, `profiles: ['tools']`,
+- [x] `docker-compose.yml` with the single `prometheus` service, `profiles: ['tools']`,
       `127.0.0.1:9090` binding, read-only config mount.
-- [ ] `docker/prometheus/prometheus.yml` targeting `host.docker.internal:3001/metrics`, 5s
+- [x] `docker/prometheus/prometheus.yml` targeting `host.docker.internal:3001/metrics`, 5s
       interval, commented.
-- [ ] Root scripts `tools:up` / `tools:down`; README note (one paragraph) in the compose file
+- [x] Root scripts `tools:up` / `tools:down`; README note (one paragraph) in the compose file
       header comment explaining the profile is optional.
-- [ ] `docker compose config --profile tools` validates.
+- [x] `docker compose --profile tools config` validates (exit 0); the default config lists no
+      services, keeping `pnpm dev` infrastructure-free.
 
 #### Files to create / modify
 
@@ -428,3 +429,4 @@ Completion Protocol:
 - 5.1 ✅ 2026-07-17 event-loop, flaky, and hanging indicators collected into `BYMAX_HEALTH_INDICATORS`; `/health/ready` reflects all three; 100% unit coverage.
 - 5.2 ✅ 2026-07-17 flaky/hang toggle endpoints (Zod-validated) with readiness-flip proofs: 200↔503, one failure hides nothing, hang down-by-timeout carries `timedOutAfterMs`; 100% coverage.
 - 5.3 ✅ 2026-07-17 `metrics-demo` custom `catalog_lookups_total` counter via injected `BYMAX_METRICS_REGISTRY` (lazy `prom-client`, no static import); scrape proofs for default HTTP metrics, bounded/default labels, process metrics, counter growth; import-hygiene gate; 100% coverage.
+- 5.4 ✅ 2026-07-17 optional `tools`-profile `docker-compose.yml` + commented `docker/prometheus/prometheus.yml` (5s scrape of `host.docker.internal:3001`), root `tools:up`/`tools:down` scripts; compose config validates and the default profile has zero services.
