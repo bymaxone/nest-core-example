@@ -53,6 +53,21 @@ function escapeRegExp(literal) {
 }
 
 /**
+ * Build a RegExp matching `name` only as a whole identifier.
+ *
+ * `\b` treats `$` as a word boundary, so `\b$foo\b` fails to match a `$`-prefixed
+ * export referenced after whitespace or punctuation. Identifier-character
+ * lookarounds (`[\w$]`) match the name exactly when it is not part of a longer
+ * identifier, for any valid identifier including `$`-containing ones.
+ *
+ * @param name - The exported identifier to match as a standalone token.
+ * @returns A RegExp asserting `name` is bounded by non-identifier characters.
+ */
+function wholeIdentifier(name) {
+  return new RegExp(`(?<![\\w$])${escapeRegExp(name)}(?![\\w$])`)
+}
+
+/**
  * Resolve the absolute path to the installed library's package root.
  *
  * The library is a `file:` dependency of `apps/api` only, so resolution is anchored
@@ -185,7 +200,7 @@ function main() {
   const missing = []
   for (const name of [...exports].sort()) {
     if (ignores.has(name)) continue
-    if (!new RegExp(`\\b${escapeRegExp(name)}\\b`).test(corpus)) missing.push(name)
+    if (!wholeIdentifier(name).test(corpus)) missing.push(name)
   }
 
   reportStaleIgnores(ignores, exports, corpus)
@@ -201,7 +216,7 @@ function main() {
  */
 function reportStaleIgnores(ignores, exports, corpus) {
   for (const name of ignores.keys()) {
-    if (exports.has(name) && new RegExp(`\\b${escapeRegExp(name)}\\b`).test(corpus)) {
+    if (exports.has(name) && wholeIdentifier(name).test(corpus)) {
       console.warn(
         `WARN  stale waiver: "${name}" is demonstrated; remove it from .audit-ignore.json`,
       )
