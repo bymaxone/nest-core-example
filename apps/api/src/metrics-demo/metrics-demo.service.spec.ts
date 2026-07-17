@@ -9,7 +9,7 @@
  * never statically imported).
  */
 
-import { beforeEach, describe, expect, it } from '@jest/globals'
+import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 
 import { MetricsDemoService } from './metrics-demo.service.js'
 
@@ -29,6 +29,7 @@ describe('MetricsDemoService', () => {
    */
   it('creates the counter on first lookup and caches it for later increments', async () => {
     const registry = new promClient.Registry()
+    const resolveSpy = jest.spyOn(registry, 'getSingleMetric')
     const service = new MetricsDemoService(registry)
 
     const first = await service.recordLookup()
@@ -37,6 +38,11 @@ describe('MetricsDemoService', () => {
     expect(first).toEqual({ metric: 'catalog_lookups_total', total: 1 })
     expect(second.total).toBe(2)
     expect(registry.getSingleMetric('catalog_lookups_total')).toBeDefined()
+    // The service resolves the counter from the registry exactly once: the
+    // first lookup creates and caches it, and the second reuses the cached
+    // instance instead of resolving again. The explicit lookup on the line above
+    // is the only other call, so the total is two.
+    expect(resolveSpy).toHaveBeenCalledTimes(2)
   })
 
   /**

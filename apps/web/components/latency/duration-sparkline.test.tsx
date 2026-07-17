@@ -60,4 +60,29 @@ describe('DurationSparkline', () => {
     render(<DurationSparkline samples={buildSamples(120)} />)
     expect(screen.getByLabelText('Duration sparkline of the last 50 samples')).toBeInTheDocument()
   })
+
+  /**
+   * Exact normalized geometry.
+   *
+   * Durations chosen to divide the height cleanly (0, 24, 48 against a max of
+   * 48) pin the full `points` string and the `viewBox`: x is spread evenly
+   * across the width, y is the height minus the max-normalized duration, and
+   * the tallest sample touches the top edge (y=0). This fixes every step of
+   * the coordinate math against regression.
+   */
+  it('emits exact normalized coordinates for a known batch', () => {
+    const durations = [0, 24, 48]
+    const samples: RequestTimingSample[] = durations.map((durationMs, index) => ({
+      method: 'GET',
+      route: '/latency',
+      statusCode: 200,
+      durationMs,
+      slow: index === durations.length - 1,
+    }))
+
+    const { container } = render(<DurationSparkline samples={samples} />)
+
+    expect(container.querySelector('polyline')?.getAttribute('points')).toBe('0,48 150,24 300,0')
+    expect(screen.getByRole('img').getAttribute('viewBox')).toBe('0 0 300 48')
+  })
 })

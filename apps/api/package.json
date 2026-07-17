@@ -37,7 +37,9 @@
     "dev": "nest start --watch",
     "test": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest.config.cjs",
     "test:cov": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest.config.cjs --coverage",
-    "test:e2e": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest-e2e.config.mjs --runInBand"
+    "test:e2e": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest-e2e.config.mjs --runInBand",
+    "mutation": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules --max-old-space-size=4096\" stryker run",
+    "mutation:incremental": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules --max-old-space-size=4096\" stryker run --incremental"
   },
   "dependencies": {
     "@bymax-one/nest-core": "file:../../../nest-core",
@@ -54,6 +56,8 @@
     "@jest/globals": "^30",
     "@nestjs/cli": "^11",
     "@nestjs/testing": "^11",
+    "@stryker-mutator/core": "9.6.1",
+    "@stryker-mutator/jest-runner": "9.6.1",
     "@types/node": "^24",
     "@types/supertest": "^7",
     "jest": "^30",

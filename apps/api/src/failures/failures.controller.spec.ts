@@ -27,28 +27,90 @@ interface CatalogRow {
   readonly kind: string
   readonly status: number
   readonly code: string
+  /** The exact human-readable message the envelope must carry for this trigger. */
+  readonly message: string
 }
 
 const CATALOG_ROWS: readonly CatalogRow[] = [
-  { kind: 'bad-request', status: 400, code: 'BYMAX_BAD_REQUEST' },
-  { kind: 'unauthorized', status: 401, code: 'BYMAX_UNAUTHORIZED' },
-  { kind: 'forbidden', status: 403, code: 'BYMAX_FORBIDDEN' },
-  { kind: 'conflict', status: 409, code: 'BYMAX_CONFLICT' },
-  { kind: 'payload-too-large', status: 413, code: 'BYMAX_PAYLOAD_TOO_LARGE' },
-  { kind: 'unsupported-media-type', status: 415, code: 'BYMAX_UNSUPPORTED_MEDIA_TYPE' },
-  { kind: 'unprocessable', status: 422, code: 'BYMAX_UNPROCESSABLE_ENTITY' },
-  { kind: 'too-many-requests', status: 429, code: 'BYMAX_TOO_MANY_REQUESTS' },
-  { kind: 'internal', status: 500, code: 'BYMAX_INTERNAL_ERROR' },
-  { kind: 'not-implemented', status: 501, code: 'BYMAX_NOT_IMPLEMENTED' },
-  { kind: 'bad-gateway', status: 502, code: 'BYMAX_BAD_GATEWAY' },
-  { kind: 'service-unavailable', status: 503, code: 'BYMAX_SERVICE_UNAVAILABLE' },
-  { kind: 'gateway-timeout', status: 504, code: 'BYMAX_GATEWAY_TIMEOUT' },
+  {
+    kind: 'bad-request',
+    status: 400,
+    code: 'BYMAX_BAD_REQUEST',
+    message: 'Demo bad request failure',
+  },
+  {
+    kind: 'unauthorized',
+    status: 401,
+    code: 'BYMAX_UNAUTHORIZED',
+    message: 'Demo unauthorized failure',
+  },
+  { kind: 'forbidden', status: 403, code: 'BYMAX_FORBIDDEN', message: 'Demo forbidden failure' },
+  { kind: 'conflict', status: 409, code: 'BYMAX_CONFLICT', message: 'Demo conflict failure' },
+  {
+    kind: 'payload-too-large',
+    status: 413,
+    code: 'BYMAX_PAYLOAD_TOO_LARGE',
+    message: 'Demo payload too large failure',
+  },
+  {
+    kind: 'unsupported-media-type',
+    status: 415,
+    code: 'BYMAX_UNSUPPORTED_MEDIA_TYPE',
+    message: 'Demo unsupported media type failure',
+  },
+  {
+    kind: 'unprocessable',
+    status: 422,
+    code: 'BYMAX_UNPROCESSABLE_ENTITY',
+    message: 'Demo unprocessable entity failure',
+  },
+  {
+    kind: 'too-many-requests',
+    status: 429,
+    code: 'BYMAX_TOO_MANY_REQUESTS',
+    message: 'Demo too many requests failure',
+  },
+  {
+    kind: 'internal',
+    status: 500,
+    code: 'BYMAX_INTERNAL_ERROR',
+    message: 'Demo internal server error failure',
+  },
+  {
+    kind: 'not-implemented',
+    status: 501,
+    code: 'BYMAX_NOT_IMPLEMENTED',
+    message: 'Demo not implemented failure',
+  },
+  {
+    kind: 'bad-gateway',
+    status: 502,
+    code: 'BYMAX_BAD_GATEWAY',
+    message: 'Demo bad gateway failure',
+  },
+  {
+    kind: 'service-unavailable',
+    status: 503,
+    code: 'BYMAX_SERVICE_UNAVAILABLE',
+    message: 'Demo service unavailable failure',
+  },
+  {
+    kind: 'gateway-timeout',
+    status: 504,
+    code: 'BYMAX_GATEWAY_TIMEOUT',
+    message: 'Demo gateway timeout failure',
+  },
   // Unmapped 4xx: the filter derives the generic BYMAX_CLIENT_ERROR fallback
   // from the raw 418 status rather than a dedicated catalog row.
-  { kind: 'teapot', status: 418, code: 'BYMAX_CLIENT_ERROR' },
+  { kind: 'teapot', status: 418, code: 'BYMAX_CLIENT_ERROR', message: 'I am a teapot' },
   // Unmapped 5xx: any status outside the catalogued rows collapses to
   // BYMAX_INTERNAL_ERROR, the same code the unknown-throw collapse uses.
-  { kind: 'variant-5xx', status: 507, code: 'BYMAX_INTERNAL_ERROR' },
+  {
+    kind: 'variant-5xx',
+    status: 507,
+    code: 'BYMAX_INTERNAL_ERROR',
+    message: 'Insufficient storage',
+  },
 ]
 
 describe('FailuresController', () => {
@@ -78,12 +140,19 @@ describe('FailuresController', () => {
    * `(code, statusCode)` pair the library's exception filter derives: the
    * standard per-status codes, and the unmapped-4xx / unmapped-5xx fallbacks.
    */
-  it.each(CATALOG_ROWS)('POST /failures/$kind -> $status $code', async ({ kind, status, code }) => {
-    const response = await request(httpServer).post(`/failures/${kind}`)
+  it.each(CATALOG_ROWS)(
+    'POST /failures/$kind -> $status $code',
+    async ({ kind, status, code, message }) => {
+      const response = await request(httpServer).post(`/failures/${kind}`)
 
-    expect(response.status).toBe(status)
-    expect((response.body as { code: string }).code).toBe(code)
-  })
+      expect(response.status).toBe(status)
+      const body = response.body as { code: string; message: string }
+      expect(body.code).toBe(code)
+      // Pin the exact human-readable message the trigger raises so the
+      // demo copy in the failure registry cannot drift or be emptied.
+      expect(body.message).toBe(message)
+    },
+  )
 
   /**
    * Unknown kind rejection.
@@ -96,6 +165,9 @@ describe('FailuresController', () => {
     const response = await request(httpServer).post('/failures/does-not-exist')
 
     expect(response.status).toBe(404)
-    expect((response.body as { code: string }).code).toBe('BYMAX_NOT_FOUND')
+    const body = response.body as { code: string; message: string }
+    expect(body.code).toBe('BYMAX_NOT_FOUND')
+    // The 404 names the rejected kind, so the guard's message cannot be emptied.
+    expect(body.message).toBe('Unknown failure kind: does-not-exist')
   })
 })

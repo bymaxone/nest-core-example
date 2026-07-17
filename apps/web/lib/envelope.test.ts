@@ -124,10 +124,14 @@ describe('isErrorEnvelope', () => {
   /**
    * Non-object rejection.
    *
-   * Primitives and null can never structurally match the envelope shape.
+   * Primitives, `null`, and `undefined` can never structurally match the
+   * envelope shape. `undefined` in particular must be short-circuited by the
+   * `typeof` guard: without it, the field access below would throw rather than
+   * cleanly return `false`.
    */
-  it('returns false for null and for primitives', () => {
+  it('returns false for null, undefined, and primitives', () => {
     expect(isErrorEnvelope(null)).toBe(false)
+    expect(isErrorEnvelope(undefined)).toBe(false)
     expect(isErrorEnvelope('not an envelope')).toBe(false)
     expect(isErrorEnvelope(42)).toBe(false)
   })

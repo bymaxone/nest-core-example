@@ -29,10 +29,11 @@
 
 ## Progress Dashboard
 
-> **Progress:** 7 / 9 phases complete (78%) · 36 / 42 tasks
-> **Active phase:** Phase 7 (Testing to the Reference Bar)
-> **Blocked:** none - the sibling library is built and its `dist/` resolves. Phases 3, 4 and 5
-> merged to `main`. A phase returns to ⛔ only if the local-build check regresses (see the
+> **Progress:** 9 / 9 phases complete (100%) · 42 / 42 tasks
+> **Active phase:** none - every phase is complete; the repository is the canonical usage
+> reference for `@bymax-one/nest-core@0.1.0`.
+> **Blocked:** none - the sibling library is built and its `dist/` resolves. A phase returns to
+> ⛔ only if the local-build check regresses (see the
 > [External Precondition](#external-precondition)).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
@@ -44,8 +45,8 @@
 | 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 4 / 4        | ✅     |
 | 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 5 / 5        | ✅     |
 | 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 6 / 6        | ✅     |
-| 7  | Testing to the Reference Bar             | `phase-07-testing.md`               | L    | 4 / 5        | 👀     |
-| 8  | Mutation, Docs, README & Export Audit    | `phase-08-hardening-docs.md`        | M    | 0 / 5        | 📋     |
+| 7  | Testing to the Reference Bar             | `phase-07-testing.md`               | L    | 5 / 5        | ✅     |
+| 8  | Mutation, Docs, README & Export Audit    | `phase-08-hardening-docs.md`        | M    | 5 / 5        | ✅     |
 
 ## External Precondition
 

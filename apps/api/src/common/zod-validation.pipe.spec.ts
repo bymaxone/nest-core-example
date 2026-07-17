@@ -55,4 +55,26 @@ describe('ZodValidationPipe', () => {
     expect(paths).toContain('name')
     expect(paths).toContain('age')
   })
+
+  /**
+   * Nested field path joining.
+   *
+   * A violation on a nested field must report its full dotted path
+   * (`address.city`), proving the issue path segments are joined with a dot
+   * rather than concatenated, which is what the dashboard renders per issue.
+   */
+  it('joins nested field paths with a dot separator', () => {
+    const nested = z.object({ address: z.object({ city: z.string() }) })
+    const pipe = new ZodValidationPipe(nested)
+    let error: BadRequestException | undefined
+
+    try {
+      pipe.transform({ address: { city: 42 } })
+    } catch (caught) {
+      error = caught as BadRequestException
+    }
+
+    const response = error?.getResponse() as { message: Array<{ path: string }> }
+    expect(response.message.map((issue) => issue.path)).toContain('address.city')
+  })
 })

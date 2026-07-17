@@ -9,7 +9,7 @@
  */
 
 import { BadRequestException, NotFoundException } from '@nestjs/common'
-import { encodeCursor } from '@bymax-one/nest-core/pagination'
+import { decodeCursor, encodeCursor } from '@bymax-one/nest-core/pagination'
 import { describe, expect, it, jest } from '@jest/globals'
 
 import { OutOfSeasonError } from '../common/domain-errors.js'
@@ -173,6 +173,27 @@ describe('CatalogService', () => {
       expect(stub.findAfter).toHaveBeenCalledWith(undefined, 2)
       expect(result.items).toEqual([rows[0]])
       expect(result.nextCursor).not.toBeNull()
+      // The cursor must encode the last emitted row's ordering key (its id), so
+      // decoding the opaque token round-trips to exactly that key, not an empty
+      // object.
+      expect(decodeCursor(result.nextCursor as string)).toEqual({ id: 'p-000001' })
+    })
+
+    /**
+     * Cursor limit clamp.
+     *
+     * An over-range cursor limit must clamp to the service's 50-item ceiling
+     * before the fetch-one-extra call, so the repository is asked for 51 rows
+     * (50 + 1) rather than the raw requested value.
+     */
+    it('clamps an over-range cursor limit to the 50-item ceiling', async () => {
+      const stub = buildRepositoryStub()
+      stub.findAfter.mockResolvedValue([])
+      const service = buildService(stub)
+
+      await service.listCursor({ limit: 999 })
+
+      expect(stub.findAfter).toHaveBeenCalledWith(undefined, 51)
     })
 
     /**

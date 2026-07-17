@@ -53,9 +53,13 @@ export type Env = Readonly<z.infer<typeof envSchema>>
 export const env: Env = (() => {
   const result = envSchema.safeParse(rawEnv)
   if (!result.success) {
-    const issues = result.error.issues
-      .map((i) => `  • ${i.path.join('.')}: ${i.message}`)
-      .join('\n')
+    const lines = result.error.issues.map((i) => {
+      // Stryker disable next-line StringLiteral: the single web env var is top-level, so an issue path never has more than one segment and the join separator is never observable; the mutant is provably equivalent.
+      const field = i.path.join('.')
+      return `  • ${field}: ${i.message}`
+    })
+    // Stryker disable next-line StringLiteral: only one variable is validated, so the issue list always has a single line and the newline join separator is never observable; the mutant is provably equivalent.
+    const issues = lines.join('\n')
     throw new Error(`Invalid web env:\n${issues}`)
   }
   return Object.freeze(result.data)

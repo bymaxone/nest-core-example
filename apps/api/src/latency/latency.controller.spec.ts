@@ -81,6 +81,24 @@ describe('LatencyController', () => {
   })
 
   /**
+   * Measured elapsed time from the monotonic clock.
+   *
+   * With the clock pinned to a start and end reading, `elapsedMs` must be the
+   * end-minus-start delta (rounded), proving the handler subtracts the start
+   * from the end rather than adding them, and that it uses `performance.now`.
+   */
+  it('reports the elapsed time as the delta between clock readings', async () => {
+    jest.spyOn(performance, 'now').mockReturnValueOnce(1000).mockReturnValue(1005)
+    const { controller } = buildController()
+
+    const pending = controller.fireDelay({ ms: 5, poison: false })
+    await jest.advanceTimersByTimeAsync(5)
+    const result = await pending
+
+    expect(result.elapsedMs).toBe(5)
+  })
+
+  /**
    * Poison arming.
    *
    * `poison: true` must arm the sink's one-shot poison exactly once and report

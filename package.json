@@ -34,6 +34,7 @@
     "pnpm": ">=10"
   },
   "scripts": {
+    "dev": "pnpm -r --parallel run dev",
     "lint": "eslint .",
     "typecheck": "pnpm -r --workspace-concurrency=1 --if-present run typecheck",
     "format": "prettier --write .",
@@ -45,6 +46,9 @@
     "test:cov:api": "pnpm --filter api run test:cov",
     "test:cov:web": "pnpm --filter web run test:cov",
     "test:e2e:api": "pnpm --filter api run test:e2e",
+    "mutation": "pnpm -r --workspace-concurrency=1 --if-present run mutation",
+    "mutation:incremental": "pnpm -r --workspace-concurrency=1 --if-present run mutation:incremental",
+    "audit:exports": "node scripts/audit-library-exports.mjs",
     "tools:up": "docker compose --profile tools up -d",
     "tools:down": "docker compose --profile tools down",
     "prepare": "husky"

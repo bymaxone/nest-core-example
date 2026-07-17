@@ -5,6 +5,10 @@ node_modules
 pnpm-lock.yaml
 next-env.d.ts
 
+# Mutation testing (Stryker) sandbox and generated reports are not source.
+.stryker-tmp
+reports
+
 # docs/ uses an intentional four-backtick fence convention to nest
 # triple-backtick examples inside agent prompts; Prettier's markdown
 # formatter does not preserve that nesting, so these files are hand-formatted.

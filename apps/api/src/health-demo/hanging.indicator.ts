@@ -49,10 +49,14 @@ export class HangingHealthIndicator implements IHealthIndicator {
       return { status: 'up' }
     }
     // `ref: false` keeps an armed check left in flight (after the aggregator has
-    // already timed it out) from holding the event loop open.
+    // already timed it out) from holding the event loop open. The unref hint has
+    // no bearing on the resolved value or the observed delay, so the mutants on
+    // it are provably equivalent.
+    // Stryker disable ObjectLiteral,BooleanLiteral: `ref` only governs whether the pending timer keeps the process alive; it is never observable in the check's result or timing.
     await sleep(this.options.health.indicatorTimeoutMs + HANG_OVERSHOOT_MS, undefined, {
       ref: false,
     })
+    // Stryker restore ObjectLiteral,BooleanLiteral
     return { status: 'up' }
   }
 }
