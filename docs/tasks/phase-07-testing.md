@@ -1,6 +1,6 @@
 # Phase 7: Testing to the Reference Bar
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-06
+> **Status**: 👀 Review · **Progress**: 4 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-7-testing-to-the-reference-bar)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §18, §7
 
@@ -34,11 +34,11 @@ all of it.
 
 | ID  | Task                                                            | Status | Priority | Size | Depends on |
 | --- | ----------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 7.1 | Branch + api unit completion to 100/100/100/100                   | 📋     | P0       | L    | Phase 6    |
-| 7.2 | Web unit completion to 100 (+ pinned envelope constants)          | 📋     | P0       | M    | Phase 6    |
-| 7.3 | E2E: every route through the real HTTP pipeline                   | 📋     | P0       | M    | 7.1        |
-| 7.4 | E2E: configuration variants (forRoot, disabled, paths, prod, peer) | 📋     | P0       | L    | 7.1        |
-| 7.5 | Phase close: CI hardening + audit + PR + Copilot review + merge   | 📋     | P0       | S    | 7.1-7.4    |
+| 7.1 | Branch + api unit completion to 100/100/100/100                   | ✅     | P0       | L    | Phase 6    |
+| 7.2 | Web unit completion to 100 (+ pinned envelope constants)          | ✅     | P0       | M    | Phase 6    |
+| 7.3 | E2E: every route through the real HTTP pipeline                   | ✅     | P0       | M    | 7.1        |
+| 7.4 | E2E: configuration variants (forRoot, disabled, paths, prod, peer) | ✅     | P0       | L    | 7.1        |
+| 7.5 | Phase close: CI hardening + audit + PR + Copilot review + merge   | 🔄     | P0       | S    | 7.1-7.4    |
 
 ## Tasks
 
@@ -436,3 +436,8 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 7.1 ✅ 2026-07-17 api unit suite completed to 100/100/100/100 (306 stmts, 38 branches, 109 funcs, 271 lines)
+- 7.2 ✅ 2026-07-17 web unit suite completed to 100/100/100/100 with envelope/error constants pinned
+- 7.3 ✅ 2026-07-17 api e2e over every route through the real HTTP pipeline (supertest, in-process, no infra)
+- 7.4 ✅ 2026-07-17 api e2e configuration variants: forRoot sync, disabled-feature (health/metrics/envelope/timing off), custom health.path/metrics.path, prod-mode collapse, missing-peer fail-fast; web Playwright smoke of all six pages; run-e2e-api and run-e2e-web enabled in CI
