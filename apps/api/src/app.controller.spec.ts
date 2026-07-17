@@ -25,4 +25,17 @@ describe('AppController', () => {
       docs: 'See the repository README for the full endpoint catalogue.',
     })
   })
+
+  /**
+   * CI-probe route contract.
+   *
+   * The shared pipeline's boot-wait step polls this exact route before
+   * running the Playwright web smoke, so it must always return the constant
+   * ok body regardless of any other service state.
+   */
+  it('returns a constant ok status from the bare CI-probe route', () => {
+    const controller = new AppController()
+
+    expect(controller.getProbeStatus()).toEqual({ status: 'ok' })
+  })
 })

@@ -36,7 +36,8 @@
     "start": "node dist/main.js",
     "dev": "nest start --watch",
     "test": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest.config.cjs",
-    "test:cov": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest.config.cjs --coverage"
+    "test:cov": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest.config.cjs --coverage",
+    "test:e2e": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest-e2e.config.mjs --runInBand"
   },
   "dependencies": {
     "@bymax-one/nest-core": "file:../../../nest-core",

@@ -122,13 +122,13 @@ importers:
         version: 2.1.1
       geist:
         specifier: ^1.7.0
-        version: 1.7.2(next@16.2.10(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))
+        version: 1.7.2(next@16.2.10(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))
       lucide-react:
         specifier: ^1.8.0
         version: 1.25.0(react@19.2.7)
       next:
         specifier: ^16.2.4
-        version: 16.2.10(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 16.2.10(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
         specifier: ^19.2.5
         version: 19.2.7
@@ -145,6 +145,9 @@ importers:
         specifier: ^4.3.6
         version: 4.4.3
     devDependencies:
+      '@playwright/test':
+        specifier: ^1.61.0
+        version: 1.61.1
       '@tailwindcss/postcss':
         specifier: ^4.2.2
         version: 4.3.3
@@ -1228,6 +1231,11 @@ packages:
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
+
+  '@playwright/test@1.61.1':
+    resolution: {integrity: sha512-8nKv6+0RJSL9FE4jYOEGXnPeM/Hg12qZpmqzZjRh3qM0Y7c3z1mrOTfFLids72RDQYVh9WpLEfR5WdpNX4fkig==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@radix-ui/number@1.1.2':
     resolution: {integrity: sha512-ceTwaxc4I5IOi97DgCotl3pqiyRGvffcc0oOsE2dQYaJOFIDsDt4VWG6xEbg1QePv9QWausCEIppud/tJ1wNig==}
@@ -2960,6 +2968,11 @@ packages:
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -3848,6 +3861,16 @@ packages:
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
     engines: {node: '>=8'}
+
+  playwright-core@1.61.1:
+    resolution: {integrity: sha512-h7Qlt6m4REp25qvIdvbDtVmD4LqVXfpRxhORv9L0jzETM05p4fuPJ3dKyuSXQxDSbXnmS79HAgi9589lGSpLkg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.61.1:
+    resolution: {integrity: sha512-DWnY5o3YbLWK4GovuAVwpqL+1VwGNdUGrRr++8j8PtQQzvAVZUIMjKQ90fY689sEJZJBbZVw1rXaOKSTitkzPQ==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -5902,6 +5925,10 @@ snapshots:
 
   '@pkgr/core@0.3.6': {}
 
+  '@playwright/test@1.61.1':
+    dependencies:
+      playwright: 1.61.1
+
   '@radix-ui/number@1.1.2': {}
 
   '@radix-ui/primitive@1.1.5': {}
@@ -7599,14 +7626,17 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
+  fsevents@2.3.2:
+    optional: true
+
   fsevents@2.3.3:
     optional: true
 
   function-bind@1.1.2: {}
 
-  geist@1.7.2(next@16.2.10(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)):
+  geist@1.7.2(next@16.2.10(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)):
     dependencies:
-      next: 16.2.10(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 16.2.10(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
 
   gensync@1.0.0-beta.2: {}
 
@@ -8430,7 +8460,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next@16.2.10(@opentelemetry/api@1.9.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  next@16.2.10(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
       '@next/env': 16.2.10
       '@swc/helpers': 0.5.15
@@ -8450,6 +8480,7 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 16.2.10
       '@next/swc-win32-x64-msvc': 16.2.10
       '@opentelemetry/api': 1.9.1
+      '@playwright/test': 1.61.1
       sharp: 0.34.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -8586,6 +8617,14 @@ snapshots:
   pkg-dir@4.2.0:
     dependencies:
       find-up: 4.1.0
+
+  playwright-core@1.61.1: {}
+
+  playwright@1.61.1:
+    dependencies:
+      playwright-core: 1.61.1
+    optionalDependencies:
+      fsevents: 2.3.2
 
   pluralize@8.0.0: {}
 
