@@ -32,19 +32,26 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/main.js",
+    "dev": "nest start --watch",
     "test": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest.config.cjs --coverage",
-    "build": "tsc -p tsconfig.json"
+    "test:cov": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --experimental-vm-modules\" jest --config jest.config.cjs --coverage"
   },
   "dependencies": {
     "@bymax-one/nest-core": "file:../../../nest-core",
     "@nestjs/common": "^11",
+    "@nestjs/config": "^4",
     "@nestjs/core": "^11",
+    "@nestjs/platform-express": "^11",
     "prom-client": "^15",
     "reflect-metadata": "^0.2",
-    "rxjs": "^7"
+    "rxjs": "^7",
+    "zod": "^4"
   },
   "devDependencies": {
     "@jest/globals": "^30",
+    "@nestjs/cli": "^11",
     "@types/node": "^24",
     "jest": "^30",
     "ts-jest": "^29"

@@ -16,6 +16,10 @@
 module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: 'src',
+  // NestJS decorators emit `design:*` metadata through `reflect-metadata`; load
+  // the polyfill before any decorated class is evaluated so specs can import
+  // providers, controllers, and pipes directly without booting an application.
+  setupFiles: ['reflect-metadata'],
   testRegex: '.*\\.spec\\.ts$',
   extensionsToTreatAsEsm: ['.ts'],
   transform: {

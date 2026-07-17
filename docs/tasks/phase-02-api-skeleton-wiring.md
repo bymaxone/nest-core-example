@@ -1,6 +1,6 @@
 # Phase 2: API Skeleton + Core Wiring
 
-> **Status**: 🔄 In Progress · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 1 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-2-api-skeleton--core-wiring)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §9, §10
 
@@ -32,7 +32,7 @@ infrastructure.
 
 | ID  | Task                                                          | Status | Priority | Size | Depends on |
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 2.1 | Branch + Nest app skeleton + Zod env schema                    | 📋     | P0       | M    | Phase 1    |
+| 2.1 | Branch + Nest app skeleton + Zod env schema                    | ✅     | P0       | M    | Phase 1    |
 | 2.2 | Correlation: request context (ALS) + middleware + header echo  | 📋     | P0       | M    | 2.1        |
 | 2.3 | Timing sink (ring buffer, poisonable) + core.config factory    | 📋     | P0       | M    | 2.1        |
 | 2.4 | Module wiring (forRootAsync + token providers) + timing-feed   | 📋     | P0       | M    | 2.2, 2.3   |
@@ -42,7 +42,7 @@ infrastructure.
 
 ### Task 2.1: Branch + Nest app skeleton + Zod env schema
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 1
@@ -55,13 +55,13 @@ wired through `@nestjs/config` so a bad environment fails at startup with a read
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-02-api-skeleton-wiring` created with `git switch -c`.
-- [ ] `src/config/env.schema.ts`: Zod schema for every Appendix A variable with defaults;
+- [x] Branch `feat/phase-02-api-skeleton-wiring` created with `git switch -c`.
+- [x] `src/config/env.schema.ts`: Zod schema for every Appendix A variable with defaults;
       `validateEnv()`; exported `Env` type; unit-tested (valid, invalid, defaults).
-- [ ] `main.ts`: `createApp()` seam (testable) + `bootstrap()`; CORS restricted to
+- [x] `main.ts`: `createApp()` seam (testable) + `bootstrap()`; CORS restricted to
       `WEB_ORIGIN`; `enableShutdownHooks`.
-- [ ] `pnpm --filter @nest-core-example/api dev` boots and serves a minimal `GET /` info route.
-- [ ] 100% unit coverage on the new files; `it()` scenario comments.
+- [x] `pnpm --filter @nest-core-example/api dev` boots and serves a minimal `GET /` info route.
+- [x] 100% unit coverage on the new files; `it()` scenario comments.
 
 #### Files to create / modify
 
@@ -443,3 +443,6 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 2.1 ✅ 2026-07-17 Nest 11 skeleton (createApp/bootstrap, restricted CORS, shutdown hooks),
+  Zod-validated env schema with fail-fast validateEnv, root info controller; 100% unit coverage.
