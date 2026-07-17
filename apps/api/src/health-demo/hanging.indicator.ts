@@ -7,6 +7,8 @@
  * @layer service
  */
 
+import { setTimeout as sleep } from 'node:timers/promises'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { BYMAX_CORE_OPTIONS } from '@bymax-one/nest-core'
 import type { ResolvedCoreOptions } from '@bymax-one/nest-core'
@@ -16,21 +18,6 @@ import { HangStateService } from './hang-state.service.js'
 
 /** Delay added past the configured timeout so the aggregator times out first. */
 const HANG_OVERSHOOT_MS = 250
-
-/**
- * Await a delay whose timer never keeps the process alive on its own.
- *
- * The timer is unreferenced so an armed check left in flight after the
- * aggregator has already timed out cannot hold the event loop open.
- *
- * @param ms - Milliseconds to wait.
- * @returns A promise resolving once the delay has elapsed.
- */
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms).unref()
-  })
-}
 
 /**
  * Sleeps past the per-indicator timeout when armed; healthy otherwise.
@@ -61,7 +48,11 @@ export class HangingHealthIndicator implements IHealthIndicator {
     if (!this.state.isArmed()) {
       return { status: 'up' }
     }
-    await sleep(this.options.health.indicatorTimeoutMs + HANG_OVERSHOOT_MS)
+    // `ref: false` keeps an armed check left in flight (after the aggregator has
+    // already timed it out) from holding the event loop open.
+    await sleep(this.options.health.indicatorTimeoutMs + HANG_OVERSHOOT_MS, undefined, {
+      ref: false,
+    })
     return { status: 'up' }
   }
 }
