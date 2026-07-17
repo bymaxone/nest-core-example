@@ -16,8 +16,12 @@ import type { PageQuery } from '@bymax-one/nest-core/pagination'
 import type { Env } from '../config/env.schema.js'
 import type { Product } from './product.types.js'
 
-/** Ordering keys encoded into a cursor for this repository (id only). */
-export interface ProductCursorKeys {
+/**
+ * Ordering keys encoded into a cursor for this repository (id only). Declared as
+ * a type alias (not an interface) so it satisfies the library's cursor-key
+ * constraint (`Record<string, string | number>`) when passed to `decodeCursor`.
+ */
+export type ProductCursorKeys = {
   readonly id: string
 }
 
