@@ -14,11 +14,17 @@ is still what resolves) and proves that all three subpaths (`.`, `./pagination`,
 type-resolve, before any real wiring exists. The `apps/api` workspace package is created here
 as a minimal holder so the dependency has a home.
 
-**External gate:** this phase must not start until the library's `dist/` is built — from the
-repo root, `test -f ../nest-core/dist/index.d.ts && test -f
-../nest-core/dist/pagination/index.d.ts && test -f ../nest-core/dist/health/index.d.ts` must
-exit 0. While it fails, the phase stays ⛔ with the missing build named in the plan dashboard,
-and the run stops cleanly (the operator rebuilds with `pnpm -C ../nest-core build`).
+**External gate:** this phase must not start until the library's `dist/` is built. From the
+repo root, this must exit 0:
+
+```bash
+test -f ../nest-core/dist/index.d.ts \
+  && test -f ../nest-core/dist/pagination/index.d.ts \
+  && test -f ../nest-core/dist/health/index.d.ts
+```
+
+While it fails, the phase stays ⛔ with the missing build named in the plan dashboard, and the
+run stops cleanly (the operator rebuilds with `pnpm -C ../nest-core build`).
 
 ## Rules-of-phase
 
@@ -121,7 +127,7 @@ Constraints:
   PR bodies, or comments.
 - The library resolves through its packed dist + exports map only (the file: protocol
   guarantees this); no workspace: member, no link: symlink, no paths alias, no copied code.
-  Never read ../nest-core sources — only the installed node_modules artifacts. TS strict; no
+  Never read ../nest-core sources - only the installed node_modules artifacts. TS strict; no
   suppression comments; English-only timeless comments; no .gitkeep; no em dashes.
 
 Verification:

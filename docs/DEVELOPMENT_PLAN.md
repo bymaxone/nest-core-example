@@ -32,7 +32,7 @@
 > **Progress:** 0 / 9 phases complete (0%) · 0 / 42 tasks
 > **Active phase:** none (plan awaiting kickoff)
 > **Blocked:** none (the library is available locally; Phase 1 only requires its `dist/` to
-> be built — see the external precondition below).
+> be built - see the external precondition below).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
 | -- | ---------------------------------------- | ----------------------------------- | ---- | ------------ | ------ |
@@ -50,14 +50,14 @@
 
 `@bymax-one/nest-core` is **ready in its sibling local checkout
 (`../nest-core`) and is not published to npm for now**. The example consumes it via
-`"@bymax-one/nest-core": "file:../../../nest-core"` in `apps/api` — the same pattern the
+`"@bymax-one/nest-core": "file:../../../nest-core"` in `apps/api` - the same pattern the
 sibling `*-example` repos use. The `file:` protocol packs the library respecting its
 `files` and `exports` fields, so the example still validates the packaged `exports` map
 like a real consumer. Before starting Phase 1 (and any phase after it), verify the library
 is built:
 
 ```bash
-# from the repo root — all three subpath type entries must exist
+# from the repo root - all three subpath type entries must exist
 test -f ../nest-core/dist/index.d.ts \
   && test -f ../nest-core/dist/pagination/index.d.ts \
   && test -f ../nest-core/dist/health/index.d.ts
@@ -66,7 +66,7 @@ test -f ../nest-core/dist/index.d.ts \
 While the check fails, Phase 1 stays ⛔ Blocked (name the missing build in the dashboard
 notes) and the run stops cleanly; the operator builds the library with
 `pnpm -C ../nest-core build`. This plan never consumes the library as a `workspace:` member,
-a `link:` symlink, or a `paths` alias — and after any library rebuild, a fresh
+a `link:` symlink, or a `paths` alias - and after any library rebuild, a fresh
 `pnpm install` is required for the repacked `file:` dependency to be picked up.
 
 ---

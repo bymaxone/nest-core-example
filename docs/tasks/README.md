@@ -13,10 +13,10 @@ four-backtick **Agent prompt** executable by a fresh agent) and a completion log
 ## External precondition (not a phase)
 
 `@bymax-one/nest-core` lives in the sibling local checkout (`../nest-core`) and is **not
-published to npm for now** — the example consumes it via
+published to npm for now** - the example consumes it via
 `"@bymax-one/nest-core": "file:../../../nest-core"` in `apps/api`. Phase 1 and everything
-after it require the library's `dist/` to be built (all three subpath `.d.ts` entries
-present; see the [plan's External Precondition](../DEVELOPMENT_PLAN.md#external-precondition)).
+after it require the library's `dist/` to be built, i.e. all three subpath `.d.ts` entries
+present; see the [plan's External Precondition](../DEVELOPMENT_PLAN.md#external-precondition).
 If the check fails, mark Phase 1 ⛔ with the missing build named and stop cleanly; the
 operator rebuilds with `pnpm -C ../nest-core build`.
 

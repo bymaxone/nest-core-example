@@ -506,7 +506,7 @@ protocol pointing at the sibling checkout: pnpm packs the directory respecting t
 The consuming phases of the plan require the local library to be **built**:
 
 ```bash
-# from this repo's root — all three subpath type entries must exist
+# from this repo's root - all three subpath type entries must exist
 test -f ../nest-core/dist/index.d.ts \
   && test -f ../nest-core/dist/pagination/index.d.ts \
   && test -f ../nest-core/dist/health/index.d.ts     # exit 0 → consumption unblocked
