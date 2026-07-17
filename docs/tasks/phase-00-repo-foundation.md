@@ -1,6 +1,6 @@
 # Phase 0: Repository Foundation & CI
 
-> **Status**: 🔄 In Progress · **Progress**: 2 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 3 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-0-repository-foundation--ci)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §6, §19
 
@@ -31,7 +31,7 @@ the plan's external precondition).
 | --- | ----------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 0.1 | Branch + root workspace, TypeScript base, editor hygiene    | ✅     | P0       | S    | none       |
 | 0.2 | Lint, format, git hooks, commit governance                  | ✅     | P0       | S    | 0.1        |
-| 0.3 | Community files + Renovate                                  | 📋     | P1       | S    | 0.1        |
+| 0.3 | Community files + Renovate                                  | ✅     | P1       | S    | 0.1        |
 | 0.4 | CI workflows (ci + conditional codeql/scorecard)            | 📋     | P0       | M    | 0.2        |
 | 0.5 | Phase close: audit, dashboards, PR + Copilot review + merge | 📋     | P0       | S    | 0.1-0.4    |
 
@@ -205,7 +205,7 @@ Completion Protocol:
 
 ### Task 0.3: Community files + Renovate
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P1
 - **Size**: S
 - **Depends on**: 0.1
@@ -218,12 +218,12 @@ rule (automerge minor/patch after green CI, majors labeled).
 
 #### Acceptance criteria
 
-- [ ] `LICENSE` (MIT, Bymax One), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant
+- [x] `LICENSE` (MIT, Bymax One), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant
       2.1 by reference, never transcribed), `CHANGELOG.md` (empty Unreleased section).
-- [ ] `README.md` stub: one-paragraph purpose, links to the three docs, "under construction"
+- [x] `README.md` stub: one-paragraph purpose, links to the three docs, "under construction"
       note that is honest and professional.
-- [ ] `CLAUDE.md` and `AGENTS.md` stubs pointing agents at `docs/` and the tasks folder.
-- [ ] `renovate.json`: extends recommended, `@bymax-one/**` group with automerge for
+- [x] `CLAUDE.md` and `AGENTS.md` stubs pointing agents at `docs/` and the tasks folder.
+- [x] `renovate.json`: extends recommended, `@bymax-one/**` group with automerge for
       minor/patch, `breaking-change` label for majors.
 
 #### Files to create / modify
@@ -450,3 +450,4 @@ Completion Protocol:
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
 - 0.1 ✅ 2026-07-17 pnpm workspace root, strict TypeScript base and editor hygiene scaffolded
 - 0.2 ✅ 2026-07-17 ESLint 9 flat config, Prettier, husky and commitlint wired and verified
+- 0.3 ✅ 2026-07-17 Community files (license, contributing, conduct, changelog, README stub) and Renovate config added
