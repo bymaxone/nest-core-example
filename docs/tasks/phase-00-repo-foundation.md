@@ -1,6 +1,6 @@
 # Phase 0: Repository Foundation & CI
 
-> **Status**: 🔄 In Progress · **Progress**: 1 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 2 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-0-repository-foundation--ci)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §6, §19
 
@@ -30,7 +30,7 @@ the plan's external precondition).
 | ID  | Task                                                       | Status | Priority | Size | Depends on |
 | --- | ----------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 0.1 | Branch + root workspace, TypeScript base, editor hygiene    | ✅     | P0       | S    | none       |
-| 0.2 | Lint, format, git hooks, commit governance                  | 📋     | P0       | S    | 0.1        |
+| 0.2 | Lint, format, git hooks, commit governance                  | ✅     | P0       | S    | 0.1        |
 | 0.3 | Community files + Renovate                                  | 📋     | P1       | S    | 0.1        |
 | 0.4 | CI workflows (ci + conditional codeql/scorecard)            | 📋     | P0       | M    | 0.2        |
 | 0.5 | Phase close: audit, dashboards, PR + Copilot review + merge | 📋     | P0       | S    | 0.1-0.4    |
@@ -126,7 +126,7 @@ Completion Protocol:
 
 ### Task 0.2: Lint, format, git hooks, commit governance
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 0.1
@@ -138,14 +138,14 @@ and commitlint so Conventional Commits are enforced locally from the first commi
 
 #### Acceptance criteria
 
-- [ ] `eslint.config.mjs` (flat, typed rules for `*.ts`/`*.tsx`, ignores for `dist`, `.next`,
+- [x] `eslint.config.mjs` (flat, typed rules for `*.ts`/`*.tsx`, ignores for `dist`, `.next`,
       `coverage`); `pnpm lint` exits 0.
-- [ ] `.prettierrc.mjs` + `pnpm format:check` exits 0.
-- [ ] `.husky/pre-commit` → lint-staged; `.husky/commit-msg` → commitlint;
+- [x] `.prettierrc.mjs` + `pnpm format:check` exits 0.
+- [x] `.husky/pre-commit` → lint-staged; `.husky/commit-msg` → commitlint;
       `commitlint.config.mjs` extends `config-conventional`; `lint-staged.config.mjs` runs
       prettier + eslint --fix on staged files.
-- [ ] `.gitmessage` template with the project scopes (`repo`, `api`, `web`, `ci`, `docs`).
-- [ ] A test commit with a non-Conventional message is rejected by the hook.
+- [x] `.gitmessage` template with the project scopes (`repo`, `api`, `web`, `ci`, `docs`).
+- [x] A test commit with a non-Conventional message is rejected by the hook.
 
 #### Files to create / modify
 
@@ -449,3 +449,4 @@ Completion Protocol:
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
 - 0.1 ✅ 2026-07-17 pnpm workspace root, strict TypeScript base and editor hygiene scaffolded
+- 0.2 ✅ 2026-07-17 ESLint 9 flat config, Prettier, husky and commitlint wired and verified
