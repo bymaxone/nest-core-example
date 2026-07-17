@@ -34,6 +34,7 @@
     "pnpm": ">=10"
   },
   "scripts": {
+    "dev": "pnpm -r --parallel run dev",
     "lint": "eslint .",
     "typecheck": "pnpm -r --workspace-concurrency=1 --if-present run typecheck",
     "format": "prettier --write .",

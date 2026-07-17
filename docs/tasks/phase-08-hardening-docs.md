@@ -1,6 +1,6 @@
 # Phase 8: Mutation, Docs, README & Export Audit
 
-> **Status**: 🔄 In Progress · **Progress**: 3 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 4 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-8-mutation-docs-readme--export-audit)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §7, §18, §21
 
@@ -38,7 +38,7 @@ the complete, verifiable usage reference for `@bymax-one/nest-core`.
 | 8.1 | Branch + Stryker toolchain (api + web) + baseline records      | ✅     | P0       | M    | Phase 7    |
 | 8.2 | Survivor hardening to thresholds (api 100, web 90)             | ✅     | P0       | L    | 8.1        |
 | 8.3 | Export audit script + CI job                                   | ✅     | P0       | M    | Phase 7    |
-| 8.4 | Final README, CHANGELOG and journeys                           | 📋     | P0       | M    | 8.3        |
+| 8.4 | Final README, CHANGELOG and journeys                           | ✅     | P0       | M    | 8.3        |
 | 8.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 8.1-8.4    |
 
 ## Tasks
@@ -275,7 +275,7 @@ Completion Protocol:
 
 ### Task 8.4: Final README, CHANGELOG and journeys
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 8.3
@@ -289,12 +289,12 @@ readiness flip, metrics growth), the pages gallery, and the CHANGELOG 0.1.0 entr
 
 #### Acceptance criteria
 
-- [ ] `README.md`: header + badges (CI, license, Node, library version), what's inside,
+- [x] `README.md`: header + badges (CI, license, Node, library version), what's inside,
       quick start, endpoints table (§11.1), five documented curl journeys with expected
       outputs, dashboard pages table, architecture ASCII, links to the three docs.
-- [ ] `CHANGELOG.md` 0.1.0 entry summarizing the delivered surface.
-- [ ] Every README link resolves; every journey command verified against the running app.
-- [ ] Docs cross-references consistent (spec §24 reconciliation note honored if any drift was
+- [x] `CHANGELOG.md` 0.1.0 entry summarizing the delivered surface.
+- [x] Every README link resolves; every journey command verified against the running app.
+- [x] Docs cross-references consistent (spec §24 reconciliation note honored if any drift was
       found during Phases 1-7).
 
 #### Files to create / modify
@@ -433,3 +433,5 @@ Completion Protocol:
 - 8.3 ✅ 2026-07-17 `scripts/audit-library-exports.mjs` reads the shipped `.d.ts` from
   node_modules; `pnpm audit:exports` exits 0 (49 demonstrated, 5 waived); CI `run-export-audit`
   and `run-mutation` flipped to true.
+- 8.4 ✅ 2026-07-17 Final README (badges, what's inside, quick start, endpoints, five verified
+  curl journeys, pages table, architecture) and CHANGELOG 0.1.0; root `dev` script added.
