@@ -29,11 +29,10 @@
 
 ## Progress Dashboard
 
-> **Progress:** 5 / 9 phases complete (56%) · 25 / 42 tasks
-> **Active phase:** Phase 5 (Health Indicators & Metrics (API))
-> **Blocked:** none - the sibling library is built and its `dist/` resolves. Phases 3 and 4
-> merged to `main`; Phase 5 is in review (tasks 5.1-5.4 done, PR open). A phase returns to ⛔
-> only if the local-build check regresses (see the
+> **Progress:** 6 / 9 phases complete (67%) · 26 / 42 tasks
+> **Active phase:** Phase 6 (Dashboard: Shell + All Pages)
+> **Blocked:** none - the sibling library is built and its `dist/` resolves. Phases 3, 4 and 5
+> merged to `main`. A phase returns to ⛔ only if the local-build check regresses (see the
 > [External Precondition](#external-precondition)).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
@@ -43,8 +42,8 @@
 | 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 5 / 5        | ✅     |
 | 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 4 / 4        | ✅     |
 | 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 4 / 4        | ✅     |
-| 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 4 / 5        | 🔄     |
-| 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 0 / 6        | 📋     |
+| 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 5 / 5        | ✅     |
+| 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 0 / 6        | 🔄     |
 | 7  | Testing to the Reference Bar             | `phase-07-testing.md`               | L    | 0 / 5        | 📋     |
 | 8  | Mutation, Docs, README & Export Audit    | `phase-08-hardening-docs.md`        | M    | 0 / 5        | 📋     |
 

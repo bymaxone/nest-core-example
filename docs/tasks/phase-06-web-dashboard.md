@@ -1,6 +1,6 @@
 # Phase 6: Dashboard: Shell + All Pages
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 6 tasks · **Last updated**: 2026-07-06
+> **Status**: 🔄 In Progress · **Progress**: 0 / 6 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-6-dashboard-shell--all-pages)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §13, §14, §12
 
