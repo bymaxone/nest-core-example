@@ -28,6 +28,12 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.next', 'coverage', '.stryker-tmp', 'reports'])
 /** Test files are excluded: the audit proves exports are demonstrated, not merely tested. */
 const TEST_FILE = /\.(spec|e2e-spec|test)\.(ts|tsx)$/
+/**
+ * Ambient declaration files (`*.d.ts`, e.g. `next-env.d.ts`) are excluded: they are
+ * generated, type-only shims. An export named there would count as demonstrated
+ * without any real runtime use, defeating the audit's purpose.
+ */
+const DECLARATION_FILE = /\.d\.ts$/
 const SOURCE_FILE = /\.(ts|tsx)$/
 /** Synthetic export name the `--self-test` flag injects to prove the failure path exits 1. */
 const SELF_TEST_MISS = '__nest_core_audit_self_test_missing_export__'
@@ -118,7 +124,8 @@ function collectSources(dir, acc = []) {
     if (SKIP_DIRS.has(name)) continue
     const full = path.join(dir, name)
     if (statSync(full).isDirectory()) collectSources(full, acc)
-    else if (SOURCE_FILE.test(name) && !TEST_FILE.test(name)) acc.push(full)
+    else if (SOURCE_FILE.test(name) && !TEST_FILE.test(name) && !DECLARATION_FILE.test(name))
+      acc.push(full)
   }
   return acc
 }
@@ -132,12 +139,18 @@ function collectSources(dir, acc = []) {
  * @returns A map of ignored export name to its written reason.
  */
 function loadIgnores() {
-  let parsed
+  let raw
   try {
-    parsed = JSON.parse(readFileSync(path.join(REPO_ROOT, '.audit-ignore.json'), 'utf8'))
-  } catch {
-    return new Map()
+    raw = readFileSync(path.join(REPO_ROOT, '.audit-ignore.json'), 'utf8')
+  } catch (err) {
+    // A missing waiver file legitimately means "no waivers"; any other read
+    // error (permissions, a directory in its place) is a real problem to surface.
+    if (err?.code === 'ENOENT') return new Map()
+    throw err
   }
+  // A malformed waiver file must fail loudly here, not silently drop every waiver
+  // and resurface later as confusing "undemonstrated exports".
+  const parsed = JSON.parse(raw)
   const map = new Map()
   for (const entry of parsed.ignored ?? []) {
     if (!entry?.name || typeof entry.reason !== 'string' || entry.reason.trim() === '') {
