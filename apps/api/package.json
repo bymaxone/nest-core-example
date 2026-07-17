@@ -1,0 +1,52 @@
+{
+  "name": "@nest-core-example/api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "NestJS 11 reference API consuming @bymax-one/nest-core from the sibling local checkout and proving its three published subpaths (root, ./pagination, ./health) resolve.",
+  "keywords": [
+    "bymax",
+    "bymax-one",
+    "nest-core",
+    "nestjs",
+    "reference-app",
+    "example",
+    "api"
+  ],
+  "homepage": "https://github.com/bymaxone/nest-core-example/tree/main/apps/api#readme",
+  "bugs": {
+    "url": "https://github.com/bymaxone/nest-core-example/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bymaxone/nest-core-example.git",
+    "directory": "apps/api"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Bymax One",
+    "url": "https://github.com/bymaxone"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.cjs --coverage",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@bymax-one/nest-core": "file:../../../nest-core",
+    "@nestjs/common": "^11",
+    "@nestjs/core": "^11",
+    "prom-client": "^15",
+    "reflect-metadata": "^0.2",
+    "rxjs": "^7"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30",
+    "@types/node": "^24",
+    "jest": "^30",
+    "ts-jest": "^29"
+  }
+}
