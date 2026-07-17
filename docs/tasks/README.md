@@ -1,6 +1,6 @@
 # Development Tasks: nest-core-example
 
-> **Last updated:** 2026-07-06
+> **Last updated:** 2026-07-17
 > **Source roadmap:** [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md) · **Spec:** [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md)
 
 Tasks live **one file per phase** in this folder (`phase-NN-<slug>.md`). Each file is

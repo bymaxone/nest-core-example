@@ -74,9 +74,9 @@ the optional `prom-client`.
       `dist/pagination/index.d.ts`, `dist/health/index.d.ts` all exist); the packed library
       version (from `../nest-core/package.json`) is recorded in the completion log.
 - [ ] Branch `feat/phase-01-library-consumption` created with `git switch -c`.
-- [ ] `apps/api/package.json`: name `@nest-core-example/api`, deps
-      `@bymax-one/nest-core@file:../../../nest-core`,
-      `@nestjs/common@^11`, `@nestjs/core@^11`, `reflect-metadata@^0.2`, `rxjs@^7`,
+- [ ] `apps/api/package.json`: name `@nest-core-example/api`, with the library declared as the
+      exact `package.json` key/value pair `"@bymax-one/nest-core": "file:../../../nest-core"`,
+      plus peers `@nestjs/common@^11`, `@nestjs/core@^11`, `reflect-metadata@^0.2`, `rxjs@^7`,
       `prom-client@^15`; scripts `typecheck`, `test`, `build` (placeholder tsc build).
 - [ ] `apps/api/tsconfig.json` extends `../../tsconfig.base.json`.
 - [ ] `pnpm install` links everything; peers resolve to a single copy (`pnpm why @nestjs/core`).
@@ -99,9 +99,8 @@ CURRENT PHASE: 1 (Library Consumption), Task 1.1 of 3 (FIRST).
 
 PRECONDITIONS
 - Phase 0 merged; CI green on main.
-- EXTERNAL GATE: from the repo root, verify the packed library is built:
-  `test -f ../nest-core/dist/index.d.ts && test -f ../nest-core/dist/pagination/index.d.ts
-  && test -f ../nest-core/dist/health/index.d.ts`. Under autopilot the orchestrator builds the
+- EXTERNAL GATE: from the repo root, verify the packed library is built by running this single
+  command: `test -f ../nest-core/dist/index.d.ts && test -f ../nest-core/dist/pagination/index.d.ts && test -f ../nest-core/dist/health/index.d.ts`. Under autopilot the orchestrator builds the
   library as a precondition before spawning you, so this normally already passes. If you still
   find it failing, build it once with `pnpm -C ../nest-core build` and re-check; if it STILL
   fails, STOP and report the missing build (the orchestrator/operator marks Phase 1 ⛔ in the
