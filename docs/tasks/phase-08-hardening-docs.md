@@ -1,6 +1,6 @@
 # Phase 8: Mutation, Docs, README & Export Audit
 
-> **Status**: 🔄 In Progress · **Progress**: 2 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 3 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-8-mutation-docs-readme--export-audit)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §7, §18, §21
 
@@ -37,7 +37,7 @@ the complete, verifiable usage reference for `@bymax-one/nest-core`.
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 8.1 | Branch + Stryker toolchain (api + web) + baseline records      | ✅     | P0       | M    | Phase 7    |
 | 8.2 | Survivor hardening to thresholds (api 100, web 90)             | ✅     | P0       | L    | 8.1        |
-| 8.3 | Export audit script + CI job                                   | 📋     | P0       | M    | Phase 7    |
+| 8.3 | Export audit script + CI job                                   | ✅     | P0       | M    | Phase 7    |
 | 8.4 | Final README, CHANGELOG and journeys                           | 📋     | P0       | M    | 8.3        |
 | 8.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 8.1-8.4    |
 
@@ -195,7 +195,7 @@ Completion Protocol:
 
 ### Task 8.3: Export audit script + CI job
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 7
@@ -213,13 +213,14 @@ reason; wired as an `audit:exports` script and a CI step.
 
 #### Acceptance criteria
 
-- [ ] The script parses `node_modules/@bymax-one/nest-core/dist/{index,pagination/index,health/index}.d.ts`
-      export names (zero-dependency: `node:fs` + a conservative regex over `export` statements).
-- [ ] Every export found is word-boundary-matched in `apps/**` sources; misses fail with a
+- [x] The script parses every subpath's shipped `.d.ts` from `node_modules` (resolved via the
+      installed package's `exports` map, zero-dependency: `node:fs`/`node:module` + a conservative
+      regex over `export` statements).
+- [x] Every export found is word-boundary-matched in `apps/**` sources; misses fail with a
       clear list; `.audit-ignore.json` entries require a `reason` field.
-- [ ] `pnpm audit:exports` exits 0 on the current corpus; a temporary fake miss (self-test flag)
-      proves the failure path.
-- [ ] CI step added after the test steps.
+- [x] `pnpm audit:exports` exits 0 on the current corpus (49 demonstrated, 5 waived); the
+      `--self-test` flag proves the failure path (exit 1).
+- [x] CI enabled via `run-export-audit: true` (and `run-mutation: true`) on `ci.yml`.
 
 #### Files to create / modify
 
@@ -429,3 +430,6 @@ Completion Protocol:
   incremental); baselines recorded: api 77.81%, web 84.22%; artifacts git/lint/prettier ignored.
 - 8.2 ✅ 2026-07-17 Survivors killed with behavioral assertions: api 100.00% (break 100, 0
   survivors), web 90.72% (break 90, `lib/**` at 100); 9 proven-equivalent mutants documented.
+- 8.3 ✅ 2026-07-17 `scripts/audit-library-exports.mjs` reads the shipped `.d.ts` from
+  node_modules; `pnpm audit:exports` exits 0 (49 demonstrated, 5 waived); CI `run-export-audit`
+  and `run-mutation` flipped to true.

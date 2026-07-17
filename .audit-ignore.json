@@ -1,0 +1,24 @@
+{
+  "ignored": [
+    {
+      "name": "BymaxExceptionFilter",
+      "reason": "Registered automatically as the global APP_FILTER by BymaxCoreModule.forRootAsync; its behavior is demonstrated by the error envelope on every failure route (spec §7.2, rows 12-19), so the example never instantiates the filter directly."
+    },
+    {
+      "name": "buildErrorEnvelope",
+      "reason": "The pure envelope builder the exception filter applies internally. The assembled 7-field envelope is demonstrated on every error response and rendered by the Errors page, rather than by the example calling the builder itself."
+    },
+    {
+      "name": "BuildErrorEnvelopeInput",
+      "reason": "The input type of the internal buildErrorEnvelope builder. The example consumes the assembled ErrorEnvelope (mirrored in apps/web/lib/envelope.ts), not the builder's input shape."
+    },
+    {
+      "name": "FilterErrorContext",
+      "reason": "The neutral request context passed to the exception filter's observability seam. The example does not override that seam (it relies on the default), so the type is not referenced by name."
+    },
+    {
+      "name": "codeForStatus",
+      "reason": "The HTTP-status-to-code derivation the filter applies internally. Its result is demonstrated end-to-end by the failure triggers, including the unmapped 418 to BYMAX_CLIENT_ERROR and 507 to BYMAX_INTERNAL_ERROR fallbacks (spec §7.3, rows 35-36)."
+    }
+  ]
+}
