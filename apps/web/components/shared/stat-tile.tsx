@@ -1,5 +1,5 @@
 /**
- * @fileoverview KPI tile — the design system's `stat` pattern (label, mono
+ * @fileoverview KPI tile: the design system's `stat` pattern (label, mono
  * value, optional hint), used for the Overview status strip.
  *
  * @layer components/shared

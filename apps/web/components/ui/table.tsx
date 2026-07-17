@@ -46,7 +46,7 @@ const TableHeader = React.forwardRef<
 TableHeader.displayName = 'TableHeader'
 
 /**
- * `<tbody>` wrapper — applies alternating row highlighting via CSS.
+ * `<tbody>` wrapper: applies alternating row highlighting via CSS.
  *
  * @param className - Additional classes merged onto the `<tbody>`.
  */

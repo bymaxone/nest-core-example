@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tooltip primitive — Radix Tooltip with glass panel.
+ * @fileoverview Tooltip primitive: Radix Tooltip with glass panel.
  *
  * The tooltip panel uses the glass surface pattern: dark bg, blur, border.
  *

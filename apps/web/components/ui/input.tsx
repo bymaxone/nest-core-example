@@ -1,5 +1,5 @@
 /**
- * @fileoverview Input primitive — shadcn/ui new-york style with brand theme.
+ * @fileoverview Input primitive: shadcn/ui new-york style with brand theme.
  *
  * Pill-shaped (rounded-full), 48px height, glass surface background.
  * Focus ring uses brand orange (--ring).

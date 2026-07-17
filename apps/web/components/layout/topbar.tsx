@@ -28,7 +28,7 @@ interface TopbarProps {
 }
 
 /**
- * Fixed top bar — brand identity (left) + API-origin chip (right).
+ * Fixed top bar: brand identity (left) + API-origin chip (right).
  *
  * @param onMenuOpen - Handler invoked by the mobile hamburger button.
  */

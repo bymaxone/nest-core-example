@@ -1,5 +1,5 @@
 /**
- * @fileoverview Sonner toast wrapper — dark theme matching the design system.
+ * @fileoverview Sonner toast wrapper: dark theme matching the design system.
  *
  * The Toaster is placed in the root layout. Individual toasts are triggered
  * via `toast()` from the `sonner` package.

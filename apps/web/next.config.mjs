@@ -28,7 +28,7 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
-          // Prevent MIME-type sniffing — required by browsers to honour declared Content-Type.
+          // Prevent MIME-type sniffing: required by browsers to honour declared Content-Type.
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           // Deny embedding in <iframe>, <embed>, or <object> to block clickjacking.
           { key: 'X-Frame-Options', value: 'DENY' },

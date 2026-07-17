@@ -1,6 +1,6 @@
 # Phase 6: Dashboard: Shell + All Pages
 
-> **Status**: 🔄 In Progress · **Progress**: 2 / 6 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 3 / 6 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-6-dashboard-shell--all-pages)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §13, §14, §12
 
@@ -39,7 +39,7 @@ Health Console, and Metrics View.
 | --- | ------------------------------------------------------------ | ------ | -------- | ---- | ------------- |
 | 6.1 | Branch + Next.js skeleton + design-system shell              | ✅     | P0       | L    | Phases 3, 4, 5 |
 | 6.2 | Typed API client + mirrored envelope + Overview page         | ✅     | P0       | M    | 6.1           |
-| 6.3 | Errors Playground + Latency Lab pages                        | 📋     | P0       | L    | 6.2           |
+| 6.3 | Errors Playground + Latency Lab pages                        | ✅     | P0       | L    | 6.2           |
 | 6.4 | Pagination page (offset + cursor + corrupt-cursor)           | 📋     | P0       | M    | 6.2           |
 | 6.5 | Health Console + Metrics View pages                          | 📋     | P0       | M    | 6.2           |
 | 6.6 | Phase close: audit, dashboards, PR + Copilot review + merge  | 📋     | P0       | S    | 6.1-6.5       |
@@ -221,10 +221,15 @@ Completion Protocol:
 
 ### Task 6.3: Errors Playground + Latency Lab pages
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: L
 - **Depends on**: 6.2
+
+> **Note:** also introduces `lib/catalog-api.ts` (single-lookup + validation-trigger helpers)
+> and `lib/latency-api.ts` ahead of/alongside their listed tasks, since the Errors page's
+> catalog-driven triggers and the Latency Lab both need them now; `lib/catalog-api.ts` is
+> extended with `listOffsetProducts`/`listCursorProducts` in task 6.4.
 
 #### Description
 
@@ -236,13 +241,16 @@ a duration sparkline, and the sink-poison toggle.
 
 #### Acceptance criteria
 
-- [ ] `/errors`: every §7.3 code triggerable; the viewer renders the exact envelope with field
-      annotations; custom-code demo (seasonal) visually distinguished from `BYMAX_*` codes.
-- [ ] `/latency`: slider + fire button; samples table polling `/timing/samples` with the
+- [x] `/errors`: every §7.3 code triggerable (16 failure kinds + catalog not-found, validation,
+      and seasonal); the viewer renders the exact envelope with field annotations; custom-code
+      demo (seasonal) visually distinguished from `BYMAX_*` codes.
+- [x] `/latency`: slider + fire button; samples table polling `/timing/samples` with the
       threshold displayed; slow rows badged; poison button fires `POST /timing/poison` and a
       toast confirms the next request still succeeded.
-- [ ] Component unit specs for `EnvelopeViewer` and `SampleFeed` (pure rendering paths).
-- [ ] `pnpm --filter web build` and unit suite green.
+- [x] Component unit specs for `EnvelopeViewer` and `SampleFeed` (pure rendering paths), plus
+      `TriggerGrid`, `DurationSparkline`, `DelayControl`, and `PoisonToggle`.
+- [x] `pnpm --filter web build` and unit suite green (100% coverage maintained); verified live
+      against the running API (curl contract check + SSR HTML check for both pages).
 
 #### Files to create / modify
 
@@ -537,3 +545,4 @@ Completion Protocol:
 
 - 6.1 ✅ 2026-07-17 `apps/web` scaffolded (Next.js 16 App Router, Tailwind v4, shadcn new-york primitives, Geist, forced dark); `AppShell`/`Topbar`/`Sidebar` (Observe/Labs/System groups) built verbatim to the shared design system; six placeholder routes render inside the shell; `next typegen` wired into `typecheck` so CI's standalone type-check job works without a prior build.
 - 6.2 ✅ 2026-07-17 `lib/envelope.ts` (mirrored `ErrorEnvelope` + 16-code `BYMAX_ERROR_CODES`) and `lib/api-client.ts` (envelope-aware `request<T>()`, `ok/envelope/transport` discriminated result, correlationId backfilled from `x-request-id`); `lib/health-api.ts` (503 readiness parsed as data, never a transport error) and `lib/timing-api.ts` (`summarizeSamples`) added ahead of schedule for the Overview page; Overview status strip (`StatTile`/`StatusChip`) polls `/health/ready` + `/timing/samples` every 3s; quick-link grid to the five feature pages; Vitest + Testing Library wired (`maxWorkers: '50%'`, jsdom), 63 tests green, 100% coverage on `lib/**` and the new `components/shared`/`components/overview` modules.
+- 6.3 ✅ 2026-07-17 Errors Playground: 19-card `TriggerGrid` (16 `/failures/:kind` derivations + catalog not-found/validation/seasonal), the shared `EnvelopeViewer` (annotated JSON, correlationId row highlighted, copy-to-clipboard) shows the exact envelope; Latency Lab: `DelayControl` (0-2000ms slider), `SampleFeed` (most-recent-first table with slow/status badges), `DurationSparkline` (inline SVG, last 50), `PoisonToggle` (arms the sink then verifies the follow-up request still succeeds); `lib/failures-api.ts`, `lib/catalog-api.ts`, and `lib/latency-api.ts` added; 117 tests green, 100% coverage maintained; live-verified against the running API (curl contract check + SSR HTML check for both pages).

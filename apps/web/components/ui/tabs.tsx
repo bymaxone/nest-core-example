@@ -1,8 +1,8 @@
 /**
- * @fileoverview Tabs primitive — Radix Tabs with brand orange active indicator.
+ * @fileoverview Tabs primitive: Radix Tabs with brand orange active indicator.
  *
  * The active tab gets brand orange bottom border + text color.
- * Panels are plain — no extra chrome.
+ * Panels are plain: no extra chrome.
  *
  * @layer components/ui
  */
@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils'
 const Tabs = TabsPrimitive.Root
 
 /**
- * Tabs navigation list — horizontal, underline-style.
+ * Tabs navigation list: horizontal, underline-style.
  */
 const TabsList = React.forwardRef<
   React.ComponentRef<typeof TabsPrimitive.List>,
@@ -35,7 +35,7 @@ const TabsList = React.forwardRef<
 TabsList.displayName = TabsPrimitive.List.displayName
 
 /**
- * Individual tab trigger — pill on active, muted on inactive.
+ * Individual tab trigger: pill on active, muted on inactive.
  */
 const TabsTrigger = React.forwardRef<
   React.ComponentRef<typeof TabsPrimitive.Trigger>,

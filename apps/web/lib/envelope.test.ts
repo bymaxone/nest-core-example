@@ -136,7 +136,7 @@ describe('isErrorEnvelope', () => {
    * Array edge case.
    *
    * `typeof [] === 'object'` in JavaScript, so an array reaches the field
-   * checks rather than being short-circuited by the `typeof` guard — it is
+   * checks rather than being short-circuited by the `typeof` guard; it is
    * correctly rejected there for lacking every required field.
    */
   it('returns false for an array (structurally missing every required field)', () => {

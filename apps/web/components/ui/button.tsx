@@ -1,13 +1,13 @@
 /**
- * @fileoverview Button primitive — shadcn/ui new-york style with brand theme.
+ * @fileoverview Button primitive: shadcn/ui new-york style with brand theme.
  *
  * Variants:
- *   default   — brand orange gradient, pill hover glow
- *   destructive — red semantic action
- *   outline   — transparent with border
- *   secondary — muted surface
- *   ghost     — no background, low-emphasis
- *   link      — underline text action
+ *   default: brand orange gradient, pill hover glow
+ *   destructive: red semantic action
+ *   outline: transparent with border
+ *   secondary: muted surface
+ *   ghost: no background, low-emphasis
+ *   link: underline text action
  *
  * Sizes: default | sm | lg | icon
  *

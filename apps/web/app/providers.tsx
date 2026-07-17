@@ -1,5 +1,5 @@
 /**
- * @fileoverview Client providers tree — TanStack Query + Toaster.
+ * @fileoverview Client providers tree: TanStack Query + Toaster.
  *
  * This is the only `'use client'` boundary in the root layout tree. The root
  * `app/layout.tsx` remains a server component; this file establishes the

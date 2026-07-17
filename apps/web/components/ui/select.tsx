@@ -1,5 +1,5 @@
 /**
- * @fileoverview Select primitive — Radix Select with the glass panel treatment.
+ * @fileoverview Select primitive: Radix Select with the glass panel treatment.
  *
  * The trigger reuses the pill input surface; the popover content uses the
  * same glass panel recipe as Tooltip (dark bg, blur, border).

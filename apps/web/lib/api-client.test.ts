@@ -2,10 +2,10 @@
  * Unit tests for the envelope-aware `request<T>()` fetch wrapper.
  *
  * Layer: unit.
- * Goal: verify every branch of the discriminated `ApiResult` union — success,
+ * Goal: verify every branch of the discriminated `ApiResult` union: success,
  *   documented envelope errors (with and without a body `correlationId`),
  *   and transport failures (network error, non-JSON body, non-envelope error
- *   body) — using a mocked global `fetch` so no real network call is made.
+ *   body), using a mocked global `fetch` so no real network call is made.
  * Mocks: `global.fetch`, restored after every test.
  */
 

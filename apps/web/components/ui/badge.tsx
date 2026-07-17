@@ -1,5 +1,5 @@
 /**
- * @fileoverview Badge primitive — shadcn/ui new-york style with brand theme.
+ * @fileoverview Badge primitive: shadcn/ui new-york style with brand theme.
  *
  * Variants: default (brand orange), secondary, destructive, outline.
  *

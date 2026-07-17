@@ -49,7 +49,7 @@ const NAV_BASE_CLASSES = [
   'lg:sticky lg:top-16 lg:h-[calc(100vh-64px)]',
 ] as const
 
-/** Active-state palette class — brand orange. Pinned by the active-state test. */
+/** Active-state palette class: brand orange. Pinned by the active-state test. */
 const NAV_ITEM_ACTIVE_CLASS =
   'border-l-[#ff6224] bg-[rgba(255,98,36,0.1)] font-semibold text-[#ff6224]'
 const ICON_ACTIVE_CLASS = 'text-[#ff6224]'
@@ -100,7 +100,7 @@ interface SidebarNavItemProps {
   onNavClick?: () => void
 }
 
-/** Single nav item — extracted so the active-state check stays component-scoped. */
+/** Single nav item: extracted so the active-state check stays component-scoped. */
 function SidebarNavItem({ item, onNavClick }: SidebarNavItemProps) {
   const pathname = usePathname()
   const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href)

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Skeleton primitive — glass shimmer placeholder for loading content.
+ * @fileoverview Skeleton primitive: glass shimmer placeholder for loading content.
  *
  * Per the design system's "skeletons, not spinners" rule: content fetches show
  * a pulsing glass block instead of a spinner; spinners are reserved for short

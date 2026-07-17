@@ -2,7 +2,7 @@
   "name": "@nest-core-example/web",
   "version": "0.0.0",
   "private": true,
-  "description": "Next.js 16 dashboard for nest-core-example — renders the demo domain of @bymax-one/nest-core (error envelope, timing, pagination, health, metrics) against apps/api.",
+  "description": "Next.js 16 dashboard for nest-core-example: renders the demo domain of @bymax-one/nest-core (error envelope, timing, pagination, health, metrics) against apps/api.",
   "keywords": [
     "bymax",
     "bymax-one",

@@ -11,7 +11,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-/** Original env snapshot — restored after every test. */
+/** Original env snapshot, restored after every test. */
 const originalEnv = { ...process.env }
 
 afterEach(() => {

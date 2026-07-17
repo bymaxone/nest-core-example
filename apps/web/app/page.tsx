@@ -1,5 +1,5 @@
 /**
- * @fileoverview Overview page — the status strip and quick links.
+ * @fileoverview Overview page: the status strip and quick links.
  *
  * Polls `/health/ready` and `/timing/samples` on a bounded interval so the
  * readiness chip and request/slow/error counts feel live without a realtime
@@ -91,7 +91,7 @@ export default function OverviewPage() {
             healthStatus ? (
               <StatusChip severity={healthStatus} label={healthStatus.toUpperCase()} />
             ) : (
-              '—'
+              '...'
             )
           }
           loading={readiness.isPending}

@@ -3,8 +3,8 @@
  *
  * Reused wherever a status needs to be shown compactly: the Overview status
  * strip, the Health Console's check list, and the Latency Lab's sample feed.
- * Encodes severity with color, position (dot), and text together — never
- * color alone — per the design system's accessible-severity rule.
+ * Encodes severity with color, position (dot), and text together: never
+ * color alone: per the design system's accessible-severity rule.
  *
  * @layer components/shared
  */

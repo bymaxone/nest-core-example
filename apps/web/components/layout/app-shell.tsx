@@ -1,5 +1,5 @@
 /**
- * @fileoverview App shell — client component that owns sidebar toggle state.
+ * @fileoverview App shell: client component that owns sidebar toggle state.
  *
  * Wraps `Topbar` + `Sidebar` + `main` content in a responsive flex layout.
  * Extracted from `app/layout.tsx` so the root layout stays a server
@@ -21,7 +21,7 @@ interface AppShellProps {
 }
 
 /**
- * Client shell for the dashboard — manages sidebar visibility state.
+ * Client shell for the dashboard: manages sidebar visibility state.
  *
  * @param children - Page content.
  */
@@ -32,7 +32,7 @@ export function AppShell({ children }: AppShellProps) {
     <>
       <Topbar onMenuOpen={() => setSidebarOpen(true)} />
 
-      {/* Page body — below the fixed topbar */}
+      {/* Page body: below the fixed topbar */}
       <div className="flex pt-16">
         <Sidebar isOpen={sidebarOpen} onNavClick={() => setSidebarOpen(false)} />
 

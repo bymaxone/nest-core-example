@@ -2,7 +2,7 @@
  * @fileoverview Tailwind CSS v4 configuration for apps/web.
  *
  * Content globs cover every file that can contain Tailwind class names. The
- * `theme.extend` block is intentionally open — shadcn/ui populates it with CSS
+ * `theme.extend` block is intentionally open: shadcn/ui populates it with CSS
  * variable-driven tokens via `components.json` and `globals.css`.
  */
 

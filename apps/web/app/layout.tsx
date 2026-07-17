@@ -1,5 +1,5 @@
 /**
- * @fileoverview Root layout — HTML shell, font loading, and global providers.
+ * @fileoverview Root layout: HTML shell, font loading, and global providers.
  *
  * Uses Geist Sans + Geist Mono from the `geist` package. The font CSS
  * variables are injected into `<html>` and consumed by globals.css. Forced

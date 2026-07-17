@@ -35,7 +35,7 @@ describe('cn', () => {
    * Tailwind conflict resolution.
    *
    * When two classes target the same CSS property, `tailwind-merge` keeps
-   * only the last one — this is what lets a caller override a component's
+   * only the last one: this is what lets a caller override a component's
    * default padding via `className` without `!important`.
    */
   it('resolves a Tailwind utility conflict by keeping the last class', () => {

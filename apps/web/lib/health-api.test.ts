@@ -66,7 +66,7 @@ describe('getReadiness', () => {
    * 503 any-down, rendered as data.
    *
    * The core assertion this module exists to protect: a 503 readiness
-   * response is a valid application state, not a transport failure — it
+   * response is a valid application state, not a transport failure: it
    * must resolve as `ok: true`, never as `kind: 'transport'`.
    */
   it('returns ok:true when an indicator is down (status 503), never as transport error', async () => {

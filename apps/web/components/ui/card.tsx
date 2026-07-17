@@ -1,5 +1,5 @@
 /**
- * @fileoverview Card primitive — glassmorphism style matching the design system.
+ * @fileoverview Card primitive: glassmorphism style matching the design system.
  *
  * All card sub-components use the glass surface pattern:
  *   bg: var(--glass-card-bg), border: var(--glass-border), backdrop-blur
@@ -32,7 +32,7 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
 Card.displayName = 'Card'
 
 /**
- * Card header region — contains title and description.
+ * Card header region: contains title and description.
  */
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -54,7 +54,7 @@ const CardHeader = React.forwardRef<
 CardHeader.displayName = 'CardHeader'
 
 /**
- * Card title — monospace font, bold.
+ * Card title: monospace font, bold.
  */
 const CardTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
@@ -68,7 +68,7 @@ const CardTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
 CardTitle.displayName = 'CardTitle'
 
 /**
- * Card description — muted secondary text.
+ * Card description: muted secondary text.
  */
 const CardDescription = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
@@ -88,7 +88,7 @@ const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
 CardContent.displayName = 'CardContent'
 
 /**
- * Card footer region — typically holds actions.
+ * Card footer region: typically holds actions.
  */
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
