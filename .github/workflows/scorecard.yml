@@ -1,0 +1,65 @@
+name: OSSF Scorecard
+
+# Publishes the OpenSSF Scorecard (https://github.com/ossf/scorecard) result to
+# the repository's Security tab and to the public viewer at scorecard.dev. The
+# weekly schedule keeps the score fresh even when no code lands; the push
+# trigger catches regressions immediately (for example branch protection
+# removed).
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 4 * * 1' # Mondays 04:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: scorecard-${{ github.ref }}
+  cancel-in-progress: true
+
+# Default to read-only; specific permissions are widened at the job level.
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Scorecard publishes SARIF to the Security tab and mints an OIDC token
+    # for the public scorecard.dev viewer; neither works on a private
+    # repository without GitHub Advanced Security. This repository is private
+    # today, so the job stays inert (reported as skipped) until it is made
+    # public, at which point this condition flips to true with no edit.
+    if: ${{ !github.event.repository.private }}
+
+    permissions:
+      security-events: write
+      id-token: write
+      contents: read
+      actions: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+
+      - name: Run Scorecard analysis
+        uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+
+      - name: Upload SARIF artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: scorecard-sarif
+          path: results.sarif
+          retention-days: 30
+
+      - name: Upload SARIF to code scanning
+        uses: github/codeql-action/upload-sarif@7188fc363630916deb702c7fdcf4e481b751f97a # v4
+        with:
+          sarif_file: results.sarif
+          category: ossf-scorecard

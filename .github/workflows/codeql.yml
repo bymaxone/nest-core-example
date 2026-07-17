@@ -1,0 +1,61 @@
+name: CodeQL
+
+# Runs on every push to main, on every PR targeting main, and on a weekly
+# cron so new query packs catch issues in code that did not change.
+# workflow_dispatch allows an ad-hoc re-run from the Actions tab.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+# Default to read-only; the analyze job widens to security-events: write
+# only where it needs to upload SARIF.
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # Code scanning uploads SARIF to the Security tab, which requires GitHub
+    # Advanced Security on a private repository. This repository is private
+    # today, so the job stays inert (reported as skipped) until it is made
+    # public, at which point this condition flips to true with no edit.
+    if: ${{ !github.event.repository.private }}
+
+    permissions:
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@7188fc363630916deb702c7fdcf4e481b751f97a # v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@7188fc363630916deb702c7fdcf4e481b751f97a # v4
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@7188fc363630916deb702c7fdcf4e481b751f97a # v4
+        with:
+          category: /language:${{ matrix.language }}
