@@ -1,6 +1,6 @@
 # Phase 3: Catalog Domain & Pagination
 
-> **Status**: 🔄 In Progress · **Progress**: 2 / 4 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 3 / 4 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-3-catalog-domain--pagination)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §11, §12.3, §7.5
 
@@ -31,7 +31,7 @@ envelope paths. No database: the repository pattern proves the library's ORM neu
 | --- | ------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 3.1 | Branch + seeded repository + single lookup (404 path)         | ✅     | P0       | M    | Phase 2    |
 | 3.2 | Offset endpoint + Zod-validated create + seasonal domain code | ✅     | P0       | M    | 3.1        |
-| 3.3 | Cursor endpoint (codec walk + strict rejection)               | 📋     | P0       | M    | 3.1        |
+| 3.3 | Cursor endpoint (codec walk + strict rejection)               | ✅     | P0       | M    | 3.1        |
 | 3.4 | Phase close: audit, dashboards, PR + Copilot review + merge   | 📋     | P0       | S    | 3.1-3.3    |
 
 ## Tasks
@@ -205,7 +205,7 @@ Completion Protocol:
 
 ### Task 3.3: Cursor endpoint (codec walk + strict rejection)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 3.1
@@ -218,14 +218,14 @@ yields `nextCursor: null`, and a tampered cursor is rejected as `BYMAX_VALIDATIO
 
 #### Acceptance criteria
 
-- [ ] Cursor endpoint: `?cursor=&limit=` normalized; repository fetches `limit + 1` rows after
+- [x] Cursor endpoint: `?cursor=&limit=` normalized; repository fetches `limit + 1` rows after
       the decoded position; `buildCursorResult` trims and derives `nextCursor` from the last
       item's ordering keys (`{ id }`).
-- [ ] Walking the whole seeded catalog page by page terminates with `nextCursor: null` and
+- [x] Walking the whole seeded catalog page by page terminates with `nextCursor: null` and
       yields every product exactly once (unit-proven).
-- [ ] A tampered cursor (`not-base64url!!!` and a truncated valid cursor) returns the envelope
+- [x] A tampered cursor (`not-base64url!!!` and a truncated valid cursor) returns the envelope
       with `BYMAX_VALIDATION_FAILED`.
-- [ ] 100% unit coverage on changed files.
+- [x] 100% unit coverage on changed files.
 
 #### Files to create / modify
 
@@ -361,3 +361,7 @@ Completion Protocol:
   Zod-validated POST /catalog/products through ZodValidationPipe, GET
   /catalog/products/:id/seasonal throwing common/domain-errors.ts's OutOfSeasonError with the
   custom code CATALOG_OUT_OF_SEASON; 100% unit coverage on changed files.
+- 3.3 ✅ 2026-07-17 Cursor endpoint via normalizeCursorQuery + decodeCursor + buildCursorResult
+  (fetch-one-extra); the full seeded catalog walk terminates at nextCursor: null visiting every
+  product exactly once; a tampered or truncated cursor rejects as BYMAX_VALIDATION_FAILED;
+  100% unit coverage on changed files.

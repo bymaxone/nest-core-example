@@ -8,8 +8,14 @@
  */
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { buildPageResult, normalizePageQuery } from '@bymax-one/nest-core/pagination'
-import type { PageResult } from '@bymax-one/nest-core/pagination'
+import {
+  buildCursorResult,
+  buildPageResult,
+  decodeCursor,
+  normalizeCursorQuery,
+  normalizePageQuery,
+} from '@bymax-one/nest-core/pagination'
+import type { CursorResult, PageResult } from '@bymax-one/nest-core/pagination'
 
 import { OutOfSeasonError } from '../common/domain-errors.js'
 import type { CreateProductInput } from './dto/create-product.dto.js'
@@ -52,6 +58,22 @@ export class CatalogService {
     const query = normalizePageQuery(raw, { maxLimit: MAX_PAGE_LIMIT })
     const { rows, total } = await this.products.findPage(query)
     return buildPageResult(rows, total, query)
+  }
+
+  /**
+   * List products with opaque-cursor pagination.
+   *
+   * @param raw - Unvalidated query input (cursor, limit).
+   * @returns A CursorResult; `nextCursor` is `null` on the last page.
+   * @throws BadRequestException when the supplied cursor is malformed
+   *   (propagated untouched from `decodeCursor`).
+   */
+  async listCursor(raw: Record<string, unknown>): Promise<CursorResult<Product>> {
+    const query = normalizeCursorQuery(raw, { maxLimit: MAX_PAGE_LIMIT })
+    const after =
+      query.cursor !== undefined ? decodeCursor<{ id: string }>(query.cursor) : undefined
+    const rows = await this.products.findAfter(after, query.limit + 1)
+    return buildCursorResult(rows, query.limit, (last) => ({ id: last.id }))
   }
 
   /**

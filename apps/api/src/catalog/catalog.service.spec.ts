@@ -3,11 +3,13 @@
  *
  * Layer: unit.
  * Goal: verify the 404 lookup path, offset clamping via the library helpers,
- * create delegation, and the seasonal domain-error passthrough.
+ * cursor pagination including tampered-cursor propagation, create delegation,
+ * and the seasonal domain-error passthrough.
  * Mocks: a ProductRepository stub returning fixed rows/products.
  */
 
-import { NotFoundException } from '@nestjs/common'
+import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { encodeCursor } from '@bymax-one/nest-core/pagination'
 import { describe, expect, it, jest } from '@jest/globals'
 
 import { OutOfSeasonError } from '../common/domain-errors.js'
@@ -31,6 +33,7 @@ function buildProduct(overrides: Partial<Product> = {}): Product {
 interface RepositoryStub {
   findById: jest.Mock<ProductRepository['findById']>
   findPage: jest.Mock<ProductRepository['findPage']>
+  findAfter: jest.Mock<ProductRepository['findAfter']>
   create: jest.Mock<ProductRepository['create']>
 }
 
@@ -39,6 +42,7 @@ function buildRepositoryStub(): RepositoryStub {
   return {
     findById: jest.fn<ProductRepository['findById']>(),
     findPage: jest.fn<ProductRepository['findPage']>(),
+    findAfter: jest.fn<ProductRepository['findAfter']>(),
     create: jest.fn<ProductRepository['create']>(),
   }
 }
@@ -148,6 +152,91 @@ describe('CatalogService', () => {
       expect(result.items).toEqual(rows)
       expect(result.meta.totalItems).toBe(21)
       expect(result.meta.totalPages).toBe(3)
+    })
+  })
+
+  describe('listCursor', () => {
+    /**
+     * First page, no cursor.
+     *
+     * Without a cursor, the repository must be asked for rows starting from
+     * the beginning, fetching one extra row per the fetch-one-extra convention.
+     */
+    it('fetches limit + 1 rows from the start when no cursor is supplied', async () => {
+      const rows = [buildProduct({ id: 'p-000001' }), buildProduct({ id: 'p-000002' })]
+      const stub = buildRepositoryStub()
+      stub.findAfter.mockResolvedValue(rows)
+      const service = buildService(stub)
+
+      const result = await service.listCursor({ limit: 1 })
+
+      expect(stub.findAfter).toHaveBeenCalledWith(undefined, 2)
+      expect(result.items).toEqual([rows[0]])
+      expect(result.nextCursor).not.toBeNull()
+    })
+
+    /**
+     * Continuation with a valid cursor.
+     *
+     * A well-formed cursor must decode to its ordering keys and the repository
+     * must be asked to resume strictly after that position.
+     */
+    it('decodes a valid cursor and resumes after its position', async () => {
+      const cursor = encodeCursor({ id: 'p-000002' })
+      const stub = buildRepositoryStub()
+      stub.findAfter.mockResolvedValue([])
+      const service = buildService(stub)
+
+      await service.listCursor({ cursor, limit: 5 })
+
+      expect(stub.findAfter).toHaveBeenCalledWith({ id: 'p-000002' }, 6)
+    })
+
+    /**
+     * Last page, walk termination.
+     *
+     * Exactly `limit` rows (no extra) must yield `nextCursor: null`.
+     */
+    it('yields nextCursor null on the last page', async () => {
+      const rows = [buildProduct()]
+      const stub = buildRepositoryStub()
+      stub.findAfter.mockResolvedValue(rows)
+      const service = buildService(stub)
+
+      const result = await service.listCursor({ limit: 1 })
+
+      expect(result.nextCursor).toBeNull()
+    })
+
+    /**
+     * Tampered cursor rejection.
+     *
+     * A non-base64url cursor must propagate `decodeCursor`'s
+     * `BadRequestException` untouched, which the library maps to
+     * `BYMAX_VALIDATION_FAILED`.
+     */
+    it('propagates BadRequestException for a tampered cursor', async () => {
+      const service = buildService(buildRepositoryStub())
+
+      await expect(service.listCursor({ cursor: 'not-base64url!!!' })).rejects.toBeInstanceOf(
+        BadRequestException,
+      )
+    })
+
+    /**
+     * Truncated cursor rejection.
+     *
+     * A truncated (but base64url-shaped) cursor must also reject as a
+     * `BadRequestException` rather than throwing an internal error.
+     */
+    it('propagates BadRequestException for a truncated cursor', async () => {
+      const valid = encodeCursor({ id: 'p-000001' })
+      const truncated = valid.slice(0, Math.max(1, valid.length - 4))
+      const service = buildService(buildRepositoryStub())
+
+      await expect(service.listCursor({ cursor: truncated })).rejects.toBeInstanceOf(
+        BadRequestException,
+      )
     })
   })
 

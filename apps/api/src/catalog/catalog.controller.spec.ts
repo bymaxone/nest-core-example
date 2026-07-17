@@ -16,6 +16,7 @@ import type { Product } from './product.types.js'
 /** Typed mock shape for each service method exercised by these tests. */
 interface ServiceStub {
   listOffset: jest.Mock<CatalogService['listOffset']>
+  listCursor: jest.Mock<CatalogService['listCursor']>
   createProduct: jest.Mock<CatalogService['createProduct']>
   getSeasonalProduct: jest.Mock<CatalogService['getSeasonalProduct']>
   getProduct: jest.Mock<CatalogService['getProduct']>
@@ -25,6 +26,7 @@ interface ServiceStub {
 function buildServiceStub(): ServiceStub {
   return {
     listOffset: jest.fn<CatalogService['listOffset']>(),
+    listCursor: jest.fn<CatalogService['listCursor']>(),
     createProduct: jest.fn<CatalogService['createProduct']>(),
     getSeasonalProduct: jest.fn<CatalogService['getSeasonalProduct']>(),
     getProduct: jest.fn<CatalogService['getProduct']>(),
@@ -63,6 +65,23 @@ describe('CatalogController', () => {
 
     expect(stub.listOffset).toHaveBeenCalledWith(raw)
     expect(result.items).toEqual([product])
+  })
+
+  /**
+   * Cursor listing delegation.
+   *
+   * The raw cursor query object must reach the service untouched.
+   */
+  it('delegates listCursor to the service with the raw query', async () => {
+    const stub = buildServiceStub()
+    stub.listCursor.mockResolvedValue({ items: [product], nextCursor: null })
+    const controller = buildController(stub)
+    const raw = { cursor: 'abc', limit: '5' }
+
+    const result = await controller.listCursor(raw)
+
+    expect(stub.listCursor).toHaveBeenCalledWith(raw)
+    expect(result.nextCursor).toBeNull()
   })
 
   /**

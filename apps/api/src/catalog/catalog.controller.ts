@@ -1,8 +1,8 @@
 /**
- * @fileoverview REST surface for the demo product catalog: single lookup, the
- * offset pagination model, a Zod-validated create, and a seasonal-availability
- * demo of explicit domain-code passthrough. Thin controller; all logic lives
- * in `CatalogService`.
+ * @fileoverview REST surface for the demo product catalog: single lookup, both
+ * pagination models, a Zod-validated create, and a seasonal-availability demo
+ * of explicit domain-code passthrough. Thin controller; all logic lives in
+ * `CatalogService`.
  * @layer controller
  */
 
@@ -17,7 +17,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import type { PageResult } from '@bymax-one/nest-core/pagination'
+import type { CursorResult, PageResult } from '@bymax-one/nest-core/pagination'
 
 import { ZodValidationPipe } from '../common/zod-validation.pipe.js'
 import { CatalogService } from './catalog.service.js'
@@ -41,6 +41,21 @@ export class CatalogController {
   @Get()
   listOffset(@Query() raw: Record<string, unknown>): Promise<PageResult<Product>> {
     return this.catalog.listOffset(raw)
+  }
+
+  /**
+   * List products with opaque-cursor pagination.
+   *
+   * Declared before the `:id` route below so the literal `cursor` segment
+   * matches first: NestJS resolves routes within a controller in declaration
+   * order, and a param route would otherwise swallow this one.
+   *
+   * @param raw - Raw `cursor` and `limit` query parameters.
+   * @returns The next page of products and the cursor for the page after it.
+   */
+  @Get('cursor')
+  listCursor(@Query() raw: Record<string, unknown>): Promise<CursorResult<Product>> {
+    return this.catalog.listCursor(raw)
   }
 
   /**
