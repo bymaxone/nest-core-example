@@ -1,6 +1,6 @@
 # Phase 6: Dashboard: Shell + All Pages
 
-> **Status**: 🔄 In Progress · **Progress**: 1 / 6 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 2 / 6 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-6-dashboard-shell--all-pages)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §13, §14, §12
 
@@ -38,7 +38,7 @@ Health Console, and Metrics View.
 | ID  | Task                                                        | Status | Priority | Size | Depends on    |
 | --- | ------------------------------------------------------------ | ------ | -------- | ---- | ------------- |
 | 6.1 | Branch + Next.js skeleton + design-system shell              | ✅     | P0       | L    | Phases 3, 4, 5 |
-| 6.2 | Typed API client + mirrored envelope + Overview page         | 📋     | P0       | M    | 6.1           |
+| 6.2 | Typed API client + mirrored envelope + Overview page         | ✅     | P0       | M    | 6.1           |
 | 6.3 | Errors Playground + Latency Lab pages                        | 📋     | P0       | L    | 6.2           |
 | 6.4 | Pagination page (offset + cursor + corrupt-cursor)           | 📋     | P0       | M    | 6.2           |
 | 6.5 | Health Console + Metrics View pages                          | 📋     | P0       | M    | 6.2           |
@@ -135,10 +135,15 @@ Completion Protocol:
 
 ### Task 6.2: Typed API client + mirrored envelope + Overview page
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 6.1
+
+> **Note:** also introduces `lib/health-api.ts` and `lib/timing-api.ts` ahead of their listed
+> tasks (6.5 and 6.3), since the Overview page's status strip needs `/health/ready` and
+> `/timing/samples` immediately. Both modules are extended, not recreated, when their own
+> tasks land.
 
 #### Description
 
@@ -149,14 +154,15 @@ slow count, error count from the timing feed), library summary, quick links.
 
 #### Acceptance criteria
 
-- [ ] `lib/envelope.ts` exports the envelope type + `BYMAX_ERROR_CODES` list; a Vitest spec
-      pins field names and the 17 documented codes.
-- [ ] `lib/api-client.ts`: `request<T>()` returning `{ ok: true, data } | { ok: false, error:
-      ErrorEnvelope }`; non-envelope failures surface as a distinct `transport` variant.
-- [ ] Overview page: `StatTile` strip fed by `/health/ready` (status), `/timing/samples`
+- [x] `lib/envelope.ts` exports the envelope type + `BYMAX_ERROR_CODES` list; a Vitest spec
+      pins field names and the 16 distinct codes covering the 17 documented catalog derivations.
+- [x] `lib/api-client.ts`: `request<T>()` returning `{ ok: true, data } | { ok: false, kind:
+      'envelope', error: ErrorEnvelope } | { ok: false, kind: 'transport', message: string }`.
+- [x] Overview page: `StatTile` strip fed by `/health/ready` (status), `/timing/samples`
       (counts + slow), with polling; quick links to the five feature pages.
-- [ ] Vitest toolchain in `apps/web` (jsdom, Testing Library, `maxWorkers: '50%'`); unit specs
-      for the client and envelope; `pnpm --filter web test` green.
+- [x] Vitest toolchain in `apps/web` (jsdom, Testing Library, `maxWorkers: '50%'`); unit specs
+      for the client and envelope; `pnpm --filter web test` green (100% coverage on `lib/**`
+      and the bespoke `components/shared`/`components/overview` modules).
 
 #### Files to create / modify
 
@@ -530,3 +536,4 @@ Completion Protocol:
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
 
 - 6.1 ✅ 2026-07-17 `apps/web` scaffolded (Next.js 16 App Router, Tailwind v4, shadcn new-york primitives, Geist, forced dark); `AppShell`/`Topbar`/`Sidebar` (Observe/Labs/System groups) built verbatim to the shared design system; six placeholder routes render inside the shell; `next typegen` wired into `typecheck` so CI's standalone type-check job works without a prior build.
+- 6.2 ✅ 2026-07-17 `lib/envelope.ts` (mirrored `ErrorEnvelope` + 16-code `BYMAX_ERROR_CODES`) and `lib/api-client.ts` (envelope-aware `request<T>()`, `ok/envelope/transport` discriminated result, correlationId backfilled from `x-request-id`); `lib/health-api.ts` (503 readiness parsed as data, never a transport error) and `lib/timing-api.ts` (`summarizeSamples`) added ahead of schedule for the Overview page; Overview status strip (`StatTile`/`StatusChip`) polls `/health/ready` + `/timing/samples` every 3s; quick-link grid to the five feature pages; Vitest + Testing Library wired (`maxWorkers: '50%'`, jsdom), 63 tests green, 100% coverage on `lib/**` and the new `components/shared`/`components/overview` modules.

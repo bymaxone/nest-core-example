@@ -30,10 +30,10 @@ operator rebuilds with `pnpm -C ../nest-core build`.
 | 3     | [`phase-03-catalog-pagination.md`](./phase-03-catalog-pagination.md)     | 4 / 4 | ✅     |
 | 4     | [`phase-04-failures-latency.md`](./phase-04-failures-latency.md)         | 4 / 4 | ✅     |
 | 5     | [`phase-05-health-metrics.md`](./phase-05-health-metrics.md)             | 5 / 5 | ✅     |
-| 6     | [`phase-06-web-dashboard.md`](./phase-06-web-dashboard.md)               | 1 / 6 | 🔄     |
+| 6     | [`phase-06-web-dashboard.md`](./phase-06-web-dashboard.md)               | 2 / 6 | 🔄     |
 | 7     | [`phase-07-testing.md`](./phase-07-testing.md)                           | 0 / 5 | 📋     |
 | 8     | [`phase-08-hardening-docs.md`](./phase-08-hardening-docs.md)             | 0 / 5 | 📋     |
-|       | **Total**                                                                | **27 / 42** | 🔄 |
+|       | **Total**                                                                | **28 / 42** | 🔄 |
 
 **Status legend:** 📋 ToDo · 🔄 In Progress · 👀 Review · ✅ Done · ⛔ Blocked · 🟡 Partial
 Sizes: **XS/S** (< ~100 LoC), **M** (~100-250), **L** (~250+). Priorities: **P0** (blocking),
