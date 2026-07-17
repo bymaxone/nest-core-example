@@ -13,6 +13,7 @@
  */
 
 import { env } from './env'
+import { request } from './api-client'
 import type { ApiResult } from './api-client'
 
 /** One indicator's result inside a {@link HealthResponse}. */
@@ -107,4 +108,37 @@ export function getLiveness(): Promise<ApiResult<HealthResponse>> {
  */
 export function getReadiness(): Promise<ApiResult<HealthResponse>> {
   return fetchHealth('/health/ready')
+}
+
+/** Acknowledgement of a toggle, echoing the indicator's new state. */
+export interface ToggleResponse {
+  /** The indicator whose state was changed. */
+  readonly name: string
+  /** The state now held: a readiness status for `flaky`, an armed flag for `hanging`. */
+  readonly state: 'up' | 'down' | boolean
+}
+
+/**
+ * Set the readiness the flaky demo indicator reports next.
+ *
+ * Unlike the health endpoints, this is a regular 200-or-error POST, so it
+ * goes through the standard envelope-aware `request()`.
+ *
+ * @param status - The readiness to report on the next `GET /health/ready`.
+ * @returns The toggle acknowledgement, or an API/transport failure.
+ */
+export function toggleFlaky(status: 'up' | 'down'): Promise<ApiResult<ToggleResponse>> {
+  return request<ToggleResponse>(`/health-demo/flaky?status=${status}`, { method: 'POST' })
+}
+
+/**
+ * Arm or disarm the hanging demo indicator.
+ *
+ * @param enabled - Whether the hanging indicator should be armed.
+ * @returns The toggle acknowledgement, or an API/transport failure.
+ */
+export function toggleHang(enabled: boolean): Promise<ApiResult<ToggleResponse>> {
+  return request<ToggleResponse>(`/health-demo/hang?enabled=${String(enabled)}`, {
+    method: 'POST',
+  })
 }

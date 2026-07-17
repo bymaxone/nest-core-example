@@ -4,13 +4,22 @@
  * Layer: unit.
  * Goal: verify that a 503 readiness response is parsed as data (never as a
  *   transport error), that a malformed or non-JSON body still surfaces as
- *   `transport`, and that both endpoints target the documented paths.
- * Mocks: `global.fetch`, restored after every test.
+ *   `transport`, that both liveness/readiness endpoints target the
+ *   documented paths, and that the toggle helpers call the shared client
+ *   with the documented path and method.
+ * Mocks: `global.fetch` for the liveness/readiness suites; `./api-client`
+ *   for the toggle suites.
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { getLiveness, getReadiness } from './health-api'
+import { getLiveness, getReadiness, toggleFlaky, toggleHang } from './health-api'
+import { request } from './api-client'
+
+vi.mock('./api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./api-client')>()
+  return { ...actual, request: vi.fn() }
+})
 
 /** Builds a minimal mock `Response` for a given status and JSON body. */
 function mockResponse(status: number, body: unknown): Response {
@@ -22,6 +31,7 @@ function mockResponse(status: number, body: unknown): Response {
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  vi.clearAllMocks()
 })
 
 describe('getLiveness', () => {
@@ -187,5 +197,52 @@ describe('getReadiness', () => {
 
     // Assert
     expect(result).toEqual({ ok: false, kind: 'transport', message: 'Network request failed' })
+  })
+})
+
+describe('toggleFlaky', () => {
+  /**
+   * Path and method, one case per status.
+   *
+   * Each status posts to its own query-string value and returns the
+   * client's result untouched.
+   */
+  it.each(['up', 'down'] as const)('posts status=%s to /health-demo/flaky', async (status) => {
+    // Arrange
+    const payload = { ok: true as const, data: { name: 'flaky', state: status } }
+    vi.mocked(request).mockResolvedValue(payload)
+
+    // Act
+    const result = await toggleFlaky(status)
+
+    // Assert
+    expect(request).toHaveBeenCalledWith(`/health-demo/flaky?status=${status}`, {
+      method: 'POST',
+    })
+    expect(result).toBe(payload)
+  })
+})
+
+describe('toggleHang', () => {
+  /**
+   * Path and method, one case per boolean.
+   *
+   * `enabled` is serialized as the literal strings `true`/`false`, matching
+   * the API's strict `enum(['true', 'false'])` schema (no permissive
+   * coercion).
+   */
+  it.each([true, false])('posts enabled=%s to /health-demo/hang', async (enabled) => {
+    // Arrange
+    const payload = { ok: true as const, data: { name: 'hanging', state: enabled } }
+    vi.mocked(request).mockResolvedValue(payload)
+
+    // Act
+    const result = await toggleHang(enabled)
+
+    // Assert
+    expect(request).toHaveBeenCalledWith(`/health-demo/hang?enabled=${String(enabled)}`, {
+      method: 'POST',
+    })
+    expect(result).toBe(payload)
   })
 })

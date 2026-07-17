@@ -1,6 +1,6 @@
 # Phase 6: Dashboard: Shell + All Pages
 
-> **Status**: 🔄 In Progress · **Progress**: 4 / 6 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 5 / 6 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-6-dashboard-shell--all-pages)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §13, §14, §12
 
@@ -41,7 +41,7 @@ Health Console, and Metrics View.
 | 6.2 | Typed API client + mirrored envelope + Overview page         | ✅     | P0       | M    | 6.1           |
 | 6.3 | Errors Playground + Latency Lab pages                        | ✅     | P0       | L    | 6.2           |
 | 6.4 | Pagination page (offset + cursor + corrupt-cursor)           | ✅     | P0       | M    | 6.2           |
-| 6.5 | Health Console + Metrics View pages                          | 📋     | P0       | M    | 6.2           |
+| 6.5 | Health Console + Metrics View pages                          | ✅     | P0       | M    | 6.2           |
 | 6.6 | Phase close: audit, dashboards, PR + Copilot review + merge  | 📋     | P0       | S    | 6.1-6.5       |
 
 ## Tasks
@@ -390,7 +390,7 @@ Completion Protocol:
 
 ### Task 6.5: Health Console + Metrics View pages
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 6.2
@@ -404,14 +404,16 @@ metrics, the histogram buckets, and `catalog_lookups_total`, with a fire-traffic
 
 #### Acceptance criteria
 
-- [ ] `/health`: liveness + readiness tiles (200/503 aware), `CheckList` with per-check status
+- [x] `/health`: liveness + readiness tiles (200/503 aware), `CheckList` with per-check status
       chips and details, toggle switches wired to the health-demo endpoints, readiness flip
-      observable live.
-- [ ] `/metrics`: raw text panel (mono, refresh), parsed highlights (`http_requests_total`
-      total, duration buckets count, custom counter value), "fire traffic" button (N requests
-      via the catalog list), disabled-state explanation callout.
-- [ ] Unit specs for `CheckList` and the metrics parser helper.
-- [ ] Build + unit suite green.
+      observable live (curl-verified: flaky down -> 503, up -> 200).
+- [x] `/metrics`: raw text panel (mono, refresh), parsed highlights (`http_requests_total`
+      total, duration buckets count, custom counter value), "fire traffic" button (10 requests
+      via the catalog list), disabled-state explanation callout with the 404 meaning spelled out.
+- [x] Unit specs for `CheckList` and the metrics parser helper (`findMetricSamples`/
+      `sumMetricValue`), plus `StatusTiles`, `ToggleCard`, `Highlights`, `RawScrape`, `FireTraffic`.
+- [x] Build + unit suite green (100% coverage maintained); live-verified against the running
+      API (SSR HTML check + curl-verified readiness flip).
 
 #### Files to create / modify
 
@@ -549,3 +551,4 @@ Completion Protocol:
 - 6.2 ✅ 2026-07-17 `lib/envelope.ts` (mirrored `ErrorEnvelope` + 16-code `BYMAX_ERROR_CODES`) and `lib/api-client.ts` (envelope-aware `request<T>()`, `ok/envelope/transport` discriminated result, correlationId backfilled from `x-request-id`); `lib/health-api.ts` (503 readiness parsed as data, never a transport error) and `lib/timing-api.ts` (`summarizeSamples`) added ahead of schedule for the Overview page; Overview status strip (`StatTile`/`StatusChip`) polls `/health/ready` + `/timing/samples` every 3s; quick-link grid to the five feature pages; Vitest + Testing Library wired (`maxWorkers: '50%'`, jsdom), 63 tests green, 100% coverage on `lib/**` and the new `components/shared`/`components/overview` modules.
 - 6.3 ✅ 2026-07-17 Errors Playground: 19-card `TriggerGrid` (16 `/failures/:kind` derivations + catalog not-found/validation/seasonal), the shared `EnvelopeViewer` (annotated JSON, correlationId row highlighted, copy-to-clipboard) shows the exact envelope; Latency Lab: `DelayControl` (0-2000ms slider), `SampleFeed` (most-recent-first table with slow/status badges), `DurationSparkline` (inline SVG, last 50), `PoisonToggle` (arms the sink then verifies the follow-up request still succeeds); `lib/failures-api.ts`, `lib/catalog-api.ts`, and `lib/latency-api.ts` added; 117 tests green, 100% coverage maintained; live-verified against the running API (curl contract check + SSR HTML check for both pages).
 - 6.4 ✅ 2026-07-17 Pagination page: Offset tab (`OffsetTable` with limit `Select` + page prev/next clamped from `meta`, raw meta panel) and Cursor tab (`CursorTable` load-more accumulation, `CursorTrail` chips with copy-to-clipboard, `nextCursor: null` end-of-catalog state, "Corrupt the cursor" button rendering the `BYMAX_VALIDATION_FAILED` envelope inline via the shared `EnvelopeViewer`); `lib/catalog-api.ts` extended with `listOffsetProducts`/`listCursorProducts`; jsdom polyfills for `scrollIntoView`/pointer-capture added so Radix `Select` interactions run under Vitest; 138 tests green, 100% coverage maintained; live-verified against the running API (SSR HTML check).
+- 6.5 ✅ 2026-07-17 Health Console: `StatusTiles` (liveness + readiness, 2s poll), `CheckList` (per-indicator status chip + details), `ToggleCard` (generic two-option toggle reused for the flaky up/down switch and the hanging arm/disarm switch, owns its own mutation + sonner toast); `lib/health-api.ts` extended with `toggleFlaky`/`toggleHang`. Metrics View: `RawScrape` (mono panel, manual refresh + 5s auto), `Highlights` (parsed `http_requests_total`, duration bucket count, `catalog_lookups_total`), `FireTraffic` (10 concurrent catalog requests then refetch), a disabled-by-default callout explaining a 404; `lib/metrics-api.ts` added (`getRawMetrics` text fetch, `findMetricSamples`/`sumMetricValue` Prometheus-text parser, `+Inf` bucket labels handled). 172 tests green, 100% coverage maintained; live-verified against the running API (SSR HTML check + curl-verified readiness flip: flaky down -> 503, up -> 200).
