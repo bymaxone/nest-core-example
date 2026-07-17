@@ -1,6 +1,6 @@
 # Phase 6: Dashboard: Shell + All Pages
 
-> **Status**: 🔄 In Progress · **Progress**: 3 / 6 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 4 / 6 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-6-dashboard-shell--all-pages)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §13, §14, §12
 
@@ -40,7 +40,7 @@ Health Console, and Metrics View.
 | 6.1 | Branch + Next.js skeleton + design-system shell              | ✅     | P0       | L    | Phases 3, 4, 5 |
 | 6.2 | Typed API client + mirrored envelope + Overview page         | ✅     | P0       | M    | 6.1           |
 | 6.3 | Errors Playground + Latency Lab pages                        | ✅     | P0       | L    | 6.2           |
-| 6.4 | Pagination page (offset + cursor + corrupt-cursor)           | 📋     | P0       | M    | 6.2           |
+| 6.4 | Pagination page (offset + cursor + corrupt-cursor)           | ✅     | P0       | M    | 6.2           |
 | 6.5 | Health Console + Metrics View pages                          | 📋     | P0       | M    | 6.2           |
 | 6.6 | Phase close: audit, dashboards, PR + Copilot review + merge  | 📋     | P0       | S    | 6.1-6.5       |
 
@@ -312,7 +312,7 @@ Completion Protocol:
 
 ### Task 6.4: Pagination page (offset + cursor + corrupt-cursor)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 6.2
@@ -326,13 +326,15 @@ the resulting `BYMAX_VALIDATION_FAILED` envelope inline.
 
 #### Acceptance criteria
 
-- [ ] Offset tab: page/limit controls (clamped values reflected from `meta`), sortable-free
+- [x] Offset tab: page/limit controls (clamped values reflected from `meta`), sortable-free
       simple table, raw `meta` panel.
-- [ ] Cursor tab: load-more accumulation, `CursorTrail` listing every cursor used,
+- [x] Cursor tab: load-more accumulation, `CursorTrail` listing every cursor used,
       `nextCursor: null` end state visible ("end of catalog"), corrupt button + inline envelope
       render.
-- [ ] Unit specs for `CursorTrail` and the corrupt-cursor flow (mocked client).
-- [ ] Build + unit suite green.
+- [x] Unit specs for `CursorTrail` and the corrupt-cursor flow (mocked client), plus
+      `OffsetTable` (page/limit clamping) and `CursorTable` (accumulation, end state).
+- [x] Build + unit suite green (100% coverage maintained); live-verified against the running
+      API (SSR HTML check).
 
 #### Files to create / modify
 
@@ -546,3 +548,4 @@ Completion Protocol:
 - 6.1 ✅ 2026-07-17 `apps/web` scaffolded (Next.js 16 App Router, Tailwind v4, shadcn new-york primitives, Geist, forced dark); `AppShell`/`Topbar`/`Sidebar` (Observe/Labs/System groups) built verbatim to the shared design system; six placeholder routes render inside the shell; `next typegen` wired into `typecheck` so CI's standalone type-check job works without a prior build.
 - 6.2 ✅ 2026-07-17 `lib/envelope.ts` (mirrored `ErrorEnvelope` + 16-code `BYMAX_ERROR_CODES`) and `lib/api-client.ts` (envelope-aware `request<T>()`, `ok/envelope/transport` discriminated result, correlationId backfilled from `x-request-id`); `lib/health-api.ts` (503 readiness parsed as data, never a transport error) and `lib/timing-api.ts` (`summarizeSamples`) added ahead of schedule for the Overview page; Overview status strip (`StatTile`/`StatusChip`) polls `/health/ready` + `/timing/samples` every 3s; quick-link grid to the five feature pages; Vitest + Testing Library wired (`maxWorkers: '50%'`, jsdom), 63 tests green, 100% coverage on `lib/**` and the new `components/shared`/`components/overview` modules.
 - 6.3 ✅ 2026-07-17 Errors Playground: 19-card `TriggerGrid` (16 `/failures/:kind` derivations + catalog not-found/validation/seasonal), the shared `EnvelopeViewer` (annotated JSON, correlationId row highlighted, copy-to-clipboard) shows the exact envelope; Latency Lab: `DelayControl` (0-2000ms slider), `SampleFeed` (most-recent-first table with slow/status badges), `DurationSparkline` (inline SVG, last 50), `PoisonToggle` (arms the sink then verifies the follow-up request still succeeds); `lib/failures-api.ts`, `lib/catalog-api.ts`, and `lib/latency-api.ts` added; 117 tests green, 100% coverage maintained; live-verified against the running API (curl contract check + SSR HTML check for both pages).
+- 6.4 ✅ 2026-07-17 Pagination page: Offset tab (`OffsetTable` with limit `Select` + page prev/next clamped from `meta`, raw meta panel) and Cursor tab (`CursorTable` load-more accumulation, `CursorTrail` chips with copy-to-clipboard, `nextCursor: null` end-of-catalog state, "Corrupt the cursor" button rendering the `BYMAX_VALIDATION_FAILED` envelope inline via the shared `EnvelopeViewer`); `lib/catalog-api.ts` extended with `listOffsetProducts`/`listCursorProducts`; jsdom polyfills for `scrollIntoView`/pointer-capture added so Radix `Select` interactions run under Vitest; 138 tests green, 100% coverage maintained; live-verified against the running API (SSR HTML check).

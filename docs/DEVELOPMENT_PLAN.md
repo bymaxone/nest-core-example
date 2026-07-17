@@ -29,7 +29,7 @@
 
 ## Progress Dashboard
 
-> **Progress:** 6 / 9 phases complete (67%) · 29 / 42 tasks
+> **Progress:** 6 / 9 phases complete (67%) · 30 / 42 tasks
 > **Active phase:** Phase 6 (Dashboard: Shell + All Pages)
 > **Blocked:** none - the sibling library is built and its `dist/` resolves. Phases 3, 4 and 5
 > merged to `main`. A phase returns to ⛔ only if the local-build check regresses (see the
@@ -43,7 +43,7 @@
 | 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 4 / 4        | ✅     |
 | 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 4 / 4        | ✅     |
 | 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 5 / 5        | ✅     |
-| 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 3 / 6        | 🔄     |
+| 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 4 / 6        | 🔄     |
 | 7  | Testing to the Reference Bar             | `phase-07-testing.md`               | L    | 0 / 5        | 📋     |
 | 8  | Mutation, Docs, README & Export Audit    | `phase-08-hardening-docs.md`        | M    | 0 / 5        | 📋     |
 

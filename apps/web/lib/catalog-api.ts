@@ -25,6 +25,34 @@ export interface Product {
   readonly createdAt: string
 }
 
+/** Pagination metadata describing the position within the full result set. */
+export interface PageMeta {
+  /** The 1-based page this result represents. */
+  readonly page: number
+  /** The page size used to compute the slice. */
+  readonly limit: number
+  /** Total number of items across all pages. */
+  readonly totalItems: number
+  /** Total number of pages, `0` when there are no items. */
+  readonly totalPages: number
+}
+
+/** A page of products plus its computed {@link PageMeta}. */
+export interface PageResult {
+  /** The items on this page. */
+  readonly items: readonly Product[]
+  /** Metadata describing this page within the full set. */
+  readonly meta: PageMeta
+}
+
+/** A page of products plus the cursor for the next page, if any. */
+export interface CursorResult {
+  /** The items on this page, trimmed to the requested limit. */
+  readonly items: readonly Product[]
+  /** The cursor for the next page, or `null` when this is the last page. */
+  readonly nextCursor: string | null
+}
+
 /**
  * An id guaranteed to be absent from the seeded catalog (the seed is bounded
  * by `CATALOG_SEED_COUNT`, whose documented default is 240), used by the
@@ -73,4 +101,39 @@ export function triggerCatalogValidationError(): Promise<ApiResult<never>> {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({}),
   })
+}
+
+/**
+ * List products with offset pagination.
+ *
+ * @param page - 1-based page index; clamped server-side to `>= 1`.
+ * @param limit - Page size; clamped server-side to `[1, 50]`.
+ * @returns The requested page and its derived meta, or an API/transport failure.
+ */
+export function listOffsetProducts(page: number, limit: number): Promise<ApiResult<PageResult>> {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+  return request<PageResult>(`/catalog/products?${params.toString()}`)
+}
+
+/**
+ * List products with opaque-cursor pagination.
+ *
+ * The cursor is passed through untouched: it is never parsed or validated
+ * client-side, matching the library's opaque-cursor contract. Passing a
+ * tampered value deliberately (the Pagination page's "corrupt the cursor"
+ * demo) is exactly how a caller reproduces `BYMAX_VALIDATION_FAILED`.
+ *
+ * @param cursor - The opaque cursor from a prior page, or undefined for the first page.
+ * @param limit - Page size; clamped server-side to `[1, 50]`.
+ * @returns The requested page and the next cursor, or an API/transport failure.
+ */
+export function listCursorProducts(
+  cursor: string | undefined,
+  limit: number,
+): Promise<ApiResult<CursorResult>> {
+  const params = new URLSearchParams({ limit: String(limit) })
+  if (cursor !== undefined) {
+    params.set('cursor', cursor)
+  }
+  return request<CursorResult>(`/catalog/products/cursor?${params.toString()}`)
 }
