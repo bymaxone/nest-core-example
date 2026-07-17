@@ -230,6 +230,11 @@ export class ProductRepository {
 
   /** Await the configured artificial origin latency. */
   private async simulateLatency(): Promise<void> {
+    // A configured latency of 0 disables the delay entirely: return without
+    // scheduling a timer so "no latency" is a true no-op, not an extra tick.
+    if (this.originLatencyMs <= 0) {
+      return
+    }
     await new Promise<void>((resolve) => setTimeout(resolve, this.originLatencyMs))
   }
 }
