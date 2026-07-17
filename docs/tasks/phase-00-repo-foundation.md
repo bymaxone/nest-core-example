@@ -1,6 +1,6 @@
 # Phase 0: Repository Foundation & CI
 
-> **Status**: 🔄 In Progress · **Progress**: 3 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 4 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-0-repository-foundation--ci)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §6, §19
 
@@ -32,7 +32,7 @@ the plan's external precondition).
 | 0.1 | Branch + root workspace, TypeScript base, editor hygiene    | ✅     | P0       | S    | none       |
 | 0.2 | Lint, format, git hooks, commit governance                  | ✅     | P0       | S    | 0.1        |
 | 0.3 | Community files + Renovate                                  | ✅     | P1       | S    | 0.1        |
-| 0.4 | CI workflows (ci + conditional codeql/scorecard)            | 📋     | P0       | M    | 0.2        |
+| 0.4 | CI workflows (ci + conditional codeql/scorecard)            | ✅     | P0       | M    | 0.2        |
 | 0.5 | Phase close: audit, dashboards, PR + Copilot review + merge | 📋     | P0       | S    | 0.1-0.4    |
 
 ## Tasks
@@ -284,7 +284,7 @@ Completion Protocol:
 
 ### Task 0.4: CI workflows (ci + conditional codeql/scorecard)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 0.2
@@ -298,15 +298,15 @@ is private and active once it is public.
 
 #### Acceptance criteria
 
-- [ ] `.github/workflows/ci.yml`: triggers on `pull_request` + `push` to `main`; pnpm setup
+- [x] `.github/workflows/ci.yml`: triggers on `pull_request` + `push` to `main`; pnpm setup
       before node setup with `cache: pnpm`; `pnpm install --frozen-lockfile`; jobs/steps in
       order lint → typecheck → build → test; actions SHA-pinned; least-privilege `permissions`.
-- [ ] Test step tolerates the empty workspace (documented as removed when the first suite
+- [x] Test step tolerates the empty workspace (documented as removed when the first suite
       lands).
-- [ ] `.github/workflows/codeql.yml` and `.github/workflows/scorecard.yml` guarded with
+- [x] `.github/workflows/codeql.yml` and `.github/workflows/scorecard.yml` guarded with
       `if: ${{ !github.event.repository.private }}` (job level) so they activate on the public
       flip without edits.
-- [ ] The phase PR (task 0.5) shows the `ci` workflow green.
+- [x] The phase PR (task 0.5) shows the `ci` workflow green.
 
 #### Files to create / modify
 
@@ -451,3 +451,4 @@ Completion Protocol:
 - 0.1 ✅ 2026-07-17 pnpm workspace root, strict TypeScript base and editor hygiene scaffolded
 - 0.2 ✅ 2026-07-17 ESLint 9 flat config, Prettier, husky and commitlint wired and verified
 - 0.3 ✅ 2026-07-17 Community files (license, contributing, conduct, changelog, README stub) and Renovate config added
+- 0.4 ✅ 2026-07-17 CI pipeline plus visibility-gated CodeQL and Scorecard workflows added, all actions SHA-pinned
