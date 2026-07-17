@@ -42,6 +42,8 @@
     "test:api": "pnpm --filter api run test",
     "test:cov": "pnpm -r --workspace-concurrency=1 --if-present run test:cov",
     "test:cov:api": "pnpm --filter api run test:cov",
+    "tools:up": "docker compose --profile tools up -d",
+    "tools:down": "docker compose --profile tools down",
     "prepare": "husky"
   },
   "devDependencies": {

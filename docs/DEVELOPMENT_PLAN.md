@@ -29,10 +29,11 @@
 
 ## Progress Dashboard
 
-> **Progress:** 4 / 9 phases complete (44%) · 20 / 42 tasks
-> **Active phase:** Phase 4 (Failure Injection & Latency Lab (API))
-> **Blocked:** none - the sibling library is built and its `dist/` resolves. Phase 3 merged to
-> `main`; Phase 4 returns to ⛔ only if the local-build check regresses (see the
+> **Progress:** 5 / 9 phases complete (56%) · 25 / 42 tasks
+> **Active phase:** Phase 5 (Health Indicators & Metrics (API))
+> **Blocked:** none - the sibling library is built and its `dist/` resolves. Phases 3 and 4
+> merged to `main`; Phase 5 is in review (tasks 5.1-5.4 done, PR open). A phase returns to ⛔
+> only if the local-build check regresses (see the
 > [External Precondition](#external-precondition)).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
@@ -41,8 +42,8 @@
 | 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 3 / 3        | ✅     |
 | 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 5 / 5        | ✅     |
 | 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 4 / 4        | ✅     |
-| 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 3 / 4        | 👀     |
-| 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 0 / 5        | 📋     |
+| 4  | Failure Injection & Latency Lab (API)    | `phase-04-failures-latency.md`      | M    | 4 / 4        | ✅     |
+| 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 4 / 5        | 🔄     |
 | 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 0 / 6        | 📋     |
 | 7  | Testing to the Reference Bar             | `phase-07-testing.md`               | L    | 0 / 5        | 📋     |
 | 8  | Mutation, Docs, README & Export Audit    | `phase-08-hardening-docs.md`        | M    | 0 / 5        | 📋     |

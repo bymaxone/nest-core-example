@@ -1,0 +1,21 @@
+# Prometheus scrape configuration for the nest-core-example API.
+#
+# This is a learning aid, not a production configuration: it scrapes a single
+# target, the host-run API's `/metrics` endpoint, every 5 seconds so a metric
+# change shows up quickly in the Prometheus UI. Nothing in the app depends on
+# this file; it is used only by the optional `tools` compose profile.
+
+global:
+  # How often Prometheus scrapes each target. 5s keeps the demo responsive.
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'nest-core-example-api'
+    # The library serves Prometheus text format at `/metrics` when metrics are
+    # enabled (the default in this example's environment).
+    metrics_path: /metrics
+    static_configs:
+      # `host.docker.internal` resolves to the Docker host, where `pnpm dev`
+      # runs the API on port 3001. On Linux this name comes from the compose
+      # `extra_hosts: host.docker.internal:host-gateway` mapping.
+      - targets: ['host.docker.internal:3001']
