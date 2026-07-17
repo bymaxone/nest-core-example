@@ -29,15 +29,15 @@
 
 ## Progress Dashboard
 
-> **Progress:** 0 / 9 phases complete (0%) · 0 / 42 tasks
-> **Active phase:** none (plan awaiting kickoff)
+> **Progress:** 0 / 9 phases complete (0%) · 5 / 42 tasks
+> **Active phase:** Phase 0 (Repository Foundation & CI), PR open awaiting review and merge
 > **Blocked:** none at kickoff - the sibling library is built and its `dist/` resolves, so
 > Phase 1's external gate is satisfied. Phase 1 returns to ⛔ only if that local-build check
 > regresses (see the [External Precondition](#external-precondition)).
 
 | #  | Phase                                   | Tasks file                          | Size | Done / Total | Status |
 | -- | ---------------------------------------- | ----------------------------------- | ---- | ------------ | ------ |
-| 0  | Repository Foundation & CI               | `phase-00-repo-foundation.md`       | M    | 0 / 5        | 📋     |
+| 0  | Repository Foundation & CI               | `phase-00-repo-foundation.md`       | M    | 5 / 5        | 👀     |
 | 1  | Library Consumption & Subpath Probes     | `phase-01-library-consumption.md`   | S    | 0 / 3        | 📋     |
 | 2  | API Skeleton + Core Wiring               | `phase-02-api-skeleton-wiring.md`   | L    | 0 / 5        | 📋     |
 | 3  | Catalog Domain & Pagination              | `phase-03-catalog-pagination.md`    | M    | 0 / 4        | 📋     |

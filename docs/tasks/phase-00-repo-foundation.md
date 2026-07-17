@@ -1,6 +1,6 @@
 # Phase 0: Repository Foundation & CI
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 👀 Review · **Progress**: 5 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-0-repository-foundation--ci)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §6, §19
 
@@ -29,17 +29,17 @@ the plan's external precondition).
 
 | ID  | Task                                                       | Status | Priority | Size | Depends on |
 | --- | ----------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 0.1 | Branch + root workspace, TypeScript base, editor hygiene    | 📋     | P0       | S    | none       |
-| 0.2 | Lint, format, git hooks, commit governance                  | 📋     | P0       | S    | 0.1        |
-| 0.3 | Community files + Renovate                                  | 📋     | P1       | S    | 0.1        |
-| 0.4 | CI workflows (ci + conditional codeql/scorecard)            | 📋     | P0       | M    | 0.2        |
-| 0.5 | Phase close: audit, dashboards, PR + Copilot review + merge | 📋     | P0       | S    | 0.1-0.4    |
+| 0.1 | Branch + root workspace, TypeScript base, editor hygiene    | ✅     | P0       | S    | none       |
+| 0.2 | Lint, format, git hooks, commit governance                  | ✅     | P0       | S    | 0.1        |
+| 0.3 | Community files + Renovate                                  | ✅     | P1       | S    | 0.1        |
+| 0.4 | CI workflows (ci + conditional codeql/scorecard)            | ✅     | P0       | M    | 0.2        |
+| 0.5 | Phase close: audit, dashboards, PR + Copilot review + merge | 👀     | P0       | S    | 0.1-0.4    |
 
 ## Tasks
 
 ### Task 0.1: Branch + root workspace, TypeScript base, editor hygiene
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: none
@@ -52,16 +52,16 @@ created by later phases); the workspace globs simply tolerate an empty `apps/`.
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-00-repo-foundation` created with `git switch -c`.
-- [ ] Root `package.json`: `private: true`, `packageManager` pinning pnpm, `engines.node >=24`,
+- [x] Branch `feat/phase-00-repo-foundation` created with `git switch -c`.
+- [x] Root `package.json`: `private: true`, `packageManager` pinning pnpm, `engines.node >=24`,
       scripts `lint`, `typecheck`, `format`, `format:check`, `test` (workspace fan-outs that
       tolerate zero packages).
-- [ ] `pnpm-workspace.yaml` with `packages: ['apps/*']`; `.nvmrc` = `24`; `.npmrc` with
+- [x] `pnpm-workspace.yaml` with `packages: ['apps/*']`; `.nvmrc` = `24`; `.npmrc` with
       `engine-strict=true` and `frozen-lockfile=true` (no registry mapping).
-- [ ] `tsconfig.base.json`: `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
+- [x] `tsconfig.base.json`: `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
       ES2022 target.
-- [ ] `.editorconfig` and `.gitignore` (node, dist, .next, coverage, .env).
-- [ ] `pnpm install` exits 0 on a clean checkout.
+- [x] `.editorconfig` and `.gitignore` (node, dist, .next, coverage, .env).
+- [x] `pnpm install` exits 0 on a clean checkout.
 
 #### Files to create / modify
 
@@ -126,7 +126,7 @@ Completion Protocol:
 
 ### Task 0.2: Lint, format, git hooks, commit governance
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 0.1
@@ -138,14 +138,14 @@ and commitlint so Conventional Commits are enforced locally from the first commi
 
 #### Acceptance criteria
 
-- [ ] `eslint.config.mjs` (flat, typed rules for `*.ts`/`*.tsx`, ignores for `dist`, `.next`,
+- [x] `eslint.config.mjs` (flat, typed rules for `*.ts`/`*.tsx`, ignores for `dist`, `.next`,
       `coverage`); `pnpm lint` exits 0.
-- [ ] `.prettierrc.mjs` + `pnpm format:check` exits 0.
-- [ ] `.husky/pre-commit` → lint-staged; `.husky/commit-msg` → commitlint;
+- [x] `.prettierrc.mjs` + `pnpm format:check` exits 0.
+- [x] `.husky/pre-commit` → lint-staged; `.husky/commit-msg` → commitlint;
       `commitlint.config.mjs` extends `config-conventional`; `lint-staged.config.mjs` runs
       prettier + eslint --fix on staged files.
-- [ ] `.gitmessage` template with the project scopes (`repo`, `api`, `web`, `ci`, `docs`).
-- [ ] A test commit with a non-Conventional message is rejected by the hook.
+- [x] `.gitmessage` template with the project scopes (`repo`, `api`, `web`, `ci`, `docs`).
+- [x] A test commit with a non-Conventional message is rejected by the hook.
 
 #### Files to create / modify
 
@@ -205,7 +205,7 @@ Completion Protocol:
 
 ### Task 0.3: Community files + Renovate
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P1
 - **Size**: S
 - **Depends on**: 0.1
@@ -218,12 +218,12 @@ rule (automerge minor/patch after green CI, majors labeled).
 
 #### Acceptance criteria
 
-- [ ] `LICENSE` (MIT, Bymax One), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant
+- [x] `LICENSE` (MIT, Bymax One), `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant
       2.1 by reference, never transcribed), `CHANGELOG.md` (empty Unreleased section).
-- [ ] `README.md` stub: one-paragraph purpose, links to the three docs, "under construction"
+- [x] `README.md` stub: one-paragraph purpose, links to the three docs, "under construction"
       note that is honest and professional.
-- [ ] `CLAUDE.md` and `AGENTS.md` stubs pointing agents at `docs/` and the tasks folder.
-- [ ] `renovate.json`: extends recommended, `@bymax-one/**` group with automerge for
+- [x] `CLAUDE.md` and `AGENTS.md` stubs pointing agents at `docs/` and the tasks folder.
+- [x] `renovate.json`: extends recommended, `@bymax-one/**` group with automerge for
       minor/patch, `breaking-change` label for majors.
 
 #### Files to create / modify
@@ -284,7 +284,7 @@ Completion Protocol:
 
 ### Task 0.4: CI workflows (ci + conditional codeql/scorecard)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 0.2
@@ -298,15 +298,15 @@ is private and active once it is public.
 
 #### Acceptance criteria
 
-- [ ] `.github/workflows/ci.yml`: triggers on `pull_request` + `push` to `main`; pnpm setup
+- [x] `.github/workflows/ci.yml`: triggers on `pull_request` + `push` to `main`; pnpm setup
       before node setup with `cache: pnpm`; `pnpm install --frozen-lockfile`; jobs/steps in
       order lint → typecheck → build → test; actions SHA-pinned; least-privilege `permissions`.
-- [ ] Test step tolerates the empty workspace (documented as removed when the first suite
+- [x] Test step tolerates the empty workspace (documented as removed when the first suite
       lands).
-- [ ] `.github/workflows/codeql.yml` and `.github/workflows/scorecard.yml` guarded with
+- [x] `.github/workflows/codeql.yml` and `.github/workflows/scorecard.yml` guarded with
       `if: ${{ !github.event.repository.private }}` (job level) so they activate on the public
       flip without edits.
-- [ ] The phase PR (task 0.5) shows the `ci` workflow green.
+- [x] The phase PR (task 0.5) shows the `ci` workflow green.
 
 #### Files to create / modify
 
@@ -367,7 +367,12 @@ Completion Protocol:
 
 ### Task 0.5: Phase close: audit, dashboards, PR + Copilot review + merge
 
-- **Status**: 📋 ToDo
+- **Status**: 👀 Review
+
+> **Note:** the implementer completes the audit, dashboards, and PR open with the review
+> requested. Waiting for the review and CI, addressing findings, the merge, and branch deletion
+> are carried out by the orchestrator in a follow-up step.
+
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 0.1, 0.2, 0.3, 0.4
@@ -379,11 +384,11 @@ PR, request the GitHub Copilot code review, address every finding, and merge wit
 
 #### Acceptance criteria
 
-- [ ] Every acceptance criterion of tasks 0.1-0.4 re-verified on the branch (spot-run the
+- [x] Every acceptance criterion of tasks 0.1-0.4 re-verified on the branch (spot-run the
       verification commands).
-- [ ] Phase file header, task index, completion log, plan dashboard and tasks README all
+- [x] Phase file header, task index, completion log, plan dashboard and tasks README all
       consistent (5/5 done).
-- [ ] PR opened with a professional English title/body summarizing the foundation; Copilot
+- [x] PR opened with a professional English title/body summarizing the foundation; Copilot
       review requested; every finding addressed or answered.
 - [ ] Merged via squash with branch deletion; `main` CI green after merge.
 
@@ -448,3 +453,8 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+- 0.1 ✅ 2026-07-17 pnpm workspace root, strict TypeScript base and editor hygiene scaffolded
+- 0.2 ✅ 2026-07-17 ESLint 9 flat config, Prettier, husky and commitlint wired and verified
+- 0.3 ✅ 2026-07-17 Community files (license, contributing, conduct, changelog, README stub) and Renovate config added
+- 0.4 ✅ 2026-07-17 CI pipeline plus visibility-gated CodeQL and Scorecard workflows added, all actions SHA-pinned
+- 0.5 👀 2026-07-17 Acceptance criteria audited, dashboards synced, PR opened with Copilot review requested; merge owned by the orchestrator

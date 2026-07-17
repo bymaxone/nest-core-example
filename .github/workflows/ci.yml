@@ -1,0 +1,60 @@
+name: CI
+
+# Runs on every pull request targeting main and on every push to main, so the
+# gate that guards every future phase is exercised by this very phase's PR.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Cancel a stale run for the same ref when a new commit supersedes it.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Default to read-only. No job in this workflow needs to write to the repo.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify (lint, typecheck, build, test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      # pnpm must be on PATH before actions/setup-node's cache: pnpm resolves the
+      # store path, so the pnpm setup step runs first.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # No package declares a build script yet; --if-present keeps this step
+      # green today and starts building automatically once apps/api and
+      # apps/web land.
+      - name: Build
+        run: pnpm -r --workspace-concurrency=1 run build --if-present
+
+      # No package declares a test script yet; --if-present keeps this step
+      # green today. Remove --if-present once the first real suite lands and
+      # replace it with the coverage-enforcing script for that package.
+      - name: Test
+        run: pnpm -r --workspace-concurrency=1 run test --if-present
