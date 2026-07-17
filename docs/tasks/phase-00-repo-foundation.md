@@ -1,6 +1,6 @@
 # Phase 0: Repository Foundation & CI
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 1 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-0-repository-foundation--ci)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §6, §19
 
@@ -29,7 +29,7 @@ the plan's external precondition).
 
 | ID  | Task                                                       | Status | Priority | Size | Depends on |
 | --- | ----------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 0.1 | Branch + root workspace, TypeScript base, editor hygiene    | 📋     | P0       | S    | none       |
+| 0.1 | Branch + root workspace, TypeScript base, editor hygiene    | ✅     | P0       | S    | none       |
 | 0.2 | Lint, format, git hooks, commit governance                  | 📋     | P0       | S    | 0.1        |
 | 0.3 | Community files + Renovate                                  | 📋     | P1       | S    | 0.1        |
 | 0.4 | CI workflows (ci + conditional codeql/scorecard)            | 📋     | P0       | M    | 0.2        |
@@ -39,7 +39,7 @@ the plan's external precondition).
 
 ### Task 0.1: Branch + root workspace, TypeScript base, editor hygiene
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: none
@@ -52,16 +52,16 @@ created by later phases); the workspace globs simply tolerate an empty `apps/`.
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-00-repo-foundation` created with `git switch -c`.
-- [ ] Root `package.json`: `private: true`, `packageManager` pinning pnpm, `engines.node >=24`,
+- [x] Branch `feat/phase-00-repo-foundation` created with `git switch -c`.
+- [x] Root `package.json`: `private: true`, `packageManager` pinning pnpm, `engines.node >=24`,
       scripts `lint`, `typecheck`, `format`, `format:check`, `test` (workspace fan-outs that
       tolerate zero packages).
-- [ ] `pnpm-workspace.yaml` with `packages: ['apps/*']`; `.nvmrc` = `24`; `.npmrc` with
+- [x] `pnpm-workspace.yaml` with `packages: ['apps/*']`; `.nvmrc` = `24`; `.npmrc` with
       `engine-strict=true` and `frozen-lockfile=true` (no registry mapping).
-- [ ] `tsconfig.base.json`: `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
+- [x] `tsconfig.base.json`: `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
       ES2022 target.
-- [ ] `.editorconfig` and `.gitignore` (node, dist, .next, coverage, .env).
-- [ ] `pnpm install` exits 0 on a clean checkout.
+- [x] `.editorconfig` and `.gitignore` (node, dist, .next, coverage, .env).
+- [x] `pnpm install` exits 0 on a clean checkout.
 
 #### Files to create / modify
 
@@ -448,3 +448,4 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+- 0.1 ✅ 2026-07-17 pnpm workspace root, strict TypeScript base and editor hygiene scaffolded
