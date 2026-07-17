@@ -25,12 +25,17 @@ describe('latency lab and timing feed', () => {
   })
 
   /** The artificial-delay endpoint reports the requested and measured elapsed time. */
-  it('GET /latency?ms= reports the requested delay and an elapsed time at least that long', async () => {
-    const response = await httpAgent(app).get('/latency').query({ ms: 20 })
+  it('GET /latency?ms= reports the requested delay and a measured elapsed time', async () => {
+    const requestedMs = 50
+    const response = await httpAgent(app).get('/latency').query({ ms: requestedMs })
 
     expect(response.status).toBe(200)
-    expect(response.body).toMatchObject({ requestedMs: 20, poisoned: false })
-    expect(response.body.elapsedMs).toBeGreaterThanOrEqual(20)
+    expect(response.body).toMatchObject({ requestedMs, poisoned: false })
+    // setTimeout resolves at approximately, not exactly, `ms`: timer resolution
+    // and Math.round on performance.now() can report a few ms under the request.
+    // A tolerant lower bound still proves the delay was awaited (a no-op would
+    // report ~0) without a wall-clock flake.
+    expect(response.body.elapsedMs).toBeGreaterThanOrEqual(requestedMs - 5)
   })
 
   /**
