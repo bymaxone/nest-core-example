@@ -39,6 +39,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "pnpm -r --workspace-concurrency=1 run test",
+    "test:api": "pnpm --filter api run test",
+    "test:cov": "pnpm -r --workspace-concurrency=1 --if-present run test:cov",
+    "test:cov:api": "pnpm --filter api run test:cov",
     "prepare": "husky"
   },
   "devDependencies": {

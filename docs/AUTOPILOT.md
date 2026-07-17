@@ -36,6 +36,12 @@ install time, **a rebuild of the library only reaches this repo after a fresh
 `pnpm install`**: if library behavior looks stale during a fix cycle, re-install before
 diagnosing.
 
+This precondition check is a **local dev-loop concern only**. In CI, `.github/workflows/ci.yml`
+is a thin caller of the org-wide reusable pipeline
+(`bymaxone/.github/.github/workflows/node-ci.yml@v1`); its `library-repo: bymaxone/nest-core`
+input clones and builds the sibling library inside every CI job automatically, so there is no
+manual clone+build step to keep in sync here.
+
 Docker is **not** launch-blocking: the stack has zero infrastructure requirements. The
 `docker-compose.yml` authored in Phase 5 is an optional `tools` profile (Prometheus scraper);
 no gate executes it. E2E suites run supertest over the in-process app, no containers.
@@ -67,7 +73,7 @@ suites) and **8** (Stryker mutation runs on both apps).
 | `pnpm lint && pnpm typecheck && pnpm format:check` | phase 0 |
 | commitlint (Conventional Commits, enforced by husky) | phase 0 |
 | `pnpm --filter api test` - probe test lands, `--passWithNoTests` removed | phase 1 |
-| `pnpm --filter api test` - 100% coverage on every new/changed file | phase 2 |
+| `pnpm --filter api test:cov` - 100% coverage on every new/changed file | phase 2 |
 | `pnpm --filter api build` | phase 2 |
 | `pnpm --filter web build` (`next build`) | phase 6 |
 | `pnpm --filter web test` (Vitest) - 100% on new/changed files | phase 6 |

@@ -21,6 +21,9 @@ all of it.
    running dev configuration.
 3. Suites run sequentially (`maxWorkers: '50%'`; one package at a time in CI steps).
 4. Every `it()` carries a scenario comment.
+5. `.github/workflows/ci.yml` is a thin caller of the org reusable pipeline. Closing this phase
+   must flip its `run-e2e-api: true` input and add the `test:e2e:api` script(s) the reusable's
+   `e2e-api-command` expects, rather than hand-writing new CI steps.
 
 ## Reference docs
 
@@ -360,6 +363,11 @@ Completion Protocol:
 
 Harden CI to the final shape (coverage-enforced unit steps per app, then E2E, sequential;
 `--if-present` tolerances gone) and close the phase with the standard PR + Copilot flow.
+
+> **Update**: `ci.yml` is now a thin caller of the org reusable pipeline (see
+> `docs/AUTOPILOT.md`). "Hardening CI" for this phase means flipping `run-e2e-api: true` (and
+> `has-web`-dependent e2e-web flags, if Phase 6 has not already flipped `has-web`) in `ci.yml`
+> and adding the `test:e2e:api` script, not hand-writing explicit sequential steps.
 
 #### Acceptance criteria
 
