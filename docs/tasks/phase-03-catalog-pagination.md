@@ -1,6 +1,6 @@
 # Phase 3: Catalog Domain & Pagination
 
-> **Status**: 📋 ToDo · **Progress**: 0 / 4 tasks · **Last updated**: 2026-07-06
+> **Status**: 🔄 In Progress · **Progress**: 3 / 4 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-3-catalog-domain--pagination)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §11, §12.3, §7.5
 
@@ -29,16 +29,16 @@ envelope paths. No database: the repository pattern proves the library's ORM neu
 
 | ID  | Task                                                         | Status | Priority | Size | Depends on |
 | --- | ------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
-| 3.1 | Branch + seeded repository + single lookup (404 path)         | 📋     | P0       | M    | Phase 2    |
-| 3.2 | Offset endpoint + Zod-validated create + seasonal domain code | 📋     | P0       | M    | 3.1        |
-| 3.3 | Cursor endpoint (codec walk + strict rejection)               | 📋     | P0       | M    | 3.1        |
-| 3.4 | Phase close: audit, dashboards, PR + Copilot review + merge   | 📋     | P0       | S    | 3.1-3.3    |
+| 3.1 | Branch + seeded repository + single lookup (404 path)         | ✅     | P0       | M    | Phase 2    |
+| 3.2 | Offset endpoint + Zod-validated create + seasonal domain code | ✅     | P0       | M    | 3.1        |
+| 3.3 | Cursor endpoint (codec walk + strict rejection)               | ✅     | P0       | M    | 3.1        |
+| 3.4 | Phase close: audit, dashboards, PR + Copilot review + merge   | 🔄     | P0       | S    | 3.1-3.3    |
 
 ## Tasks
 
 ### Task 3.1: Branch + seeded repository + single lookup (404 path)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: Phase 2
@@ -52,13 +52,13 @@ The `catalog` module skeleton: a deterministic in-memory `ProductRepository` (se
 
 #### Acceptance criteria
 
-- [ ] Branch `feat/phase-03-catalog-pagination` created with `git switch -c`.
-- [ ] `ProductRepository`: `findById`, `findPage(query)`, `findAfter(cursorKeys, limit)`
+- [x] Branch `feat/phase-03-catalog-pagination` created with `git switch -c`.
+- [x] `ProductRepository`: `findById`, `findPage(query)`, `findAfter(cursorKeys, limit)`
       (returns `limit` rows after the cursor position, ordered by id), all latency-simulated.
-- [ ] `GET /catalog/products/:id` returns the product or throws `NotFoundException` with a
+- [x] `GET /catalog/products/:id` returns the product or throws `NotFoundException` with a
       message naming the id (the library derives `BYMAX_NOT_FOUND`).
-- [ ] Seed is deterministic: same count env yields the same products across boots.
-- [ ] 100% unit coverage; scenario comments on every `it()`.
+- [x] Seed is deterministic: same count env yields the same products across boots.
+- [x] 100% unit coverage; scenario comments on every `it()`.
 
 #### Files to create / modify
 
@@ -123,7 +123,7 @@ Completion Protocol:
 
 ### Task 3.2: Offset endpoint + Zod-validated create + seasonal domain code
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 3.1
@@ -137,14 +137,14 @@ derived by the library), `POST /catalog/products` with a Zod DTO whose rejection
 
 #### Acceptance criteria
 
-- [ ] Offset endpoint: `?page=&limit=` normalized with `{ maxLimit: 50 }`; response is the
+- [x] Offset endpoint: `?page=&limit=` normalized with `{ maxLimit: 50 }`; response is the
       library's `PageResult` (items + meta with derived totalPages); out-of-range inputs are
       clamped, never errors.
-- [ ] Create endpoint: Zod DTO (name, category, priceCents); invalid body returns the envelope
+- [x] Create endpoint: Zod DTO (name, category, priceCents); invalid body returns the envelope
       with `BYMAX_VALIDATION_FAILED` and one `details` entry per issue.
-- [ ] Seasonal endpoint: throws `new HttpException({ code: 'CATALOG_OUT_OF_SEASON', message },
-      409)`; the envelope carries the custom code verbatim.
-- [ ] 100% unit coverage on changed files.
+- [x] Seasonal endpoint: throws an `HttpException` subclass (`OutOfSeasonError`) carrying the
+      custom code `CATALOG_OUT_OF_SEASON` at 409; the envelope carries the custom code verbatim.
+- [x] 100% unit coverage on changed files.
 
 #### Files to create / modify
 
@@ -205,7 +205,7 @@ Completion Protocol:
 
 ### Task 3.3: Cursor endpoint (codec walk + strict rejection)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: M
 - **Depends on**: 3.1
@@ -218,14 +218,14 @@ yields `nextCursor: null`, and a tampered cursor is rejected as `BYMAX_VALIDATIO
 
 #### Acceptance criteria
 
-- [ ] Cursor endpoint: `?cursor=&limit=` normalized; repository fetches `limit + 1` rows after
+- [x] Cursor endpoint: `?cursor=&limit=` normalized; repository fetches `limit + 1` rows after
       the decoded position; `buildCursorResult` trims and derives `nextCursor` from the last
       item's ordering keys (`{ id }`).
-- [ ] Walking the whole seeded catalog page by page terminates with `nextCursor: null` and
+- [x] Walking the whole seeded catalog page by page terminates with `nextCursor: null` and
       yields every product exactly once (unit-proven).
-- [ ] A tampered cursor (`not-base64url!!!` and a truncated valid cursor) returns the envelope
+- [x] A tampered cursor (`not-base64url!!!` and a truncated valid cursor) returns the envelope
       with `BYMAX_VALIDATION_FAILED`.
-- [ ] 100% unit coverage on changed files.
+- [x] 100% unit coverage on changed files.
 
 #### Files to create / modify
 
@@ -281,10 +281,13 @@ Completion Protocol:
 
 ### Task 3.4: Phase close: audit, dashboards, PR + Copilot review + merge
 
-- **Status**: 📋 ToDo
+- **Status**: 🔄 In Progress
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 3.1, 3.2, 3.3
+
+> **Note:** acceptance audit, dashboard sync, and PR creation (with the auto-requested Copilot
+> review) are complete. Review resolution and the squash-merge are owned by the orchestrator.
 
 #### Description
 
@@ -293,9 +296,10 @@ resolve the GitHub Copilot review, merge with CI green.
 
 #### Acceptance criteria
 
-- [ ] All verification commands of 3.1-3.3 re-run green.
+- [x] All verification commands of 3.1-3.3 re-run green.
 - [ ] Dashboards consistent (4/4); PR opened; Copilot review requested and fully addressed;
-      squash-merged with branch deletion; `main` CI green.
+      squash-merged with branch deletion; `main` CI green. _(PR opened and review auto-requested;
+      resolution + merge owned by the orchestrator.)_
 
 #### Files to create / modify
 
@@ -353,3 +357,18 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 3.1 ✅ 2026-07-17 Deterministic seeded ProductRepository (mulberry32 PRNG keyed by index,
+  latency-simulated findById/findPage/findAfter), CatalogService.getProduct throwing
+  NotFoundException, GET /catalog/products/:id wired into AppModule; 100% unit coverage.
+- 3.2 ✅ 2026-07-17 Offset endpoint via normalizePageQuery + buildPageResult (clamped meta),
+  Zod-validated POST /catalog/products through ZodValidationPipe, GET
+  /catalog/products/:id/seasonal throwing common/domain-errors.ts's OutOfSeasonError with the
+  custom code CATALOG_OUT_OF_SEASON; 100% unit coverage on changed files.
+- 3.3 ✅ 2026-07-17 Cursor endpoint via normalizeCursorQuery + decodeCursor + buildCursorResult
+  (fetch-one-extra); the full seeded catalog walk terminates at nextCursor: null visiting every
+  product exactly once; a tampered or truncated cursor rejects as BYMAX_VALIDATION_FAILED;
+  100% unit coverage on changed files.
+- 3.4 🔄 2026-07-17 Phase-close audit and dashboards done; all gates green (100% coverage,
+  code review and security review clean); PR opened with the Copilot review auto-requested.
+  Review resolution and squash-merge are owned by the orchestrator.
