@@ -215,7 +215,9 @@ Per-phase focus for the security-sensitive rows of the model policy:
   when public. Never assume permanent privacy; never hardcode a public-only step off.
 - **Code sizing & style**: functions ≤ 50 lines, files ≤ 800, `@fileoverview` + `@layer`
   header per file, JSDoc on every export, English-only timeless comments, zero `any`,
-  zero suppression comments, no `.gitkeep`, no em dashes in code or docs, no Swagger.
+  zero suppression comments, no `.gitkeep`, no em dashes in application code (enforced on
+  `apps/` by the invariant grep above; the design-system HTML and Markdown docs are exempt),
+  no Swagger.
 - **Sequential execution track**: phases 3/4/5 are code-parallel on paper, but the chain
   runs strictly one implementer at a time - the plan's parallelism notes never license
   two implementers at once.
