@@ -28,12 +28,12 @@ operator rebuilds with `pnpm -C ../nest-core build`.
 | 1     | [`phase-01-library-consumption.md`](./phase-01-library-consumption.md)   | 3 / 3 | ✅     |
 | 2     | [`phase-02-api-skeleton-wiring.md`](./phase-02-api-skeleton-wiring.md)   | 5 / 5 | ✅     |
 | 3     | [`phase-03-catalog-pagination.md`](./phase-03-catalog-pagination.md)     | 4 / 4 | ✅     |
-| 4     | [`phase-04-failures-latency.md`](./phase-04-failures-latency.md)         | 2 / 4 | 🔄     |
+| 4     | [`phase-04-failures-latency.md`](./phase-04-failures-latency.md)         | 3 / 4 | 👀     |
 | 5     | [`phase-05-health-metrics.md`](./phase-05-health-metrics.md)             | 0 / 5 | 📋     |
 | 6     | [`phase-06-web-dashboard.md`](./phase-06-web-dashboard.md)               | 0 / 6 | 📋     |
 | 7     | [`phase-07-testing.md`](./phase-07-testing.md)                           | 0 / 5 | 📋     |
 | 8     | [`phase-08-hardening-docs.md`](./phase-08-hardening-docs.md)             | 0 / 5 | 📋     |
-|       | **Total**                                                                | **19 / 42** | 🔄 |
+|       | **Total**                                                                | **20 / 42** | 🔄 |
 
 **Status legend:** 📋 ToDo · 🔄 In Progress · 👀 Review · ✅ Done · ⛔ Blocked · 🟡 Partial
 Sizes: **XS/S** (< ~100 LoC), **M** (~100-250), **L** (~250+). Priorities: **P0** (blocking),

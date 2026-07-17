@@ -1,6 +1,6 @@
 # Phase 4: Failure Injection & Latency Lab (API)
 
-> **Status**: 🔄 In Progress · **Progress**: 2 / 4 tasks · **Last updated**: 2026-07-17
+> **Status**: 👀 Review · **Progress**: 3 / 4 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-4-failure-injection--latency-lab-api)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §12.1, §12.2, §7.3, §7.4
 
@@ -32,8 +32,8 @@ artificial-delay endpoint that drives the `slow` flag and the sink-poison proof.
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 4.1 | Branch + failures module: standard HttpException triggers      | ✅     | P0       | M    | Phase 2    |
 | 4.2 | Fallback + collapse triggers (418, 507, unknown) + prod proof  | ✅     | P0       | M    | 4.1        |
-| 4.3 | Latency endpoint (slow flag + sink poison round trip)          | 📋     | P0       | S    | Phase 2    |
-| 4.4 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 4.1-4.3    |
+| 4.3 | Latency endpoint (slow flag + sink poison round trip)          | ✅     | P0       | S    | Phase 2    |
+| 4.4 | Phase close: audit, dashboards, PR + Copilot review + merge    | 🔄     | P0       | S    | 4.1-4.3    |
 
 ## Tasks
 
@@ -349,6 +349,10 @@ Completion Protocol:
 ## Completion log
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
+
+- 4.1 ✅ 2026-07-17 failure triggers for the standard HttpException error-code catalog
+- 4.2 ✅ 2026-07-17 fallback + unknown-collapse triggers (418, 507) with prod-mode collapse proof
+- 4.3 ✅ 2026-07-17 latency lab endpoint with slow-flag and sink-poison round trip
 
 - 4.1 ✅ 2026-07-17 failures module added: frozen `FAILURE_REGISTRY` (13 standard
   `HttpException` derivations, bad-request through gateway-timeout), `FailuresService.trigger`
