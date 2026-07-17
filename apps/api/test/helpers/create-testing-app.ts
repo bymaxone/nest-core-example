@@ -83,12 +83,13 @@ function applyEnv(values: Readonly<Record<string, string>>): () => void {
 export async function createTestingApp(
   env: Readonly<Record<string, string>> = {},
 ): Promise<TestApiApp> {
-  const restoreEnv = applyEnv({ ...BASELINE_ENV, ...env })
+  const mergedEnv = { ...BASELINE_ENV, ...env }
+  const restoreEnv = applyEnv(mergedEnv)
   try {
     const { AppModule } = await import('../../src/app.module.js')
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile()
     const app = moduleRef.createNestApplication()
-    app.enableCors({ origin: process.env['WEB_ORIGIN'] })
+    app.enableCors({ origin: mergedEnv.WEB_ORIGIN })
     await app.listen(0, '127.0.0.1')
 
     const server: Server = app.getHttpServer()
