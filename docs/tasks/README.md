@@ -25,8 +25,8 @@ operator rebuilds with `pnpm -C ../nest-core build`.
 | Phase | File                                                                     | Tasks | Status |
 | ----- | ------------------------------------------------------------------------ | ----- | ------ |
 | 0     | [`phase-00-repo-foundation.md`](./phase-00-repo-foundation.md)           | 5 / 5 | ✅     |
-| 1     | [`phase-01-library-consumption.md`](./phase-01-library-consumption.md)   | 3 / 3 | 👀     |
-| 2     | [`phase-02-api-skeleton-wiring.md`](./phase-02-api-skeleton-wiring.md)   | 0 / 5 | 📋     |
+| 1     | [`phase-01-library-consumption.md`](./phase-01-library-consumption.md)   | 3 / 3 | ✅     |
+| 2     | [`phase-02-api-skeleton-wiring.md`](./phase-02-api-skeleton-wiring.md)   | 0 / 5 | 🔄     |
 | 3     | [`phase-03-catalog-pagination.md`](./phase-03-catalog-pagination.md)     | 0 / 4 | 📋     |
 | 4     | [`phase-04-failures-latency.md`](./phase-04-failures-latency.md)         | 0 / 4 | 📋     |
 | 5     | [`phase-05-health-metrics.md`](./phase-05-health-metrics.md)             | 0 / 5 | 📋     |
