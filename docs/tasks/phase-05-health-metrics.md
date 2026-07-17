@@ -34,7 +34,7 @@ specified here and asserted exhaustively in Phase 7's variant suites.
 | 5.2 | Health toggle endpoints + readiness flip proofs               | ✅     | P0       | S    | 5.1        |
 | 5.3 | Metrics: custom counter + registry wiring proofs              | ✅     | P0       | M    | Phase 2    |
 | 5.4 | Optional Prometheus profile (compose + scrape config)         | ✅     | P1       | S    | 5.3        |
-| 5.5 | Phase close: audit, dashboards, PR + Copilot review + merge   | 📋     | P0       | S    | 5.1-5.4    |
+| 5.5 | Phase close: audit, dashboards, PR + Copilot review + merge   | 👀     | P0       | S    | 5.1-5.4    |
 
 ## Tasks
 
@@ -354,10 +354,14 @@ Completion Protocol:
 
 ### Task 5.5: Phase close: audit, dashboards, PR + Copilot review + merge
 
-- **Status**: 📋 ToDo
+- **Status**: 👀 Review
 - **Priority**: P0
 - **Size**: S
 - **Depends on**: 5.1, 5.2, 5.3, 5.4
+
+> **Note:** acceptance audited, dashboards synced, and the PR opened with the Copilot review
+> auto-requested. The review-to-merge loop is owned by the orchestrator; this task closes to ✅
+> once the PR merges to `main` with CI green.
 
 #### Description
 
@@ -430,3 +434,4 @@ Completion Protocol:
 - 5.2 ✅ 2026-07-17 flaky/hang toggle endpoints (Zod-validated) with readiness-flip proofs: 200↔503, one failure hides nothing, hang down-by-timeout carries `timedOutAfterMs`; 100% coverage.
 - 5.3 ✅ 2026-07-17 `metrics-demo` custom `catalog_lookups_total` counter via injected `BYMAX_METRICS_REGISTRY` (lazy `prom-client`, no static import); scrape proofs for default HTTP metrics, bounded/default labels, process metrics, counter growth; import-hygiene gate; 100% coverage.
 - 5.4 ✅ 2026-07-17 optional `tools`-profile `docker-compose.yml` + commented `docker/prometheus/prometheus.yml` (5s scrape of `host.docker.internal:3001`), root `tools:up`/`tools:down` scripts; compose config validates and the default profile has zero services.
+- 5.5 👀 2026-07-17 acceptance audited (readiness 200↔503, hang down-by-timeout diagnostic, `/metrics` default+custom with default labels, 100% coverage), dashboards synced (Phase 4 → ✅), PR opened with the Copilot review auto-requested; merge owned by the orchestrator.
