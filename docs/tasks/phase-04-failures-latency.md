@@ -350,10 +350,6 @@ Completion Protocol:
 
 <!-- append: - N.M ✅ YYYY-MM-DD <one-line summary> -->
 
-- 4.1 ✅ 2026-07-17 failure triggers for the standard HttpException error-code catalog
-- 4.2 ✅ 2026-07-17 fallback + unknown-collapse triggers (418, 507) with prod-mode collapse proof
-- 4.3 ✅ 2026-07-17 latency lab endpoint with slow-flag and sink-poison round trip
-
 - 4.1 ✅ 2026-07-17 failures module added: frozen `FAILURE_REGISTRY` (13 standard
   `HttpException` derivations, bad-request through gateway-timeout), `FailuresService.trigger`
   collapsing an unregistered kind to `NotFoundException`, `POST /failures/:kind` wired into
@@ -365,3 +361,7 @@ Completion Protocol:
   the fixed 500 envelope with no `details` key and no marker or stack anywhere in the body;
   dev-internals.spec.ts (`exposeInternals: true`) asserts the same fixed top-level `message`
   with the original marker and a stack surfaced under `details`; 100% unit coverage.
+- 4.3 ✅ 2026-07-17 latency lab added: `GET /latency?ms=&poison=` clamps the delay into
+  `[0, 5000]` and, on `poison=true`, arms the sink's one-shot poison for its own request; unit
+  and integration suites prove the slow-flag threshold and that a poisoned sink never breaks the
+  request; 100% coverage.

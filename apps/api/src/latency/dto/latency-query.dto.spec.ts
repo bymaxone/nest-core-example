@@ -86,4 +86,55 @@ describe('latencyQuerySchema', () => {
 
     expect(result.success).toBe(false)
   })
+
+  /**
+   * Poison flag, explicit true.
+   *
+   * `poison=true` must parse to the boolean `true` so the endpoint arms the
+   * one-shot sink poison for the request.
+   */
+  it('parses poison=true to true', () => {
+    const result = latencyQuerySchema.safeParse({ poison: 'true' })
+
+    expect(result.success).toBe(true)
+    expect(result.success && result.data.poison).toBe(true)
+  })
+
+  /**
+   * Poison flag, numeric truthy.
+   *
+   * `poison=1` is also accepted as true, matching the endpoint's lenient
+   * truthy-string parsing.
+   */
+  it('parses poison=1 to true', () => {
+    const result = latencyQuerySchema.safeParse({ poison: '1' })
+
+    expect(result.success).toBe(true)
+    expect(result.success && result.data.poison).toBe(true)
+  })
+
+  /**
+   * Poison flag, explicit false.
+   *
+   * `poison=false` (any non-truthy value) must parse to `false` rather than
+   * being rejected.
+   */
+  it('parses poison=false to false', () => {
+    const result = latencyQuerySchema.safeParse({ poison: 'false' })
+
+    expect(result.success).toBe(true)
+    expect(result.success && result.data.poison).toBe(false)
+  })
+
+  /**
+   * Poison flag, default when absent.
+   *
+   * Omitting `poison` must default to `false` so the sink is left untouched.
+   */
+  it('defaults poison to false when absent', () => {
+    const result = latencyQuerySchema.safeParse({})
+
+    expect(result.success).toBe(true)
+    expect(result.success && result.data.poison).toBe(false)
+  })
 })

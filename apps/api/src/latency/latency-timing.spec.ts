@@ -146,4 +146,24 @@ describe('Latency Lab: interceptor-wired timing proofs', () => {
     // Poison is one-shot: this next request records normally again.
     expect(sink.snapshot().length).toBe(before + 1)
   })
+
+  /**
+   * GET /latency?poison=true is a self-contained poison round trip.
+   *
+   * Arming the poison via the latency request itself poisons that same
+   * request's post-handler recording: it must still respond 200 while its
+   * sample is silently dropped, and the one-shot poison must clear so the
+   * next request records normally.
+   */
+  it('arms the poison via /latency?poison=true without failing the request', async () => {
+    const before = sink.snapshot().length
+
+    await request(httpServer).get('/latency?ms=0&poison=true').expect(200)
+    // The poisoned recording for this request is swallowed: no sample added.
+    expect(sink.snapshot().length).toBe(before)
+
+    await request(httpServer).get('/latency?ms=0').expect(200)
+    // One-shot poison cleared: the next request records normally.
+    expect(sink.snapshot().length).toBe(before + 1)
+  })
 })

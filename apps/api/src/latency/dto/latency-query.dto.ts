@@ -20,7 +20,8 @@ const DEFAULT_LATENCY_MS = 0
 /**
  * Validated shape accepted by `GET /latency`. `ms` coerces from the raw query
  * string, then clamps into `[0, 5000]` instead of rejecting an out-of-range
- * value.
+ * value. `poison=true` (or `1`) arms the one-shot sink poison for this request;
+ * any other value, or its absence, leaves the sink untouched.
  */
 export const latencyQuerySchema = z.object({
   ms: z.coerce
@@ -28,6 +29,10 @@ export const latencyQuerySchema = z.object({
     .int()
     .default(DEFAULT_LATENCY_MS)
     .transform((value) => Math.min(Math.max(value, MIN_LATENCY_MS), MAX_LATENCY_MS)),
+  poison: z
+    .string()
+    .optional()
+    .transform((value) => value === 'true' || value === '1'),
 })
 
 /** Inferred input type for {@link latencyQuerySchema}. */

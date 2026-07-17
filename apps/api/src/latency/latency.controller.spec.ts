@@ -2,16 +2,30 @@
  * Unit tests for LatencyController.
  *
  * Layer: unit.
- * Goal: verify the handler awaits the requested delay before resolving and
- * reports both the requested and measured durations. The interceptor,
- * slow-flag, and sink-poison proofs live in latency-timing.spec.ts against a
- * real, interceptor-wired module.
- * Mocks: none; fake timers control the awaited delay deterministically.
+ * Goal: verify the handler awaits the requested delay before resolving, reports
+ * both the requested and measured durations, and arms the one-shot sink poison
+ * only when `poison` is true. The interceptor, slow-flag, and end-to-end
+ * sink-poison round-trip proofs live in latency-timing.spec.ts against a real,
+ * interceptor-wired module.
+ * Mocks: a stub sink whose `armPoison` is a jest.fn(); fake timers control the
+ * awaited delay deterministically.
  */
 
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
 
+import type { RingBufferTimingSink } from '../core/ring-buffer-timing.sink.js'
 import { LatencyController } from './latency.controller.js'
+
+/**
+ * Build a controller backed by a stub sink.
+ *
+ * @returns The controller under test and its `armPoison` spy.
+ */
+function buildController(): { controller: LatencyController; armPoison: jest.Mock } {
+  const armPoison = jest.fn()
+  const sink = { armPoison } as unknown as RingBufferTimingSink
+  return { controller: new LatencyController(sink), armPoison }
+}
 
 describe('LatencyController', () => {
   beforeEach(() => {
@@ -30,10 +44,10 @@ describe('LatencyController', () => {
    * requested value alongside a non-negative measured duration.
    */
   it('awaits the requested delay before resolving', async () => {
-    const controller = new LatencyController()
+    const { controller } = buildController()
     let resolved = false
 
-    const pending = controller.fireDelay({ ms: 50 }).then((result) => {
+    const pending = controller.fireDelay({ ms: 50, poison: false }).then((result) => {
       resolved = true
       return result
     })
@@ -56,13 +70,46 @@ describe('LatencyController', () => {
    * fast path used by the "below threshold" Latency Lab demonstration.
    */
   it('resolves immediately for a zero delay', async () => {
-    const controller = new LatencyController()
+    const { controller } = buildController()
 
-    const pending = controller.fireDelay({ ms: 0 })
+    const pending = controller.fireDelay({ ms: 0, poison: false })
     await jest.advanceTimersByTimeAsync(0)
     const result = await pending
 
     expect(result.requestedMs).toBe(0)
     expect(result.elapsedMs).toBeGreaterThanOrEqual(0)
+  })
+
+  /**
+   * Poison arming.
+   *
+   * `poison: true` must arm the sink's one-shot poison exactly once and report
+   * `poisoned: true`, while the request itself still resolves normally.
+   */
+  it('arms the one-shot sink poison when poison is true', async () => {
+    const { controller, armPoison } = buildController()
+
+    const pending = controller.fireDelay({ ms: 0, poison: true })
+    await jest.advanceTimersByTimeAsync(0)
+    const result = await pending
+
+    expect(armPoison).toHaveBeenCalledTimes(1)
+    expect(result.poisoned).toBe(true)
+  })
+
+  /**
+   * No poison by default.
+   *
+   * `poison: false` must leave the sink untouched and report `poisoned: false`.
+   */
+  it('leaves the sink untouched when poison is false', async () => {
+    const { controller, armPoison } = buildController()
+
+    const pending = controller.fireDelay({ ms: 0, poison: false })
+    await jest.advanceTimersByTimeAsync(0)
+    const result = await pending
+
+    expect(armPoison).not.toHaveBeenCalled()
+    expect(result.poisoned).toBe(false)
   })
 })
