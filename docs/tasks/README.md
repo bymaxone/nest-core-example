@@ -32,8 +32,8 @@ operator rebuilds with `pnpm -C ../nest-core build`.
 | 5     | [`phase-05-health-metrics.md`](./phase-05-health-metrics.md)             | 5 / 5 | ✅     |
 | 6     | [`phase-06-web-dashboard.md`](./phase-06-web-dashboard.md)               | 6 / 6 | ✅     |
 | 7     | [`phase-07-testing.md`](./phase-07-testing.md)                           | 5 / 5 | ✅     |
-| 8     | [`phase-08-hardening-docs.md`](./phase-08-hardening-docs.md)             | 1 / 5 | 🔄     |
-|       | **Total**                                                                | **38 / 42** | 🔄 |
+| 8     | [`phase-08-hardening-docs.md`](./phase-08-hardening-docs.md)             | 2 / 5 | 🔄     |
+|       | **Total**                                                                | **39 / 42** | 🔄 |
 
 **Status legend:** 📋 ToDo · 🔄 In Progress · 👀 Review · ✅ Done · ⛔ Blocked · 🟡 Partial
 Sizes: **XS/S** (< ~100 LoC), **M** (~100-250), **L** (~250+). Priorities: **P0** (blocking),

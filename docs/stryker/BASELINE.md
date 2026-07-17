@@ -60,19 +60,29 @@ Both use `coverageAnalysis: perTest` and `ignoreStatic: true`.
 
 ## Final run (after hardening)
 
-Filled in when the hardening pass (survivor elimination) lands. The api holds `break: 100`
-and the web holds `break: 90` with `lib/**` fully killed.
+The api holds `break: 100` and the web holds `break: 90` with `lib/**` fully killed. Survivors
+that remain are proven-equivalent mutants, disabled with a reason (see the table below).
 
-| App | Mutation score | Killed | Survived | Ignored | Result       |
-| --- | -------------- | ------ | -------- | ------- | ------------ |
-| api | _pending_      |        |          |         | _pending_    |
-| web | _pending_      |        |          |         | _pending_    |
+| App | Mutation score | Detected (killed + timeout + error) | Survived | Ignored | Result                    |
+| --- | -------------- | ----------------------------------- | -------- | ------- | ------------------------- |
+| api | 100.00%        | 290 (284 + 4 + 2)                   | 0        | 53      | passes `break: 100`       |
+| web | 90.72%         | 596                                 | 61 (presentational, under the 90 bar) | 43 | passes `break: 90`; `lib/**` at 100 (0 survivors) |
+
+The api holds a perfect score. The web bar is 90 by design (spec §18): the remaining web
+survivors are presentational component mutants (Tailwind class variants and layout markup) below
+the 90 threshold; every `lib/**` logic module is at 100.
 
 ## Proven-equivalent mutants (ignored with a reason)
 
-Every row here has a matching `// Stryker disable next-line <Mutator>: <reason>` at the cited
-source location. A mutant a test could kill is never listed here.
+Every row here has a matching `// Stryker disable <Mutator>: <reason>` at the cited source
+location. A mutant a test could kill is never listed here.
 
-| Location | Mutator(s) | Reason |
-| -------- | ---------- | ------ |
-| _pending_ | | |
+| Location                                   | Mutator(s)                | Reason                                                                                                    |
+| ------------------------------------------ | ------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `apps/api/src/core/core.config.ts` (`INFER`)          | ObjectLiteral, BooleanLiteral | `{ infer: true }` is a compile-time-only `@nestjs/config` type hint; an emptied object or a flipped flag reads the identical value. |
+| `apps/api/src/catalog/product.repository.ts` (`INFER`) | ObjectLiteral, BooleanLiteral | Same `{ infer: true }` compile-time hint, hoisted once for the two config reads.                          |
+| `apps/api/src/core/ring-buffer-timing.sink.ts` L33    | ObjectLiteral, BooleanLiteral | Same `{ infer: true }` compile-time hint on the single buffer-size read.                                  |
+| `apps/api/src/health-demo/hanging.indicator.ts`       | ObjectLiteral, BooleanLiteral | `ref: false` only governs whether the pending timer keeps the process alive; never observable in the check's result or timing. |
+| `apps/api/src/config/env.schema.ts` (`joinedPath`)    | StringLiteral             | Env keys are all top-level, so an issue path never has more than one segment and the join separator is never observable. |
+| `apps/web/lib/env.ts` (`field` join)                  | StringLiteral             | The single web env var is top-level; an issue path never has more than one segment.                       |
+| `apps/web/lib/env.ts` (`.join('\n')`)                 | StringLiteral             | Only one variable is validated, so the issue list is always a single line and the newline separator is never observable. |

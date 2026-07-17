@@ -83,7 +83,9 @@ export type Env = z.infer<typeof envSchema>
  */
 function formatEnvError(error: ZodError): string {
   const lines = error.issues.map((issue) => {
-    const path = issue.path.length > 0 ? issue.path.join('.') : '(root)'
+    // Stryker disable next-line StringLiteral: every env key is top-level, so an issue path never has more than one segment and the join separator is never observable; the mutant is provably equivalent.
+    const joinedPath = issue.path.join('.')
+    const path = issue.path.length > 0 ? joinedPath : '(root)'
     return `  - ${path}: ${issue.message}`
   })
   return `Invalid environment configuration:\n${lines.join('\n')}`

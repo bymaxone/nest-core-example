@@ -37,31 +37,39 @@ describe('StatusStrip', () => {
   })
 
   /**
-   * Readiness chip and zero-count tiles.
+   * Readiness chip and zero-count tiles colored ok.
    *
-   * Once known, the readiness tile shows its status chip; with zero
-   * requests, slow, and error samples, all three timing tiles render 0.
+   * Once known, the readiness tile shows its status chip. With a positive
+   * request total but zero slow and zero error samples, the two derived tiles
+   * both read `0` and carry the `ok` severity color, proving the `> 0` guards
+   * resolve to `ok` at the boundary rather than warn/error.
    */
-  it('renders the readiness chip and zero-count tiles as ok', () => {
+  it('renders the readiness chip and colors the zero slow/error tiles ok', () => {
     render(
       <StatusStrip
         healthStatus="ok"
-        summary={ZERO_SUMMARY}
+        summary={{ total: 5, slow: 0, errors: 0 }}
         readinessLoading={false}
         timingLoading={false}
       />,
     )
     expect(screen.getByText('OK')).toBeInTheDocument()
-    expect(screen.getAllByText('0')).toHaveLength(3)
+    // Total tile shows 5; the two zeroed tiles (slow, errors) both take the ok color.
+    const zeroTiles = screen.getAllByText('0')
+    expect(zeroTiles).toHaveLength(2)
+    for (const tile of zeroTiles) {
+      expect(tile).toHaveClass('text-(--color-success)')
+    }
   })
 
   /**
-   * Non-zero slow/error tiles.
+   * Non-zero slow/error tiles take warn/error colors.
    *
-   * A non-zero slow or error count renders its warn/error-severity value
-   * instead of the ok treatment.
+   * A non-zero slow count colors its tile with the warn accent and a non-zero
+   * error count colors its tile with the danger color, so the severity ternaries
+   * cannot collapse to a single branch or invert their comparison.
    */
-  it('renders non-zero slow and error counts', () => {
+  it('colors a non-zero slow tile warn and a non-zero error tile danger', () => {
     render(
       <StatusStrip
         healthStatus="error"
@@ -71,7 +79,7 @@ describe('StatusStrip', () => {
       />,
     )
     expect(screen.getByText('10')).toBeInTheDocument()
-    expect(screen.getByText('2')).toBeInTheDocument()
-    expect(screen.getByText('3')).toBeInTheDocument()
+    expect(screen.getByText('2')).toHaveClass('text-(--color-accent)')
+    expect(screen.getByText('3')).toHaveClass('text-(--color-danger)')
   })
 })

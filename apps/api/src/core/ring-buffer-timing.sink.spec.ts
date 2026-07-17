@@ -19,9 +19,17 @@ function sample(route: string): RequestTimingSample {
   return { method: 'GET', route, statusCode: 200, durationMs: 1, slow: false }
 }
 
-/** Build a sink whose capacity is fixed to the given size. */
+/**
+ * Build a sink whose capacity is fixed to the given size.
+ *
+ * The stub answers only the `TIMING_BUFFER_SIZE` key so the sink must read from
+ * exactly that variable; any other key yields `undefined`, which would disable
+ * eviction and fail the bounded-capacity test.
+ */
 function sinkWithCapacity(capacity: number): RingBufferTimingSink {
-  const config = { get: () => capacity } as unknown as ConfigService<Env, true>
+  const config = {
+    get: (key: string) => (key === 'TIMING_BUFFER_SIZE' ? capacity : undefined),
+  } as unknown as ConfigService<Env, true>
   return new RingBufferTimingSink(config)
 }
 

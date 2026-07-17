@@ -1,6 +1,6 @@
 # Phase 8: Mutation, Docs, README & Export Audit
 
-> **Status**: 🔄 In Progress · **Progress**: 1 / 5 tasks · **Last updated**: 2026-07-17
+> **Status**: 🔄 In Progress · **Progress**: 2 / 5 tasks · **Last updated**: 2026-07-17
 > **Source roadmap**: [`../DEVELOPMENT_PLAN.md`](../DEVELOPMENT_PLAN.md#phase-8-mutation-docs-readme--export-audit)
 > **Source spec**: [`../TECHNICAL_SPECIFICATION.md`](../TECHNICAL_SPECIFICATION.md) §7, §18, §21
 
@@ -36,7 +36,7 @@ the complete, verifiable usage reference for `@bymax-one/nest-core`.
 | ID  | Task                                                          | Status | Priority | Size | Depends on |
 | --- | -------------------------------------------------------------- | ------ | -------- | ---- | ---------- |
 | 8.1 | Branch + Stryker toolchain (api + web) + baseline records      | ✅     | P0       | M    | Phase 7    |
-| 8.2 | Survivor hardening to thresholds (api 100, web 90)             | 📋     | P0       | L    | 8.1        |
+| 8.2 | Survivor hardening to thresholds (api 100, web 90)             | ✅     | P0       | L    | 8.1        |
 | 8.3 | Export audit script + CI job                                   | 📋     | P0       | M    | Phase 7    |
 | 8.4 | Final README, CHANGELOG and journeys                           | 📋     | P0       | M    | 8.3        |
 | 8.5 | Phase close: audit, dashboards, PR + Copilot review + merge    | 📋     | P0       | S    | 8.1-8.4    |
@@ -122,7 +122,7 @@ Completion Protocol:
 
 ### Task 8.2: Survivor hardening to thresholds (api 100, web 90)
 
-- **Status**: 📋 ToDo
+- **Status**: ✅ Done
 - **Priority**: P0
 - **Size**: L
 - **Depends on**: 8.1
@@ -135,13 +135,13 @@ observable behavior until the api holds `break: 100` and the web holds `break: 9
 
 #### Acceptance criteria
 
-- [ ] `pnpm --filter @nest-core-example/api mutation` passes at `break: 100` (zero surviving
+- [x] `pnpm --filter @nest-core-example/api mutation` passes at `break: 100` (zero surviving
       non-equivalent mutants).
-- [ ] `pnpm --filter @nest-core-example/web mutation` passes at `break: 90` with `lib/**`
+- [x] `pnpm --filter @nest-core-example/web mutation` passes at `break: 90` with `lib/**`
       mutants fully killed.
-- [ ] Every equivalent mutant carries a `// Stryker disable next-line <Mutator>: <reason>`
+- [x] Every equivalent mutant carries a `// Stryker disable <Mutator>: <reason>`
       in source AND a row in `docs/stryker/BASELINE.md`'s equivalents table.
-- [ ] `docs/stryker/HISTORY.md` updated with the final run rows.
+- [x] `docs/stryker/HISTORY.md` updated with the final run rows.
 
 #### Files to create / modify
 
@@ -427,3 +427,5 @@ Completion Protocol:
 
 - 8.1 ✅ 2026-07-17 Stryker wired for both apps (jest/vitest runners, perTest, ignoreStatic,
   incremental); baselines recorded: api 77.81%, web 84.22%; artifacts git/lint/prettier ignored.
+- 8.2 ✅ 2026-07-17 Survivors killed with behavioral assertions: api 100.00% (break 100, 0
+  survivors), web 90.72% (break 90, `lib/**` at 100); 9 proven-equivalent mutants documented.

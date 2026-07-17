@@ -29,7 +29,7 @@
 
 ## Progress Dashboard
 
-> **Progress:** 8 / 9 phases complete (89%) · 38 / 42 tasks
+> **Progress:** 8 / 9 phases complete (89%) · 39 / 42 tasks
 > **Active phase:** Phase 8 (Mutation, Docs, README & Export Audit)
 > **Blocked:** none - the sibling library is built and its `dist/` resolves. A phase returns to
 > ⛔ only if the local-build check regresses (see the
@@ -45,7 +45,7 @@
 | 5  | Health Indicators & Metrics (API)        | `phase-05-health-metrics.md`        | M    | 5 / 5        | ✅     |
 | 6  | Dashboard: Shell + All Pages             | `phase-06-web-dashboard.md`         | L    | 6 / 6        | ✅     |
 | 7  | Testing to the Reference Bar             | `phase-07-testing.md`               | L    | 5 / 5        | ✅     |
-| 8  | Mutation, Docs, README & Export Audit    | `phase-08-hardening-docs.md`        | M    | 1 / 5        | 🔄     |
+| 8  | Mutation, Docs, README & Export Audit    | `phase-08-hardening-docs.md`        | M    | 2 / 5        | 🔄     |
 
 ## External Precondition
 

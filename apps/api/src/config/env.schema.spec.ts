@@ -151,6 +151,12 @@ describe('validateEnv', () => {
     expect(message).toContain('Invalid environment configuration')
     expect(message).toContain('PORT')
     expect(message).toContain('METRICS_ENABLED')
+    // Each issue lands on its own line: the header plus one line per failing
+    // variable, proving the issues are newline-joined rather than concatenated.
+    const lines = message.split('\n')
+    expect(lines).toHaveLength(3)
+    expect(lines[1]).toContain('PORT')
+    expect(lines[2]).toContain('METRICS_ENABLED')
   })
 
   /**

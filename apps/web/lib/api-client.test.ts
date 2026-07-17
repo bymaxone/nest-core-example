@@ -41,13 +41,17 @@ describe('request', () => {
   it('returns ok:true with the parsed body on a successful response', async () => {
     // Arrange
     const payload = { status: 'ok', checks: [] }
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse(200, payload)))
+    const fetchMock = vi.fn().mockResolvedValue(mockResponse(200, payload))
+    vi.stubGlobal('fetch', fetchMock)
 
     // Act
     const result = await request<typeof payload>('/health/live')
 
     // Assert
     expect(result).toEqual({ ok: true, data: payload })
+    // The wrapper targets the configured API origin plus the caller's path, and
+    // forwards the (here absent) init argument through to fetch.
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/health/live', undefined)
   })
 
   /**

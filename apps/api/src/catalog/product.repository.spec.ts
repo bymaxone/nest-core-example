@@ -60,6 +60,103 @@ describe('ProductRepository', () => {
     expect(page.rows[0]?.category).not.toBe('seasonal')
   })
 
+  /**
+   * Exact deterministic seed values.
+   *
+   * Pins the full field-by-field output of the seeded PRNG (name, price, id,
+   * category, timestamp) for the first six products. Any drift in the
+   * generator arithmetic, the pool index, the seed offset, or the `createdAt`
+   * spread changes at least one field here, so the whole deterministic
+   * generator is fixed against silent regression.
+   */
+  it('generates each seeded product exactly from its index', async () => {
+    const repository = buildRepository(6)
+
+    const page = await repository.findPage({ page: 1, limit: 6 })
+
+    expect(page.rows).toEqual([
+      {
+        id: 'p-000001',
+        name: 'Kestrel Backpack',
+        category: 'electronics',
+        priceCents: 26608,
+        createdAt: '2024-01-01T00:00:00.000Z',
+      },
+      {
+        id: 'p-000002',
+        name: 'Lumen Journal',
+        category: 'home',
+        priceCents: 14622,
+        createdAt: '2024-01-02T00:00:00.000Z',
+      },
+      {
+        id: 'p-000003',
+        name: 'Lumen Backpack',
+        category: 'outdoors',
+        priceCents: 23081,
+        createdAt: '2024-01-03T00:00:00.000Z',
+      },
+      {
+        id: 'p-000004',
+        name: 'Onyx Journal',
+        category: 'office',
+        priceCents: 11472,
+        createdAt: '2024-01-04T00:00:00.000Z',
+      },
+      {
+        id: 'p-000005',
+        name: 'Lumen Sandal',
+        category: 'seasonal',
+        priceCents: 11378,
+        createdAt: '2024-01-05T00:00:00.000Z',
+      },
+      {
+        id: 'p-000006',
+        name: 'Indigo Backpack',
+        category: 'electronics',
+        priceCents: 33326,
+        createdAt: '2024-01-06T00:00:00.000Z',
+      },
+    ])
+  })
+
+  describe('latency scheduling', () => {
+    /**
+     * No timer when latency is disabled.
+     *
+     * A configured latency of 0 must be a true no-op: `simulateLatency` returns
+     * without scheduling any timer, so a fresh boot with no configured latency
+     * pays no per-read tick. Spying on `setTimeout` pins the `<= 0` guard's
+     * both-branches behavior directly.
+     */
+    it('schedules no timer when the configured latency is zero', async () => {
+      const spy = jest.spyOn(globalThis, 'setTimeout')
+      const repository = buildRepository(1, 0)
+
+      await repository.findById('p-000001')
+
+      expect(spy).not.toHaveBeenCalled()
+      spy.mockRestore()
+    })
+
+    /**
+     * Timer scheduled with the configured latency when positive.
+     *
+     * A positive latency reads from `CATALOG_ORIGIN_LATENCY_MS` and schedules a
+     * timer for exactly that many milliseconds, proving the delay is real and
+     * that it is sourced from the correct environment key.
+     */
+    it('schedules a timer of the configured latency when positive', async () => {
+      const spy = jest.spyOn(globalThis, 'setTimeout')
+      const repository = buildRepository(1, 5)
+
+      await repository.findById('p-000001')
+
+      expect(spy).toHaveBeenCalledWith(expect.any(Function), 5)
+      spy.mockRestore()
+    })
+  })
+
   describe('latency simulation', () => {
     beforeEach(() => {
       jest.useFakeTimers()

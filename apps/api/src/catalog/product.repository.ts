@@ -95,6 +95,14 @@ const MIN_PRICE_CENTS = 500
 const PRICE_RANGE_CENTS = 49_500
 
 /**
+ * Compile-time-only option that makes `ConfigService.get` infer each value's
+ * type from `Env`. The `infer` flag has no runtime effect; it is hoisted once
+ * and reused at every read.
+ */
+// Stryker disable next-line ObjectLiteral,BooleanLiteral: `infer` is a compile-time type hint with no runtime behavior; emptying the object or flipping the flag reads the same value.
+const INFER = { infer: true } as const
+
+/**
  * Deterministic PRNG seeded per index (mulberry32 algorithm). Never
  * `Math.random`: the same seed always yields the same stream, independent of
  * generation order, so any single product can be rebuilt in isolation.
@@ -165,8 +173,8 @@ export class ProductRepository {
    *   artificial origin latency.
    */
   constructor(@Inject(ConfigService) config: ConfigService<Env, true>) {
-    const seedCount = config.get('CATALOG_SEED_COUNT', { infer: true })
-    this.originLatencyMs = config.get('CATALOG_ORIGIN_LATENCY_MS', { infer: true })
+    const seedCount = config.get('CATALOG_SEED_COUNT', INFER)
+    this.originLatencyMs = config.get('CATALOG_ORIGIN_LATENCY_MS', INFER)
     this.products = Array.from({ length: seedCount }, (_value, index) => buildSeedProduct(index))
   }
 

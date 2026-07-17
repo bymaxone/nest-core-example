@@ -42,18 +42,18 @@ describe('getRawMetrics', () => {
    */
   it('returns the raw scrape text on a successful response', async () => {
     // Arrange
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValue({ ok: true, status: 200, text: () => Promise.resolve(SAMPLE_SCRAPE) }),
-    )
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, status: 200, text: () => Promise.resolve(SAMPLE_SCRAPE) })
+    vi.stubGlobal('fetch', fetchMock)
 
     // Act
     const result = await getRawMetrics()
 
     // Assert
     expect(result).toEqual({ ok: true, data: SAMPLE_SCRAPE })
+    // The scrape targets the configured API origin plus the `/metrics` path.
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/metrics')
   })
 
   /**

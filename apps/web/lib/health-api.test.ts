@@ -44,13 +44,17 @@ describe('getLiveness', () => {
   it('returns ok:true with an empty checks array', async () => {
     // Arrange
     const body = { status: 'ok', checks: [] }
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse(200, body)))
+    const fetchMock = vi.fn().mockResolvedValue(mockResponse(200, body))
+    vi.stubGlobal('fetch', fetchMock)
 
     // Act
     const result = await getLiveness()
 
     // Assert
     expect(result).toEqual({ ok: true, data: body })
+    // Liveness targets the documented absolute URL: the configured API origin
+    // plus the `/health/live` path, so neither the origin nor the path can drift.
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/health/live')
   })
 })
 
@@ -63,13 +67,16 @@ describe('getReadiness', () => {
   it('returns ok:true when every indicator is up (status 200)', async () => {
     // Arrange
     const body = { status: 'ok', checks: [{ name: 'event-loop', status: 'up' }] }
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse(200, body)))
+    const fetchMock = vi.fn().mockResolvedValue(mockResponse(200, body))
+    vi.stubGlobal('fetch', fetchMock)
 
     // Act
     const result = await getReadiness()
 
     // Assert
     expect(result).toEqual({ ok: true, data: body })
+    // Readiness targets the configured API origin plus `/health/ready`.
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/health/ready')
   })
 
   /**
@@ -155,6 +162,7 @@ describe('getReadiness', () => {
     // Arrange: one array per malformed entry kind, each failing the guard.
     const malformedBodies = [
       { status: 'ok', checks: [null] },
+      { status: 'ok', checks: [undefined] },
       { status: 'ok', checks: [42] },
       { status: 'ok', checks: [{ status: 'up' }] },
       { status: 'ok', checks: [{ name: 'x', status: 'sideways' }] },
@@ -190,6 +198,51 @@ describe('getReadiness', () => {
     const result = await getReadiness()
 
     // Assert
+    expect(result).toEqual({
+      ok: false,
+      kind: 'transport',
+      message: 'Unexpected health response shape (status 200)',
+    })
+  })
+
+  /**
+   * Null and undefined bodies.
+   *
+   * Both must be short-circuited by the object guard and surface gracefully as
+   * a transport failure. A `null` body would throw on field access if the guard
+   * were skipped, and an `undefined` body would throw if the `typeof` half of
+   * the guard were removed, so each pins one half of the null-object guard.
+   */
+  it.each([
+    ['null', null],
+    ['undefined', undefined],
+  ])('returns kind:transport when the body is %s', async (_label, body) => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse(200, body)))
+
+    const result = await getReadiness()
+
+    expect(result).toEqual({
+      ok: false,
+      kind: 'transport',
+      message: 'Unexpected health response shape (status 200)',
+    })
+  })
+
+  /**
+   * Invalid status with an otherwise-valid body.
+   *
+   * A body with a well-formed `checks` array but a `status` outside
+   * `'ok' | 'error'` must still be rejected, proving the status membership
+   * check is a real gate rather than always-true.
+   */
+  it('returns kind:transport when status is outside the allowed set', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(mockResponse(200, { status: 'weird', checks: [] })),
+    )
+
+    const result = await getReadiness()
+
     expect(result).toEqual({
       ok: false,
       kind: 'transport',

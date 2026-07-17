@@ -77,10 +77,19 @@ describe('summarizeSamples', () => {
    * success and a fast error must each be tallied in their own bucket.
    */
   it('tallies total, slow, and error counts independently', () => {
-    // Arrange
+    // Arrange: three non-error samples (a 2xx pair and a 3xx redirect) and two
+    // error samples (>= 400), so the error count is asymmetric with the
+    // success count and cannot be satisfied by the inverse `< 400` predicate.
     const samples: RequestTimingSample[] = [
       { method: 'GET', route: '/catalog/products', statusCode: 200, durationMs: 5, slow: false },
       { method: 'GET', route: '/latency', statusCode: 200, durationMs: 900, slow: true },
+      {
+        method: 'GET',
+        route: '/catalog/products/:id',
+        statusCode: 302,
+        durationMs: 4,
+        slow: false,
+      },
       { method: 'POST', route: '/failures/:kind', statusCode: 400, durationMs: 3, slow: false },
       { method: 'POST', route: '/failures/:kind', statusCode: 500, durationMs: 620, slow: true },
     ]
@@ -89,6 +98,21 @@ describe('summarizeSamples', () => {
     const summary = summarizeSamples(samples)
 
     // Assert
-    expect(summary).toEqual({ total: 4, slow: 2, errors: 2 })
+    expect(summary).toEqual({ total: 5, slow: 2, errors: 2 })
+  })
+
+  /**
+   * Error-status boundary.
+   *
+   * The error bucket starts at exactly 400: a 399 is a success, a 400 is an
+   * error. This pins the `>= 400` boundary so it cannot drift to `> 400`.
+   */
+  it('counts status 400 as an error but 399 as a success', () => {
+    const samples: RequestTimingSample[] = [
+      { method: 'GET', route: '/a', statusCode: 399, durationMs: 1, slow: false },
+      { method: 'GET', route: '/b', statusCode: 400, durationMs: 1, slow: false },
+    ]
+
+    expect(summarizeSamples(samples).errors).toBe(1)
   })
 })

@@ -30,6 +30,7 @@ export class RingBufferTimingSink implements ITimingSink {
   private isPoisoned = false
 
   constructor(@Inject(ConfigService) config: ConfigService<Env, true>) {
+    // Stryker disable next-line ObjectLiteral,BooleanLiteral: the `infer` hint is a compile-time type marker with no runtime effect, so an emptied object or a flipped flag reads the same value.
     this.capacity = config.get('TIMING_BUFFER_SIZE', { infer: true })
   }
 
