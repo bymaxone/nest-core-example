@@ -326,5 +326,5 @@ Completion Protocol:
   and CI so the suite genuinely runs.
 - 1.3 👀 2026-07-17 Audited every 1.1-1.2 acceptance criterion (install, lint, typecheck,
   format, frozen-lockfile, and the probe suite all green; peers single-copy), synced the
-  dashboards, and opened the phase PR with the Copilot review auto-requested. Merge, thread
+  dashboards, and opened the phase PR (#3) with the Copilot review auto-requested. Merge, thread
   resolution, and branch deletion follow the review.
