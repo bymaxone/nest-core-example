@@ -14,7 +14,8 @@ import type { Server } from 'node:http'
 /**
  * Bind a `supertest` agent to the application's live HTTP server.
  *
- * @param app - The booted Nest application (already listening).
+ * @param app - The Nest application after `app.init()`; supertest binds
+ *   directly to its HTTP server, so no `app.listen()` / live port is required.
  * @returns A `supertest` test agent; chain `.get('/health/live')`, `.post(...)`, etc.
  */
 export function httpAgent(app: INestApplication): ReturnType<typeof request.agent> {
