@@ -1,10 +1,11 @@
 /**
- * @fileoverview Typed wrapper over the Prometheus scrape endpoint, plus a
- * small text-format parser for the Metrics View's highlights panel.
+ * @fileoverview Typed wrappers over the metrics endpoints, plus a small
+ * text-format parser for the Metrics View's highlights panel.
  *
- * `GET /metrics` serves plain Prometheus exposition text, not JSON, so this
- * module fetches and parses it directly instead of going through the
- * JSON-only `request()` client.
+ * The two endpoints need different clients. `GET /metrics` serves plain
+ * Prometheus exposition text, not JSON, so `getRawMetrics` fetches and parses
+ * it directly; `POST /metrics-demo/lookup` answers with JSON and goes through
+ * the shared envelope-aware `request()` client like every other module.
  *
  * @layer data
  */

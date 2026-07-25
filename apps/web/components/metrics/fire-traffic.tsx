@@ -32,7 +32,10 @@ async function fireBurst(): Promise<number> {
 }
 
 interface FireTrafficProps {
-  /** Called after either action completes so the parent can refetch the scrape. */
+  /**
+   * Called after either action *succeeds*, so the parent can refetch the
+   * scrape. A failed action leaves the counters untouched and does not fire.
+   */
   onFired: () => void
 }
 
@@ -56,6 +59,10 @@ export function FireTraffic({ onFired }: FireTrafficProps) {
 
   const lookup = useMutation({
     mutationFn: recordCatalogLookup,
+    // A documented error envelope is deliberately silent here, as it is in
+    // ToggleCard and DelayControl: the Errors View is where envelopes are
+    // rendered in full, so toasting one would report it twice and in less
+    // detail. Only a transport fault, which no view renders, needs a toast.
     onSuccess: (result) => {
       if (result.ok) {
         toast.success(`catalog_lookups_total is now ${String(result.data.total)}`)

@@ -63,6 +63,13 @@ type CardTitleElement = 'h1' | 'h2' | 'h3' | 'div'
  * A card that carries the page's own title must pass `as="h1"`: without it the
  * document has no top-level heading at all, which breaks heading navigation
  * for assistive technology.
+ *
+ * The ref is typed `HTMLHeadingElement` even though the default renders a
+ * `div`. That is safe, not a mismatch: `HTMLHeadingElement` and
+ * `HTMLDivElement` are structurally identical apart from `align`, which both
+ * declare, so each is assignable to the other and a ref works whichever
+ * element {@link CardTitleElement} resolves to. Widening to `HTMLElement`
+ * instead fails to compile, since `HTMLElement` has no `align`.
  */
 const CardTitle = React.forwardRef<
   HTMLHeadingElement,
