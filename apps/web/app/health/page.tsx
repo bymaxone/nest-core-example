@@ -11,7 +11,13 @@
 
 'use client'
 
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CARD_TITLE_CONTENT_CLASS,
+} from '@/components/ui/card'
 import { CheckList } from '@/components/health/check-list'
 import { HealthToggles } from '@/components/health/health-toggles'
 import { StatusTiles } from '@/components/health/status-tiles'
@@ -23,8 +29,10 @@ export default function HealthPage() {
   return (
     <div className="flex flex-col gap-6">
       <Card>
-        <CardHeader accent>
-          <CardTitle as="h1">Health</CardTitle>
+        <CardHeader>
+          <CardTitle as="h1" className={`text-xl ${CARD_TITLE_CONTENT_CLASS}`}>
+            Health
+          </CardTitle>
           <CardDescription>
             Liveness and readiness, aggregated from the event-loop, flaky, and hanging demo
             indicators. Flip the toggles below and watch readiness react.
@@ -45,7 +53,7 @@ export default function HealthPage() {
       />
 
       <Card>
-        <CardHeader accent>
+        <CardHeader>
           <CardTitle className="text-base">Checks</CardTitle>
         </CardHeader>
         <div className="px-6 pb-6">

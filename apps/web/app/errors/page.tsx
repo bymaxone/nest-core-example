@@ -10,7 +10,13 @@
 
 'use client'
 
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CARD_TITLE_CONTENT_CLASS,
+} from '@/components/ui/card'
 import { DevProdCallout } from '@/components/errors/dev-prod-callout'
 import { TriggerGrid } from '@/components/errors/trigger-grid'
 import { TriggerResponsePanel } from '@/components/errors/trigger-response-panel'
@@ -23,8 +29,10 @@ export default function ErrorsPage() {
   return (
     <div className="flex flex-col gap-6">
       <Card>
-        <CardHeader accent>
-          <CardTitle as="h1">Errors</CardTitle>
+        <CardHeader>
+          <CardTitle as="h1" className={`text-xl ${CARD_TITLE_CONTENT_CLASS}`}>
+            Errors
+          </CardTitle>
           <CardDescription>
             Trigger every documented `BYMAX_*` derivation and inspect the exact 7-field envelope the
             library returns.

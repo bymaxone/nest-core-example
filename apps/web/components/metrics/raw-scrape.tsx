@@ -29,7 +29,7 @@ interface RawScrapeProps {
 export function RawScrape({ text, onRefresh, refreshing }: RawScrapeProps) {
   return (
     <Card>
-      <CardHeader accent className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-base">Raw scrape</CardTitle>
         <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing}>
           {refreshing ? 'Refreshing...' : 'Refresh'}

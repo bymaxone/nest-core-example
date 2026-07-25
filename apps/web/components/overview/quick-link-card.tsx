@@ -7,7 +7,13 @@
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CARD_TITLE_CONTENT_CLASS,
+} from '@/components/ui/card'
 
 interface QuickLinkCardProps {
   /** Target route. */
@@ -32,10 +38,10 @@ export function QuickLinkCard({ href, title, description, icon: Icon }: QuickLin
   return (
     <Link href={href} className="block transition-transform hover:scale-[1.01]">
       <Card>
-        <CardHeader accent>
+        <CardHeader>
           <div className="flex items-center gap-2">
             <Icon className="h-4 w-4 text-brand-500" aria-hidden="true" />
-            <CardTitle className="text-base">{title}</CardTitle>
+            <CardTitle className={`text-base ${CARD_TITLE_CONTENT_CLASS}`}>{title}</CardTitle>
           </div>
           <CardDescription>{description}</CardDescription>
         </CardHeader>

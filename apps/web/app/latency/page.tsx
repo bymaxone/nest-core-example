@@ -12,7 +12,14 @@
 
 import { useQuery } from '@tanstack/react-query'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CARD_TITLE_CONTENT_CLASS,
+} from '@/components/ui/card'
 import { DelayControl, TIMING_SAMPLES_QUERY_KEY } from '@/components/latency/delay-control'
 import { DurationSparkline } from '@/components/latency/duration-sparkline'
 import { PoisonToggle } from '@/components/latency/poison-toggle'
@@ -35,8 +42,10 @@ export default function LatencyPage() {
   return (
     <div className="flex flex-col gap-6">
       <Card>
-        <CardHeader accent>
-          <CardTitle as="h1">Latency</CardTitle>
+        <CardHeader>
+          <CardTitle as="h1" className={`text-xl ${CARD_TITLE_CONTENT_CLASS}`}>
+            Latency
+          </CardTitle>
           <CardDescription>
             Fire delayed requests and watch the timing interceptor record the route template,
             duration, and slow flag on every completed request.

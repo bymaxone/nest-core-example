@@ -12,7 +12,13 @@
 
 import { useQuery } from '@tanstack/react-query'
 
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CARD_TITLE_CONTENT_CLASS,
+} from '@/components/ui/card'
 import { FireTraffic } from '@/components/metrics/fire-traffic'
 import { Highlights } from '@/components/metrics/highlights'
 import { RawScrape } from '@/components/metrics/raw-scrape'
@@ -35,8 +41,10 @@ export default function MetricsPage() {
   return (
     <div className="flex flex-col gap-6">
       <Card>
-        <CardHeader accent>
-          <CardTitle as="h1">Metrics</CardTitle>
+        <CardHeader>
+          <CardTitle as="h1" className={`text-xl ${CARD_TITLE_CONTENT_CLASS}`}>
+            Metrics
+          </CardTitle>
           <CardDescription>
             The Prometheus surface: default HTTP metrics fed by the timing bridge, process metrics,
             and the custom <code>catalog_lookups_total</code> counter.
