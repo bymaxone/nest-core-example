@@ -829,12 +829,13 @@ A Next.js 16 (App Router) dashboard, **visually identical** to the other Bymax e
 
 | Route         | Page               | Demonstrates                                                   |
 | ------------- | ------------------ | --------------------------------------------------------------- |
-| `/`           | Overview           | status strip (health, request count, slow count, error count), quick links, library summary |
-| `/errors`     | Envelope Playground | matrix rows 12-36                                              |
-| `/latency`    | Latency Lab        | matrix rows 37-42                                               |
-| `/pagination` | Pagination         | matrix rows 43-51                                               |
-| `/health`     | Health Console     | matrix rows 52-59                                               |
-| `/metrics`    | Metrics View       | matrix rows 60-70                                               |
+| `/` | Landing page | the public entry point; no shell, no query client |
+| `/dashboard`           | Overview           | status strip (health, request count, slow count, error count), quick links, library summary |
+| `/dashboard/errors`     | Envelope Playground | matrix rows 12-36                                              |
+| `/dashboard/latency`    | Latency Lab        | matrix rows 37-42                                               |
+| `/dashboard/pagination` | Pagination         | matrix rows 43-51                                               |
+| `/dashboard/health`     | Health Console     | matrix rows 52-59                                               |
+| `/dashboard/metrics`    | Metrics View       | matrix rows 60-70                                               |
 
 ### 13.3 Signature components
 

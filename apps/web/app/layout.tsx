@@ -1,12 +1,14 @@
 /**
- * @fileoverview Root layout: HTML shell, font loading, and global providers.
+ * @fileoverview Root layout: HTML shell and font loading.
  *
  * Uses Geist Sans + Geist Mono from the `geist` package. The font CSS
  * variables are injected into `<html>` and consumed by globals.css. Forced
  * dark: no theme toggle, no `next-themes`.
  *
- * The client provider boundary (`<Providers>`) lives in `app/providers.tsx`
- * so this server component stays free of `'use client'`.
+ * Neither the client provider boundary nor the dashboard shell is applied here;
+ * both live in `app/dashboard/layout.tsx`. That keeps the public landing page at
+ * `/` free of the topbar and sidebar, and fully server-rendered: the query
+ * client never ships to a visitor who only reads the marketing surface.
  *
  * @layer layouts
  */
@@ -15,8 +17,6 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 
-import { AppShell } from '@/components/layout/app-shell'
-import Providers from './providers'
 import './globals.css'
 
 /** @see https://nextjs.org/docs/app/building-your-application/optimizing/metadata */
@@ -27,12 +27,12 @@ export const metadata: Metadata = {
 }
 
 interface RootLayoutProps {
-  /** Page content rendered inside the shell. */
+  /** Page or nested layout subtree. */
   children: React.ReactNode
 }
 
 /**
- * Root server component wrapping every page in the dashboard shell.
+ * Root server component: the HTML document shell.
  *
  * @param children - Page content.
  */
@@ -43,11 +43,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${GeistSans.variable} ${GeistMono.variable} dark`}
       suppressHydrationWarning
     >
-      <body>
-        <Providers>
-          <AppShell>{children}</AppShell>
-        </Providers>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }

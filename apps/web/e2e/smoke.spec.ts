@@ -1,13 +1,15 @@
 /**
  * @fileoverview Web dashboard smoke (Playwright, running stack).
  *
- * Drives the real dashboard against a live API and asserts that each of the
- * six pages renders its heading and that the page's key scenario is
- * operable, not just statically rendered: firing a failure trigger, firing a
- * delayed request, walking an offset page, flipping a health toggle, and
- * reading the raw Prometheus scrape. Only structural facts (headings,
- * labels, envelope field names) are asserted; live values (timestamps,
- * durations, counters) are never pinned since they differ every run.
+ * Drives the real app against a live API: the public landing page at `/` and
+ * the six dashboard pages under `/dashboard`. Each page must render its
+ * heading and have its key scenario operable, not just statically rendered:
+ * walking the landing CTA into the dashboard, firing a failure trigger,
+ * firing a delayed request, walking an offset page, flipping a health
+ * toggle, and reading the raw Prometheus scrape. Only structural facts
+ * (headings, labels, envelope field names) are asserted; live values
+ * (timestamps, durations, counters) are never pinned since they differ every
+ * run.
  *
  * Every assertion is scoped to the `<main>` landmark: the sidebar renders on
  * every page with the exact same page-title text as each page's own
@@ -21,14 +23,35 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('dashboard smoke (running stack)', () => {
-  test('Overview renders the status strip and every quick link', async ({ page }) => {
+  test('Landing page renders and its CTA opens the dashboard', async ({ page }) => {
     /*
-     * Scenario: a user lands on the Overview page.
-     * Rule it protects: the shell renders the page title and every
-     * quick-link card to the five feature pages, so navigation from the
-     * landing page is never silently broken.
+     * Scenario: a visitor arrives at the public entry point and clicks through.
+     * Rule it protects: `/` serves the landing page (not a 404 left behind by
+     * the move of the dashboard under `/dashboard`) and its primary CTA
+     * actually reaches the Overview, so the only path a first-time visitor
+     * has into the app is never silently broken.
      */
     await page.goto('/')
+    const main = page.locator('main')
+
+    await expect(main.getByRole('heading', { name: 'nest-core-example' })).toBeVisible()
+    await expect(main.getByText('Feature coverage', { exact: true })).toBeVisible()
+
+    // The CTA appears twice (hero and closing section); either one must work.
+    await main.getByRole('link', { name: 'Open the dashboard' }).first().click()
+
+    await expect(page).toHaveURL(/\/dashboard$/)
+    await expect(page.locator('main').getByText('Overview', { exact: true })).toBeVisible()
+  })
+
+  test('Overview renders the status strip and every quick link', async ({ page }) => {
+    /*
+     * Scenario: a user opens the dashboard Overview at `/dashboard`.
+     * Rule it protects: the shell renders the page title and every
+     * quick-link card to the five feature pages, so navigation onward from
+     * the Overview is never silently broken.
+     */
+    await page.goto('/dashboard')
     const main = page.locator('main')
 
     await expect(main.getByText('Overview', { exact: true })).toBeVisible()
@@ -44,7 +67,7 @@ test.describe('dashboard smoke (running stack)', () => {
      * response panel renders the real BYMAX_BAD_REQUEST envelope, proving
      * the full round trip (button -> API -> envelope render), not a stub.
      */
-    await page.goto('/errors')
+    await page.goto('/dashboard/errors')
     const main = page.locator('main')
     await expect(main.getByText('Errors', { exact: true })).toBeVisible()
 
@@ -65,7 +88,7 @@ test.describe('dashboard smoke (running stack)', () => {
      * timing interceptor and the sample feed picks up the new row, proving
      * the delay control, the API, and the polling feed are wired together.
      */
-    await page.goto('/latency')
+    await page.goto('/dashboard/latency')
     const main = page.locator('main')
     await expect(main.getByText('Latency', { exact: true })).toBeVisible()
 
@@ -81,7 +104,7 @@ test.describe('dashboard smoke (running stack)', () => {
      * from `GET /catalog/products`, proving the offset pagination round
      * trip, not an empty or stubbed table.
      */
-    await page.goto('/pagination')
+    await page.goto('/dashboard/pagination')
     const main = page.locator('main')
     await expect(main.getByText('Pagination', { exact: true })).toBeVisible()
 
@@ -96,7 +119,7 @@ test.describe('dashboard smoke (running stack)', () => {
      * console is reading real state, not a static mock. Restored to "up"
      * afterward so this test never leaks state into another run.
      */
-    await page.goto('/health')
+    await page.goto('/dashboard/health')
     const main = page.locator('main')
     await expect(main.getByText('Health', { exact: true })).toBeVisible()
 
@@ -116,7 +139,7 @@ test.describe('dashboard smoke (running stack)', () => {
      * broken scrape fetch or a metrics-disabled misconfiguration is caught
      * immediately rather than only in production.
      */
-    await page.goto('/metrics')
+    await page.goto('/dashboard/metrics')
     const main = page.locator('main')
     await expect(main.getByText('Metrics', { exact: true })).toBeVisible()
 
