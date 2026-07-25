@@ -30,8 +30,10 @@ interface QuickLinkCardProps {
  *
  * This is an interactive panel, not a `Card`: per the design system it matches
  * the card surface but carries no accent hairline, because a grid of quick
- * links would otherwise render a grid of hairlines. The same surface classes
- * back the Errors View's trigger tiles.
+ * links would otherwise render a grid of hairlines. The glass tokens and the
+ * 24px radius are the interactive-panel recipe from `docs/DESIGN_SYSTEM.md`
+ * §6.2. The Errors View's trigger tiles share those same tokens but keep a
+ * tighter radius, being a much smaller tile.
  *
  * @param href - Target route.
  * @param title - Card title.
