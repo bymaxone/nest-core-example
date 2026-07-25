@@ -17,7 +17,7 @@
 
 import { z } from 'zod'
 
-import { DEFAULT_API_ORIGIN } from './api-origin.mjs'
+import { DEFAULT_API_ORIGIN, isSupportedApiUrl } from './api-origin.mjs'
 
 /** Zod schema for every env var consumed by apps/web. */
 const envSchema = z.object({
@@ -33,8 +33,15 @@ const envSchema = z.object({
    * A deployment that serves the API from anywhere else must set this at build
    * time: Next.js inlines `NEXT_PUBLIC_*` into the client bundle when it
    * builds, so setting it only at runtime has no effect.
+   *
+   * `z.url()` alone accepts any parseable URL, including `javascript:` and
+   * `file:`, which the browser cannot fetch from. The shared predicate keeps
+   * this in step with the scheme the CSP source is built from.
    */
-  NEXT_PUBLIC_API_URL: z.url().default(DEFAULT_API_ORIGIN),
+  NEXT_PUBLIC_API_URL: z
+    .url()
+    .refine(isSupportedApiUrl, { message: 'must be an absolute http(s) URL' })
+    .default(DEFAULT_API_ORIGIN),
 })
 
 /**

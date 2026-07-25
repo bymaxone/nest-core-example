@@ -13,7 +13,34 @@
 
 import { describe, expect, it } from 'vitest'
 
-import { DEFAULT_API_ORIGIN, resolveApiOrigin } from './api-origin.mjs'
+import { DEFAULT_API_ORIGIN, isSupportedApiUrl, resolveApiOrigin } from './api-origin.mjs'
+
+describe('isSupportedApiUrl', () => {
+  /**
+   * Accepted schemes.
+   *
+   * Only `http:` and `https:` are fetchable by the browser and meaningful as a
+   * CSP source, so only those may pass.
+   */
+  it('accepts absolute http and https URLs', () => {
+    expect(isSupportedApiUrl('http://localhost:3001')).toBe(true)
+    expect(isSupportedApiUrl('https://api.example.com')).toBe(true)
+  })
+
+  /**
+   * Rejected input.
+   *
+   * `javascript:` and `file:` parse as URLs but have a `"null"` origin, and a
+   * non-string or unparseable value is not a URL at all.
+   */
+  it('rejects non-http schemes, unparseable strings, and non-strings', () => {
+    expect(isSupportedApiUrl('javascript:alert(1)')).toBe(false)
+    expect(isSupportedApiUrl('file:///etc/passwd')).toBe(false)
+    expect(isSupportedApiUrl('not-a-url')).toBe(false)
+    expect(isSupportedApiUrl('')).toBe(false)
+    expect(isSupportedApiUrl(undefined)).toBe(false)
+  })
+})
 
 describe('resolveApiOrigin', () => {
   /**
@@ -29,11 +56,26 @@ describe('resolveApiOrigin', () => {
   /**
    * Valid override.
    *
-   * A well-formed absolute URL passes through untouched, so a deployment can
-   * point the dashboard at any API origin.
+   * A well-formed absolute URL resolves to its origin, so a deployment can
+   * point the dashboard at any API host.
    */
-  it('returns a valid absolute URL unchanged', () => {
+  it('returns the origin of a valid absolute URL', () => {
     expect(resolveApiOrigin('https://api.example.com')).toBe('https://api.example.com')
+  })
+
+  /**
+   * CSP directive injection.
+   *
+   * `;` is legal in a URL path and is also the CSP directive separator, so a
+   * raw value like `http://host/;script-src *` would close `connect-src` and
+   * append a directive. Reducing to the origin drops the path, so nothing can
+   * escape the directive it sits in.
+   */
+  it('strips a path so a semicolon cannot inject another CSP directive', () => {
+    const resolved = resolveApiOrigin('http://evil.example.com/;script-src *')
+
+    expect(resolved).toBe('http://evil.example.com')
+    expect(resolved).not.toContain(';')
   })
 
   /**
@@ -54,5 +96,16 @@ describe('resolveApiOrigin', () => {
    */
   it('throws naming the variable when the value is not a valid URL', () => {
     expect(() => resolveApiOrigin('not-a-url')).toThrow('NEXT_PUBLIC_API_URL')
+  })
+
+  /**
+   * Unusable scheme.
+   *
+   * A `javascript:` or `file:` URL parses but has a `"null"` origin, which no
+   * request can match; it must fail at startup rather than reach the policy.
+   */
+  it('throws on a URL whose scheme has no usable origin', () => {
+    expect(() => resolveApiOrigin('javascript:alert(1)')).toThrow('NEXT_PUBLIC_API_URL')
+    expect(() => resolveApiOrigin('file:///etc/passwd')).toThrow('NEXT_PUBLIC_API_URL')
   })
 })
