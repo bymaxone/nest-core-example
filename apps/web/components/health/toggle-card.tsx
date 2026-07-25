@@ -14,7 +14,13 @@ import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CARD_TITLE_CONTENT_CLASS,
+} from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { ApiResult } from '@/lib/api-client'
 
@@ -69,8 +75,8 @@ export function ToggleCard<TValue extends string>({
 
   return (
     <Card>
-      <CardHeader accent>
-        <CardTitle className="text-base">{title}</CardTitle>
+      <CardHeader>
+        <CardTitle className={`text-base ${CARD_TITLE_CONTENT_CLASS}`}>{title}</CardTitle>
       </CardHeader>
       <CardContent className="flex gap-2">
         {options.map((option) => (

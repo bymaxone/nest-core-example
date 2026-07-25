@@ -29,7 +29,10 @@ interface RawScrapeProps {
 export function RawScrape({ text, onRefresh, refreshing }: RawScrapeProps) {
   return (
     <Card>
-      <CardHeader accent className="flex flex-row items-center justify-between">
+      {/* space-y-0 cancels the header's default vertical rhythm: in this row
+          layout it would land as a margin-top on the button and push it off
+          the title's centre line. */}
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-base">Raw scrape</CardTitle>
         <Button variant="outline" size="sm" onClick={onRefresh} disabled={refreshing}>
           {refreshing ? 'Refreshing...' : 'Refresh'}

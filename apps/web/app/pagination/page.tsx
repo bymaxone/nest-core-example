@@ -7,7 +7,14 @@
 
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CARD_TITLE_CONTENT_CLASS,
+} from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CursorTable } from '@/components/pagination/cursor-table'
 import { OffsetTable } from '@/components/pagination/offset-table'
@@ -16,8 +23,10 @@ export default function PaginationPage() {
   return (
     <div className="flex flex-col gap-6">
       <Card>
-        <CardHeader accent>
-          <CardTitle as="h1">Pagination</CardTitle>
+        <CardHeader>
+          <CardTitle as="h1" className={`text-xl ${CARD_TITLE_CONTENT_CLASS}`}>
+            Pagination
+          </CardTitle>
           <CardDescription>
             Walk the seeded catalog with clamped offset pages and with opaque cursors, side by side.
           </CardDescription>

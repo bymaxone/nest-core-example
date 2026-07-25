@@ -147,10 +147,10 @@ export function Sidebar({ isOpen, onNavClick }: SidebarProps) {
       aria-label="Main navigation"
       className={cn(...NAV_BASE_CLASSES, isOpen ? NAV_OPEN_CLASS : NAV_CLOSED_CLASS)}
     >
-      <div className="flex h-full flex-col gap-5 px-4 py-6">
+      <div className="flex h-full flex-col gap-7 px-4 py-6">
         {NAV_GROUPS.map((group) => (
-          <div key={group.label} className="flex flex-col gap-1">
-            <span className="px-3 pb-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-[rgba(255,255,255,0.3)]">
+          <div key={group.label} className="flex flex-col gap-1.5">
+            <span className="px-3 pb-2 font-mono text-[10px] font-semibold uppercase tracking-wide text-[rgba(255,255,255,0.35)]">
               {group.label}
             </span>
             {group.items.map((item) => (

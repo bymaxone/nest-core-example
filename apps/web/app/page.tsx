@@ -13,7 +13,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { Activity, AlertTriangle, BarChart3, HeartPulse, Layers } from 'lucide-react'
 
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CARD_TITLE_CONTENT_CLASS,
+} from '@/components/ui/card'
 import { QuickLinksGrid, type QuickLink } from '@/components/overview/quick-links-grid'
 import { StatusStrip } from '@/components/overview/status-strip'
 import { getReadiness } from '@/lib/health-api'
@@ -74,8 +80,10 @@ export default function OverviewPage() {
   return (
     <div className="flex flex-col gap-6">
       <Card>
-        <CardHeader accent>
-          <CardTitle as="h1">Overview</CardTitle>
+        <CardHeader>
+          <CardTitle as="h1" className={`text-xl ${CARD_TITLE_CONTENT_CLASS}`}>
+            Overview
+          </CardTitle>
           <CardDescription>
             A live snapshot of nest-core-example&apos;s demo API: request volume, slow requests, and
             error responses from the timing feed, plus the current readiness state.
