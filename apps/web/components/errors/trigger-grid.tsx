@@ -9,9 +9,37 @@
 
 'use client'
 
+import * as React from 'react'
+
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { Trigger, TriggerGroup } from './triggers'
+
+/**
+ * Render an error code with a break opportunity after every underscore.
+ *
+ * Codes such as `BYMAX_UNSUPPORTED_MEDIA_TYPE` are wider than a grid cell and
+ * carry no spaces, so the browser would either overflow the card or break the
+ * token mid-word. `<wbr>` marks the underscores as the only legal break points
+ * and contributes nothing to the element's text, so the code stays exact for
+ * reading and copying.
+ *
+ * @param code - The error code to render.
+ * @returns The code's segments interleaved with break opportunities.
+ */
+function BreakableCode({ code }: { code: string }) {
+  const segments = code.split('_')
+  return (
+    <>
+      {segments.map((segment, index) => (
+        <React.Fragment key={`${segment}-${String(index)}`}>
+          {index < segments.length - 1 ? `${segment}_` : segment}
+          {index < segments.length - 1 && <wbr />}
+        </React.Fragment>
+      ))}
+    </>
+  )
+}
 
 /** Section heading per visual group, in display order. */
 const GROUPS: readonly { readonly id: TriggerGroup; readonly label: string }[] = [
@@ -64,11 +92,19 @@ export function TriggerGrid({ triggers, activeId, onTrigger }: TriggerGridProps)
                   <span className="font-mono text-sm font-semibold">{trigger.label}</span>
                   <Badge
                     variant={trigger.isDomainCode ? 'secondary' : 'outline'}
-                    className="font-mono text-[10px]"
+                    // inline-block (not the badge's default inline-flex) so the
+                    // code's segments lay out as wrapping inline text; capped at
+                    // the card width and broken at the underscores.
+                    className="inline-block max-w-full whitespace-normal rounded-md py-1 text-center font-mono text-[10px] leading-tight"
                   >
-                    {trigger.expectedCode}
+                    <BreakableCode code={trigger.expectedCode} />
                   </Badge>
-                  <span className="text-xs text-muted-foreground">{trigger.statusCode}</span>
+                  {/* mt-auto pins the status code to the card floor so every
+                      card in a row aligns regardless of how many lines the
+                      label and the code badge each took. */}
+                  <span className="mt-auto text-xs text-muted-foreground">
+                    {trigger.statusCode}
+                  </span>
                 </button>
               ))}
             </div>

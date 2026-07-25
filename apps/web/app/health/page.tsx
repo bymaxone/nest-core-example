@@ -24,7 +24,7 @@ export default function HealthPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader accent>
-          <CardTitle>Health</CardTitle>
+          <CardTitle as="h1">Health</CardTitle>
           <CardDescription>
             Liveness and readiness, aggregated from the event-loop, flaky, and hanging demo
             indicators. Flip the toggles below and watch readiness react.

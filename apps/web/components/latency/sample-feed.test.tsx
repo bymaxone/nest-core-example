@@ -57,9 +57,9 @@ describe('SampleFeed', () => {
     render(<SampleFeed samples={samples} thresholdMs={500} />)
 
     const rows = screen.getAllByRole('row').slice(1) // skip the header row
-    expect(within(rows[0] as HTMLElement).getByText('900ms')).toBeInTheDocument()
+    expect(within(rows[0] as HTMLElement).getByText('900.00ms')).toBeInTheDocument()
     expect(within(rows[0] as HTMLElement).getByText('slow')).toBeInTheDocument()
-    expect(within(rows[1] as HTMLElement).getByText('10ms')).toBeInTheDocument()
+    expect(within(rows[1] as HTMLElement).getByText('10.00ms')).toBeInTheDocument()
     expect(within(rows[1] as HTMLElement).queryByText('slow')).not.toBeInTheDocument()
   })
 

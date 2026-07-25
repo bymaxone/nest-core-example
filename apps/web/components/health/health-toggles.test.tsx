@@ -58,7 +58,7 @@ describe('HealthToggles', () => {
   it('renders Arm as active when hangStatus is down', () => {
     renderToggles({ hangStatus: 'down' })
 
-    expect(screen.getByRole('button', { name: 'Arm' }).className).toContain('bg-gradient-to-r')
+    expect(screen.getByRole('button', { name: 'Arm' }).className).toContain('bg-linear-to-r')
   })
 
   /**
@@ -70,7 +70,7 @@ describe('HealthToggles', () => {
   it('renders Disarm as active when hangStatus is up', () => {
     renderToggles({ hangStatus: 'up' })
 
-    expect(screen.getByRole('button', { name: 'Disarm' }).className).toContain('bg-gradient-to-r')
+    expect(screen.getByRole('button', { name: 'Disarm' }).className).toContain('bg-linear-to-r')
   })
 
   /**

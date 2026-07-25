@@ -24,7 +24,7 @@ export default function ErrorsPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader accent>
-          <CardTitle>Errors</CardTitle>
+          <CardTitle as="h1">Errors</CardTitle>
           <CardDescription>
             Trigger every documented `BYMAX_*` derivation and inspect the exact 7-field envelope the
             library returns.

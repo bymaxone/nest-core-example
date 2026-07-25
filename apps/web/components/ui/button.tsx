@@ -26,7 +26,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'hover:shadow-(--shadow-primary) bg-gradient-to-r from-brand-500 to-brand-600 text-white shadow-sm hover:scale-[1.02] active:scale-[0.98]',
+          'hover:shadow-(--shadow-primary) bg-linear-to-r from-brand-500 to-brand-600 text-white shadow-sm hover:scale-[1.02] active:scale-[0.98]',
         destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
         outline:
           'border-(--glass-border) bg-(--glass-bg) hover:bg-(--glass-bg-hover) border text-foreground hover:text-foreground',

@@ -63,8 +63,8 @@ describe('ToggleCard', () => {
 
     const upButton = screen.getByRole('button', { name: 'Up' })
     const downButton = screen.getByRole('button', { name: 'Down' })
-    expect(upButton.className).toContain('bg-gradient-to-r')
-    expect(downButton.className).not.toContain('bg-gradient-to-r')
+    expect(upButton.className).toContain('bg-linear-to-r')
+    expect(downButton.className).not.toContain('bg-linear-to-r')
   })
 
   /**
