@@ -17,6 +17,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { severityForHttpStatus } from '@/lib/severity'
+import { formatDurationMs } from '@/lib/timing-api'
 import type { RequestTimingSample } from '@/lib/timing-api'
 
 interface SampleRowProps {
@@ -37,7 +38,9 @@ function SampleRow({ sample }: SampleRowProps) {
           {sample.statusCode}
         </Badge>
       </TableCell>
-      <TableCell className="font-mono">{sample.durationMs}ms</TableCell>
+      <TableCell className="whitespace-nowrap font-mono">
+        {formatDurationMs(sample.durationMs)}ms
+      </TableCell>
       <TableCell>{sample.slow && <Badge variant="secondary">slow</Badge>}</TableCell>
     </TableRow>
   )

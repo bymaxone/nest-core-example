@@ -75,7 +75,7 @@ export default function OverviewPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader accent>
-          <CardTitle>Overview</CardTitle>
+          <CardTitle as="h1">Overview</CardTitle>
           <CardDescription>
             A live snapshot of nest-core-example&apos;s demo API: request volume, slow requests, and
             error responses from the timing feed, plus the current readiness state.

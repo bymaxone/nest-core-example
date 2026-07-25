@@ -47,13 +47,23 @@ const FIELD_ANNOTATIONS: readonly FieldAnnotation[] = [
 ] as const
 
 /**
- * Render one field's value: quoted for strings, compact JSON otherwise.
+ * Render one field's value: quoted for strings, indented JSON otherwise.
+ *
+ * `details` is the only structural field, and it carries the payloads a reader
+ * most needs to inspect: an array of validation issues, or an unknown error's
+ * message and stack. Compact JSON renders those as one unreadable line with
+ * literal `\n` escapes, so objects and arrays are indented instead.
  *
  * @param value - The field's runtime value.
- * @returns A single-line display string.
+ * @returns The display string, possibly spanning several lines.
  */
 function renderValue(value: unknown): string {
-  return typeof value === 'string' ? `"${value}"` : JSON.stringify(value)
+  if (typeof value === 'string') {
+    return `"${value}"`
+  }
+  return typeof value === 'object' && value !== null
+    ? JSON.stringify(value, null, 2)
+    : JSON.stringify(value)
 }
 
 interface FieldRowProps {
@@ -76,7 +86,10 @@ function FieldRow({ annotation, value, isLast }: FieldRowProps) {
         >
           <span className="text-(--color-secondary)">&quot;{annotation.key}&quot;</span>
           <span className="text-(--text-40)">:</span>
-          <span className="text-(--text-80) break-all">
+          {/* whitespace-pre-wrap keeps the indented JSON's newlines; break-words
+              (not break-all) wraps long values such as a stack frame's path at
+              word boundaries instead of mid-token. */}
+          <span className="text-(--text-80) whitespace-pre-wrap break-words">
             {renderValue(value)}
             {!isLast && ','}
           </span>

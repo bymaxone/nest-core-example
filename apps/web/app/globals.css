@@ -18,6 +18,14 @@
 
 @import 'tailwindcss';
 
+/*
+ * Tailwind v4 does not auto-load a JavaScript config: without this directive
+ * `tailwind.config.ts` is inert and every token it defines (the `brand-*`
+ * palette, the shadcn semantic colors, the keyframes) silently compiles to
+ * nothing. Keep it pointing at the config as long as the theme lives there.
+ */
+@config '../tailwind.config.ts';
+
 /* -- shadcn/ui CSS variable tokens ------------------------------------------ */
 
 @layer base {

@@ -25,6 +25,24 @@ export interface RequestTimingSample {
   readonly slow: boolean
 }
 
+/** Decimal places kept when a duration is rendered. */
+const DURATION_DECIMALS = 2
+
+/**
+ * Format a raw sample duration for display.
+ *
+ * The library measures with a high-resolution monotonic clock, so a duration
+ * arrives as a full-precision float (`901.6137500000186`). Rendering that
+ * verbatim is unreadable and widens the samples table past its column; two
+ * decimals preserve every meaningful digit at millisecond scale.
+ *
+ * @param durationMs - The sample's raw duration in milliseconds.
+ * @returns The duration rounded to {@link DURATION_DECIMALS} decimal places.
+ */
+export function formatDurationMs(durationMs: number): string {
+  return durationMs.toFixed(DURATION_DECIMALS)
+}
+
 /** Response body for `GET /timing/samples`. */
 export interface TimingSamplesResponse {
   /** The configured slow-request threshold in ms, or undefined when unset. */

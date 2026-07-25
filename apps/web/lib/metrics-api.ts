@@ -1,16 +1,41 @@
 /**
- * @fileoverview Typed wrapper over the Prometheus scrape endpoint, plus a
- * small text-format parser for the Metrics View's highlights panel.
+ * @fileoverview Typed wrappers over the metrics endpoints, plus a small
+ * text-format parser for the Metrics View's highlights panel.
  *
- * `GET /metrics` serves plain Prometheus exposition text, not JSON, so this
- * module fetches and parses it directly instead of going through the
- * JSON-only `request()` client.
+ * The two endpoints need different clients. `GET /metrics` serves plain
+ * Prometheus exposition text, not JSON, so `getRawMetrics` fetches and parses
+ * it directly; `POST /metrics-demo/lookup` answers with JSON and goes through
+ * the shared envelope-aware `request()` client like every other module.
  *
  * @layer data
  */
 
 import { env } from './env'
+import { request } from './api-client'
 import type { ApiResult } from './api-client'
+
+/** Response body for `POST /metrics-demo/lookup`. */
+export interface LookupResult {
+  /** The counter that was incremented, always `catalog_lookups_total`. */
+  readonly metric: string
+  /** The counter's running total after this increment. */
+  readonly total: number
+}
+
+/**
+ * Increment the custom `catalog_lookups_total` counter.
+ *
+ * This is the only path that exercises the library's `BYMAX_METRICS_REGISTRY`
+ * token: the counter is registered by the API against that injected registry,
+ * so a successful call proves a consumer's own metric reaches the same scrape
+ * the library serves. The default HTTP metrics grow from any traffic; this
+ * counter only moves here.
+ *
+ * @returns The counter name and its new total, or a failure.
+ */
+export function recordCatalogLookup(): Promise<ApiResult<LookupResult>> {
+  return request<LookupResult>('/metrics-demo/lookup', { method: 'POST' })
+}
 
 /** One data sample parsed from the Prometheus exposition text. */
 export interface MetricSample {

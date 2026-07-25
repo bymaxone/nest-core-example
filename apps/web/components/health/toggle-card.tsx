@@ -79,7 +79,10 @@ export function ToggleCard<TValue extends string>({
             variant={activeValue === option.value ? 'default' : 'outline'}
             size="sm"
             disabled={mutation.isPending}
-            className={cn(activeValue === option.value && 'pointer-events-none')}
+            aria-pressed={activeValue === option.value}
+            // Both options share a floor width so the pair reads as one
+            // segmented control instead of two differently sized buttons.
+            className={cn('min-w-20', activeValue === option.value && 'pointer-events-none')}
             onClick={() => mutation.mutate(option.value)}
           >
             {option.label}

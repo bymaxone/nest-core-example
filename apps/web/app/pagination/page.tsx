@@ -17,7 +17,7 @@ export default function PaginationPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader accent>
-          <CardTitle>Pagination</CardTitle>
+          <CardTitle as="h1">Pagination</CardTitle>
           <CardDescription>
             Walk the seeded catalog with clamped offset pages and with opaque cursors, side by side.
           </CardDescription>

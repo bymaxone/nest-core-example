@@ -3,15 +3,22 @@
  *
  * Layer: unit.
  * Goal: verify `getRawMetrics` handles success, a disabled-metrics 404, a
- *   non-JSON-relevant network failure, and that `findMetricSamples` /
- *   `sumMetricValue` correctly parse comment lines, labeled samples, and
- *   `+Inf` histogram bucket labels from real-shaped exposition text.
+ *   non-JSON-relevant network failure, that `recordCatalogLookup` posts to
+ *   the custom-counter endpoint and surfaces transport failures, and that
+ *   `findMetricSamples` / `sumMetricValue` correctly parse comment lines,
+ *   labeled samples, and `+Inf` histogram bucket labels from real-shaped
+ *   exposition text.
  * Mocks: `global.fetch`, restored after every test.
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { findMetricSamples, getRawMetrics, sumMetricValue } from './metrics-api'
+import {
+  findMetricSamples,
+  getRawMetrics,
+  recordCatalogLookup,
+  sumMetricValue,
+} from './metrics-api'
 
 /** A realistic slice of Prometheus exposition text, mirroring the API's real scrape. */
 const SAMPLE_SCRAPE = [
@@ -111,6 +118,52 @@ describe('getRawMetrics', () => {
 
     // Assert
     expect(result).toEqual({ ok: false, kind: 'transport', message: 'Network request failed' })
+  })
+})
+
+describe('recordCatalogLookup', () => {
+  /**
+   * Successful increment.
+   *
+   * The counter endpoint is reached with a POST (a GET would not increment
+   * anything) and the parsed body is passed through untouched.
+   */
+  it('posts to the lookup endpoint and returns the new counter total', async () => {
+    // Arrange
+    const payload = { metric: 'catalog_lookups_total', total: 6 }
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers(),
+      json: () => Promise.resolve(payload),
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    // Act
+    const result = await recordCatalogLookup()
+
+    // Assert
+    expect(result).toEqual({ ok: true, data: payload })
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/metrics-demo/lookup', {
+      method: 'POST',
+    })
+  })
+
+  /**
+   * Network failure.
+   *
+   * The wrapper never throws: an unreachable API surfaces as a transport
+   * failure the caller can render.
+   */
+  it('returns a transport failure when the request cannot be made', async () => {
+    // Arrange
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Failed to fetch')))
+
+    // Act
+    const result = await recordCatalogLookup()
+
+    // Assert
+    expect(result).toEqual({ ok: false, kind: 'transport', message: 'Failed to fetch' })
   })
 })
 

@@ -36,7 +36,7 @@ export default function LatencyPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader accent>
-          <CardTitle>Latency</CardTitle>
+          <CardTitle as="h1">Latency</CardTitle>
           <CardDescription>
             Fire delayed requests and watch the timing interceptor record the route template,
             duration, and slow flag on every completed request.

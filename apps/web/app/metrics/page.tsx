@@ -36,7 +36,7 @@ export default function MetricsPage() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader accent>
-          <CardTitle>Metrics</CardTitle>
+          <CardTitle as="h1">Metrics</CardTitle>
           <CardDescription>
             The Prometheus surface: default HTTP metrics fed by the timing bridge, process metrics,
             and the custom <code>catalog_lookups_total</code> counter.

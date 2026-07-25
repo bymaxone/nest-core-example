@@ -53,18 +53,37 @@ const CardHeader = React.forwardRef<
 ))
 CardHeader.displayName = 'CardHeader'
 
+/** Elements a {@link CardTitle} may render as. */
+type CardTitleElement = 'h1' | 'h2' | 'h3' | 'div'
+
 /**
  * Card title: monospace font, bold.
+ *
+ * Renders a `div` by default because most cards are not section landmarks.
+ * A card that carries the page's own title must pass `as="h1"`: without it the
+ * document has no top-level heading at all, which breaks heading navigation
+ * for assistive technology.
+ *
+ * The ref is typed `HTMLHeadingElement` even though the default renders a
+ * `div`. That is safe, not a mismatch: `HTMLHeadingElement` and
+ * `HTMLDivElement` are structurally identical apart from `align`, which both
+ * declare, so each is assignable to the other and a ref works whichever
+ * element {@link CardTitleElement} resolves to. Widening to `HTMLElement`
+ * instead fails to compile, since `HTMLElement` has no `align`.
  */
-const CardTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn('font-mono text-xl font-bold leading-none tracking-tight', className)}
-      {...props}
-    />
-  ),
-)
+const CardTitle = React.forwardRef<
+  HTMLHeadingElement,
+  React.HTMLAttributes<HTMLHeadingElement> & {
+    /** The element to render. Defaults to `div`. */
+    as?: CardTitleElement
+  }
+>(({ className, as: Comp = 'div', ...props }, ref) => (
+  <Comp
+    ref={ref}
+    className={cn('font-mono text-xl font-bold leading-none tracking-tight', className)}
+    {...props}
+  />
+))
 CardTitle.displayName = 'CardTitle'
 
 /**
