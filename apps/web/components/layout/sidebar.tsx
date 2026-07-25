@@ -77,21 +77,21 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Observe',
     items: [
-      { label: 'Overview', href: '/', icon: LayoutDashboard, exact: true },
-      { label: 'Latency', href: '/latency', icon: Activity },
-      { label: 'Health', href: '/health', icon: HeartPulse },
+      { label: 'Overview', href: '/dashboard', icon: LayoutDashboard, exact: true },
+      { label: 'Latency', href: '/dashboard/latency', icon: Activity },
+      { label: 'Health', href: '/dashboard/health', icon: HeartPulse },
     ],
   },
   {
     label: 'Labs',
     items: [
-      { label: 'Errors', href: '/errors', icon: AlertTriangle },
-      { label: 'Pagination', href: '/pagination', icon: Layers },
+      { label: 'Errors', href: '/dashboard/errors', icon: AlertTriangle },
+      { label: 'Pagination', href: '/dashboard/pagination', icon: Layers },
     ],
   },
   {
     label: 'System',
-    items: [{ label: 'Metrics', href: '/metrics', icon: BarChart3 }],
+    items: [{ label: 'Metrics', href: '/dashboard/metrics', icon: BarChart3 }],
   },
 ]
 

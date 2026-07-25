@@ -206,14 +206,15 @@ http_requests_total{method="GET",route="/catalog/products/:id",status_code="404"
 A Next.js 16 App Router dashboard (`apps/web`), a thin client over the API, rendered in the
 shared Bymax design system.
 
-| Route         | Page                | Demonstrates                                                          |
-| ------------- | ------------------- | --------------------------------------------------------------------- |
-| `/`           | Overview            | readiness, request/slow/error counts, quick links, library summary    |
-| `/errors`     | Envelope Playground | the envelope contract and every `BYMAX_*` code, dev-vs-prod collapse  |
-| `/latency`    | Latency Lab         | the slow flag, the samples feed, and the poison-the-sink proof        |
-| `/pagination` | Pagination          | offset and cursor tabs, the cursor trail, and the corrupt-cursor demo |
-| `/health`     | Health Console      | live/ready tiles, per-indicator checks, and the flaky/hang toggles    |
-| `/metrics`    | Metrics View        | the raw scrape and a parsed highlights panel                          |
+| Route                   | Page                | Demonstrates                                                          |
+| ----------------------- | ------------------- | --------------------------------------------------------------------- |
+| `/`                     | Landing page        | the public entry point; no shell, no query client                     |
+| `/dashboard`            | Overview            | readiness, request/slow/error counts, quick links, library summary    |
+| `/dashboard/errors`     | Envelope Playground | the envelope contract and every `BYMAX_*` code, dev-vs-prod collapse  |
+| `/dashboard/latency`    | Latency Lab         | the slow flag, the samples feed, and the poison-the-sink proof        |
+| `/dashboard/pagination` | Pagination          | offset and cursor tabs, the cursor trail, and the corrupt-cursor demo |
+| `/dashboard/health`     | Health Console      | live/ready tiles, per-indicator checks, and the flaky/hang toggles    |
+| `/dashboard/metrics`    | Metrics View        | the raw scrape and a parsed highlights panel                          |
 
 ## Architecture
 
