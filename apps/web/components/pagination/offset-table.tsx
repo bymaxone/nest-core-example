@@ -51,7 +51,6 @@ export function OffsetTable() {
       <ProductTable
         items={items}
         emptyMessage={query.isPending ? 'Loading...' : 'No products on this page.'}
-        hasPriceColumn
       />
 
       {meta !== undefined && <RawMetaPanel meta={meta} />}

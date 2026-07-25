@@ -18,12 +18,17 @@
 
 import process from 'node:process'
 
+import { DEFAULT_API_ORIGIN } from './lib/api-origin.mjs'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typedRoutes: false,
   async headers() {
     const isProduction = process.env['NODE_ENV'] === 'production'
-    const apiUrl = process.env['NEXT_PUBLIC_API_URL'] ?? ''
+    // Falls back to the same default `lib/env.ts` applies, never to an empty
+    // string: an empty `connect-src` entry leaves `connect-src 'self'`, which
+    // blocks every call to the API while the page still renders normally.
+    const apiUrl = process.env['NEXT_PUBLIC_API_URL'] ?? DEFAULT_API_ORIGIN
     return [
       {
         source: '/(.*)',

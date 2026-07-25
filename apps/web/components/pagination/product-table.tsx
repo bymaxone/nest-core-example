@@ -1,8 +1,9 @@
 /**
  * @fileoverview Shared product rows table, reused by the offset and cursor
- * tabs. The offset tab additionally shows price; the cursor tab does not,
- * since it accumulates many rows and keeps to the columns relevant to the
- * walk.
+ * tabs. Both tabs render the same four columns: the two pagination models
+ * differ in how a page is addressed, not in what a product is, so showing
+ * different columns per tab would read as a difference the library does not
+ * have.
  *
  * @layer components/pagination
  */
@@ -27,13 +28,14 @@ function formatPrice(priceCents: number): string {
   return `$${(priceCents / 100).toFixed(2)}`
 }
 
+/** Number of columns rendered, spanned by the empty-state row. */
+const COLUMN_COUNT = 4
+
 interface ProductTableProps {
   /** The products to render, in display order. */
   items: readonly Product[]
   /** Message shown in the empty-state row when `items` is empty. */
   emptyMessage: string
-  /** Adds a price column when true. */
-  hasPriceColumn?: boolean
 }
 
 /**
@@ -41,11 +43,8 @@ interface ProductTableProps {
  *
  * @param items - The products to render.
  * @param emptyMessage - Message shown when `items` is empty.
- * @param hasPriceColumn - Adds a price column when true.
  */
-export function ProductTable({ items, emptyMessage, hasPriceColumn = false }: ProductTableProps) {
-  const columnCount = hasPriceColumn ? 4 : 3
-
+export function ProductTable({ items, emptyMessage }: ProductTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -53,13 +52,13 @@ export function ProductTable({ items, emptyMessage, hasPriceColumn = false }: Pr
           <TableHead>Id</TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Category</TableHead>
-          {hasPriceColumn && <TableHead>Price</TableHead>}
+          <TableHead>Price</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {items.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={columnCount} className="text-center text-muted-foreground">
+            <TableCell colSpan={COLUMN_COUNT} className="text-center text-muted-foreground">
               {emptyMessage}
             </TableCell>
           </TableRow>
@@ -69,9 +68,7 @@ export function ProductTable({ items, emptyMessage, hasPriceColumn = false }: Pr
               <TableCell className="font-mono">{item.id}</TableCell>
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.category}</TableCell>
-              {hasPriceColumn && (
-                <TableCell className="font-mono">{formatPrice(item.priceCents)}</TableCell>
-              )}
+              <TableCell className="font-mono">{formatPrice(item.priceCents)}</TableCell>
             </TableRow>
           ))
         )}

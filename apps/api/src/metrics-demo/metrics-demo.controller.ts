@@ -6,7 +6,7 @@
  * @layer controller
  */
 
-import { Controller, Inject, Post } from '@nestjs/common'
+import { Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common'
 
 import type { LookupResult } from './metrics-demo.service.js'
 import { MetricsDemoService } from './metrics-demo.service.js'
@@ -24,9 +24,15 @@ export class MetricsDemoController {
   /**
    * Record one catalog lookup and report the counter's new total.
    *
+   * Answers 200, not Nest's default 201 for `@Post`: the call creates no
+   * resource and returns no location, it increments a counter and echoes the
+   * running total. This matches the health demo's toggle endpoints, the other
+   * state-mutating POSTs in this API.
+   *
    * @returns The counter name and its total after the increment.
    */
   @Post('lookup')
+  @HttpCode(HttpStatus.OK)
   lookup(): Promise<LookupResult> {
     return this.service.recordLookup()
   }
