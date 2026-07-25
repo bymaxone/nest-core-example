@@ -33,9 +33,16 @@ export function QuickLinksGrid({ links }: QuickLinksGridProps) {
       <h2 className="mb-3 font-mono text-sm font-semibold uppercase tracking-wider text-muted-foreground">
         Explore
       </h2>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/*
+        Flex rather than a fixed-column grid: five cards in a three-column grid
+        leave a hole in the second row. Here each card asks for a minimum width
+        and then grows to absorb the leftover space, so a row always fills
+        edge to edge whatever the card count is. The basis alone drives how
+        many fit per row, so no breakpoints are needed.
+      */}
+      <div className="flex flex-wrap gap-4">
         {links.map((link) => (
-          <QuickLinkCard key={link.href} {...link} />
+          <QuickLinkCard key={link.href} {...link} className="grow basis-[220px]" />
         ))}
       </div>
     </div>

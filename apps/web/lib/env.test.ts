@@ -3,8 +3,9 @@
  *
  * Layer: unit.
  * Goal: verify the env module validates and freezes a valid configuration,
- *   and throws a readable, prefixed error listing every offending variable
- *   when validation fails. The module is imported dynamically (after
+ *   applies the shared development default when a variable is absent, and
+ *   throws a readable, prefixed error naming every offending variable when a
+ *   value is present but malformed. The module is imported dynamically (after
  *   mutating `process.env`) so each test controls the Zod parse outcome.
  * Mocks: `process.env`, restored after every test via `vi.resetModules()`.
  */
@@ -42,31 +43,39 @@ describe('env', () => {
   })
 
   /**
-   * Missing required variable.
+   * Absent variable.
    *
-   * When `NEXT_PUBLIC_API_URL` is absent, the module must throw at import
-   * time with the documented `Invalid web env:` prefix rather than exporting
-   * a broken config the rest of the app would silently misuse.
+   * A fresh checkout has no env file, so an absent `NEXT_PUBLIC_API_URL` must
+   * fall back to the shared development default rather than throwing. The
+   * default must be the very constant `next.config.mjs` splices into the CSP
+   * `connect-src`: if the two drift, the dashboard renders while the browser
+   * blocks every API call.
    */
-  it('throws with the "Invalid web env:" prefix when the API URL is missing', async () => {
+  it('falls back to the shared default API origin when the variable is absent', async () => {
     // Arrange
     delete process.env['NEXT_PUBLIC_API_URL']
 
-    // Act & Assert
-    await expect(import('./env')).rejects.toThrow('Invalid web env:')
+    // Act
+    const { env } = await import('./env')
+    const { DEFAULT_API_ORIGIN } = await import('./api-origin.mjs')
+
+    // Assert
+    expect(env.NEXT_PUBLIC_API_URL).toBe(DEFAULT_API_ORIGIN)
   })
 
   /**
    * Malformed variable.
    *
-   * A non-URL string must fail the same way as a missing value, naming the
-   * offending field in the error.
+   * An absent value is a fresh checkout, but a value that is present and not
+   * a URL is a mistake: it must still throw at import time, with the
+   * documented `Invalid web env:` prefix and the offending field named.
    */
-  it('throws naming the field when the API URL is not a valid URL', async () => {
+  it('throws naming the field when the API URL is present but not a valid URL', async () => {
     // Arrange
     process.env['NEXT_PUBLIC_API_URL'] = 'not-a-url'
 
     // Act & Assert
+    await expect(import('./env')).rejects.toThrow('Invalid web env:')
     await expect(import('./env')).rejects.toThrow('NEXT_PUBLIC_API_URL')
   })
 })

@@ -18,12 +18,18 @@
 
 import process from 'node:process'
 
+import { resolveApiOrigin } from './lib/api-origin.mjs'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typedRoutes: false,
   async headers() {
     const isProduction = process.env['NODE_ENV'] === 'production'
-    const apiUrl = process.env['NEXT_PUBLIC_API_URL'] ?? ''
+    // Resolves through the same contract `lib/env.ts` applies, and throws
+    // rather than emitting a policy that names no usable API origin: this is
+    // the only place the CSP is built, so a bad value must stop the build
+    // instead of silently blocking every call while the page still renders.
+    const apiUrl = resolveApiOrigin(process.env['NEXT_PUBLIC_API_URL'])
     return [
       {
         source: '/(.*)',

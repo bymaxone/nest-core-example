@@ -13,6 +13,7 @@ import {
   CardTitle,
   CARD_TITLE_CONTENT_CLASS,
 } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 
 interface QuickLinkCardProps {
   /** Target route. */
@@ -23,6 +24,8 @@ interface QuickLinkCardProps {
   description: string
   /** Lucide icon shown next to the title. */
   icon: LucideIcon
+  /** Extra classes, used by the grid to control how the card sizes. */
+  className?: string
 }
 
 /**
@@ -39,12 +42,22 @@ interface QuickLinkCardProps {
  * @param title - Card title.
  * @param description - One-line description.
  * @param icon - Lucide icon component.
+ * @param className - Extra classes controlling how the card sizes.
  */
-export function QuickLinkCard({ href, title, description, icon: Icon }: QuickLinkCardProps) {
+export function QuickLinkCard({
+  href,
+  title,
+  description,
+  icon: Icon,
+  className,
+}: QuickLinkCardProps) {
   return (
     <Link
       href={href}
-      className="border-(--glass-border) bg-(--glass-card-bg) hover:bg-(--glass-bg-hover) block rounded-[24px] border text-card-foreground backdrop-blur-lg transition-transform hover:scale-[1.01]"
+      className={cn(
+        'border-(--glass-border) bg-(--glass-card-bg) hover:bg-(--glass-bg-hover) block rounded-[24px] border text-card-foreground backdrop-blur-lg transition-transform hover:scale-[1.01]',
+        className,
+      )}
     >
       <CardHeader>
         <div className="flex items-center gap-2">

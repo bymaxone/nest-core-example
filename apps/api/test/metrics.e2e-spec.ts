@@ -72,7 +72,9 @@ describe('metrics', () => {
      */
     it('increments the counter across calls and surfaces it on the scrape', async () => {
       const first = await httpAgent(app).post('/metrics-demo/lookup')
-      expect(first.status).toBe(201)
+      // 200, not Nest's default 201: the call creates nothing, it increments
+      // a counter and echoes the total.
+      expect(first.status).toBe(200)
       expect(first.body.metric).toBe('catalog_lookups_total')
       const firstTotal = first.body.total as number
 

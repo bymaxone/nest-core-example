@@ -6,22 +6,42 @@
  * at build time; there are no server-only secrets in this dashboard, so every
  * variable declared here is safe to read from client components.
  *
- * Throws at module load with a human-readable error if any required variable
- * is missing or malformed, so a misconfigured deployment fails loudly instead
- * of silently calling the wrong API origin.
+ * Every variable carries its documented development default, mirroring
+ * `apps/api/src/config/env.schema.ts`, so a fresh checkout runs with no env
+ * file at all. A *malformed* value still throws at module load with a
+ * human-readable error: an absent variable is a fresh checkout, a malformed
+ * one is a mistake worth failing on.
  *
  * @layer config
  */
 
 import { z } from 'zod'
 
+import { DEFAULT_API_ORIGIN, isSupportedApiUrl } from './api-origin.mjs'
+
 /** Zod schema for every env var consumed by apps/web. */
 const envSchema = z.object({
   /**
    * Base URL of the NestJS API the browser calls directly (CORS is enabled
    * on the API for this origin). No same-origin proxy is used.
+   *
+   * Defaults to the API's own default port, the mirror of the API's
+   * `WEB_ORIGIN` default. The default is shared with `next.config.mjs`, which
+   * must name the same origin in the CSP `connect-src` or the browser blocks
+   * every call this module's consumers make.
+   *
+   * A deployment that serves the API from anywhere else must set this at build
+   * time: Next.js inlines `NEXT_PUBLIC_*` into the client bundle when it
+   * builds, so setting it only at runtime has no effect.
+   *
+   * `z.url()` alone accepts any parseable URL, including `javascript:` and
+   * `file:`, which the browser cannot fetch from. The shared predicate keeps
+   * this in step with the scheme the CSP source is built from.
    */
-  NEXT_PUBLIC_API_URL: z.url(),
+  NEXT_PUBLIC_API_URL: z
+    .url()
+    .refine(isSupportedApiUrl, { message: 'must be an absolute http(s) URL' })
+    .default(DEFAULT_API_ORIGIN),
 })
 
 /**
