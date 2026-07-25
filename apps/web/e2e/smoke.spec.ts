@@ -1,13 +1,15 @@
 /**
  * @fileoverview Web dashboard smoke (Playwright, running stack).
  *
- * Drives the real dashboard against a live API and asserts that each of the
- * six pages renders its heading and that the page's key scenario is
- * operable, not just statically rendered: firing a failure trigger, firing a
- * delayed request, walking an offset page, flipping a health toggle, and
- * reading the raw Prometheus scrape. Only structural facts (headings,
- * labels, envelope field names) are asserted; live values (timestamps,
- * durations, counters) are never pinned since they differ every run.
+ * Drives the real app against a live API: the public landing page at `/` and
+ * the six dashboard pages under `/dashboard`. Each page must render its
+ * heading and have its key scenario operable, not just statically rendered:
+ * walking the landing CTA into the dashboard, firing a failure trigger,
+ * firing a delayed request, walking an offset page, flipping a health
+ * toggle, and reading the raw Prometheus scrape. Only structural facts
+ * (headings, labels, envelope field names) are asserted; live values
+ * (timestamps, durations, counters) are never pinned since they differ every
+ * run.
  *
  * Every assertion is scoped to the `<main>` landmark: the sidebar renders on
  * every page with the exact same page-title text as each page's own
@@ -21,12 +23,33 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('dashboard smoke (running stack)', () => {
+  test('Landing page renders and its CTA opens the dashboard', async ({ page }) => {
+    /*
+     * Scenario: a visitor arrives at the public entry point and clicks through.
+     * Rule it protects: `/` serves the landing page (not a 404 left behind by
+     * the move of the dashboard under `/dashboard`) and its primary CTA
+     * actually reaches the Overview, so the only path a first-time visitor
+     * has into the app is never silently broken.
+     */
+    await page.goto('/')
+    const main = page.locator('main')
+
+    await expect(main.getByRole('heading', { name: 'nest-core-example' })).toBeVisible()
+    await expect(main.getByText('Feature coverage', { exact: true })).toBeVisible()
+
+    // The CTA appears twice (hero and closing section); either one must work.
+    await main.getByRole('link', { name: 'Open the dashboard' }).first().click()
+
+    await expect(page).toHaveURL(/\/dashboard$/)
+    await expect(page.locator('main').getByText('Overview', { exact: true })).toBeVisible()
+  })
+
   test('Overview renders the status strip and every quick link', async ({ page }) => {
     /*
-     * Scenario: a user lands on the Overview page.
+     * Scenario: a user opens the dashboard Overview at `/dashboard`.
      * Rule it protects: the shell renders the page title and every
-     * quick-link card to the five feature pages, so navigation from the
-     * landing page is never silently broken.
+     * quick-link card to the five feature pages, so navigation onward from
+     * the Overview is never silently broken.
      */
     await page.goto('/dashboard')
     const main = page.locator('main')
