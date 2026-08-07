@@ -88,9 +88,11 @@ reloaded into every test worker's module graph, the exact pattern that has OOM-c
 machines on sibling `*-example` repos.
 
 **Expected-skip CI checks**: CodeQL, OpenSSF Scorecard, and any other public-only workflow are
-**visibility-gated with a runtime condition** (job/workflow-level
-`if: github.event.repository.visibility == 'public'`, equivalently
-`${{ !github.event.repository.private }}`) - never a hardcoded on/off. While the repo is
+**visibility-gated at runtime** - never a hardcoded on/off. CodeQL resolves the
+visibility through the API, inside the org's reusable analysis, which is what makes
+the gate hold on `schedule` too: that event carries no webhook payload, so
+`${{ !github.event.repository.private }}` negates a null and evaluates to true there.
+Workflows still using the expression form are correct on `push` and `pull_request`. While the repo is
 private they evaluate to `skipping` (counts as pass); the moment it is flipped to public they
 self-activate with **no code change**. Design the whole repo (README, badges, links, security
 posture) as if it were already public.
