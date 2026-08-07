@@ -91,7 +91,7 @@ function shippedTypeFiles(libRoot) {
   const pkg = JSON.parse(readFileSync(path.join(libRoot, 'package.json'), 'utf8'))
   const files = []
   for (const entry of Object.values(pkg.exports ?? {})) {
-    const types = typeof entry === 'string' ? entry : entry?.types
+    const types = resolveTypesTarget(entry)
     if (typeof types === 'string' && types.endsWith('.d.ts')) {
       files.push(path.resolve(libRoot, types))
     }
@@ -252,3 +252,31 @@ function finish({ total, missing, ignored, selfTest }) {
 }
 
 main()
+
+/**
+ * Resolve the declaration target of one `exports` entry.
+ *
+ * An entry may be a bare string, a flat object carrying `types`, or a
+ * conditional object where `types` sits under `import` / `require`. TypeScript
+ * resolves through the conditions, so reading only the top level reports the
+ * library as unbuilt the moment it ships dual ESM/CJS. That is what this audit
+ * did: every subpath failed with "Reinstall or rebuild the library" while the
+ * declaration files were present all along.
+ *
+ * @param entry - The value of one subpath in the exports map.
+ * @returns The relative path of the declaration file, or undefined.
+ */
+function resolveTypesTarget(entry) {
+  if (typeof entry === 'string') return entry
+  if (entry === null || typeof entry !== 'object') return undefined
+  if (typeof entry.types === 'string') return entry.types
+  // Order mirrors what a consumer hits first; `default` last so a more specific
+  // condition wins, which is how the resolver itself reads the map.
+  for (const condition of ['import', 'require', 'node', 'default']) {
+    const nested = entry[condition]
+    if (nested === undefined || typeof nested === 'string') continue
+    const resolved = resolveTypesTarget(nested)
+    if (resolved !== undefined) return resolved
+  }
+  return undefined
+}
